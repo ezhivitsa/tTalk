@@ -1,0 +1,14 @@
+.login {
+	text-align: center;
+}
+.login .loginForm {
+	width: 500px;
+	margin: 0 auto;
+}
+.login .error, 
+.login button {
+	border-radius: 5px;
+}
+.login .button {
+	width: 200px;
+}

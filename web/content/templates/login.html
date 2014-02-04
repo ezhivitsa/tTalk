@@ -1,1 +1,10 @@
-I'm login page
+<div class="login">
+	<h2>Please login to see our site</h2>
+	<form name="loginForm" class="loginForm">
+		<input type="email" placeholder="Email" name="email" ng-model="email" required ng-pattern="/^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i">
+		<input type="password" placeholder="Password" name="password" ng-model="password" required>
+		<span class="error" ng-show="loginForm.email.$error.required || loginForm.password.$error.required">Email and Password required!</span>
+		<span class="error" ng-show="loginForm.email.$error.pattern">Invalid email</span>
+		<button class="button" ng-click="login()" ng-disabled="loginForm.email.$error.required || loginForm.password.$error.required || loginForm.email.$error.pattern">Submit</button>
+	</form>
+</div>
