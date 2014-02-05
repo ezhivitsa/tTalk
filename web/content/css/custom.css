@@ -1,14 +1,50 @@
-.login {
+.login, 
+.registration {
 	text-align: center;
 }
-.login .loginForm {
+.login .loginForm,
+.registration .regForm {
 	width: 500px;
-	margin: 0 auto;
+	margin: 20px auto;
 }
 .login .error, 
-.login button {
+.login button,
+.registration .error,
+.registration button {
 	border-radius: 5px;
 }
-.login .button {
+.login .button,
+.registration .button {
 	width: 200px;
+}
+.registration .req {
+	position: relative;
+}
+.registration .req:after {
+	content: "*";
+	display: inline-block;
+	color: red;
+	position: absolute;
+	z-index: 2;
+	right: -10px;
+	top: 0;
+	font-size: 20px;
+}
+
+.registration .info {
+	text-align: start;
+}
+
+.errorBlock {
+	width: 500px;
+	margin: 10% auto;
+	text-align: center;
+}
+.errorBlock .error {
+	font-size: 20px;
+	line-height: 50px;
+	border-radius: 5px;
+}
+.errorBlock .vcard {
+	width: 100%;
 }

@@ -10,13 +10,14 @@
 	<header>
 		<div class="logo">Maybe a logo will be here</div>
 	</header>
-	<section>
+	<section ng-controller="EventCtrl as eve">
 		<ng-view></ng-view>
 	</section>
 	<footer></footer>
 	<script src="vendor/angular.js"></script>
 	<script src="vendor/angular-route.js"></script>
 	<script src="js/common/configs.js" ></script>
+	<script src="js/common/EventController.js"></script>
 	<script src="js/helpers/HttpService.js" ></script>
 	<script src="js/common/routes.js" ></script>
 	<script src="js/user/LoginController.js" ></script>

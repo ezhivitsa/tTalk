@@ -1,0 +1,21 @@
+<div class="registration">
+	<form name="regForm" class="regForm">
+		<div class="req">
+			<input type="email" placeholder="Email" name="email" ng-model="email" required ng-pattern="/^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i">
+		</div>
+		<div class="req">
+			<input type="password" class="req" placeholder="Password" name="password" ng-model="password" required ng-minlength="6" ng-maxlength="20">
+		</div>
+		<div class="req">
+			<input type="text" class="req" placeholder="Nickname" name="nickname" ng-model="nickname" required>
+		</div>
+		<input type="text" placeholder="First Name" name="firstName" ng-model="firstName">
+		<input type="text" placeholder="Last Name" name="lastName" ng-model="lastName">
+		<span class="error" ng-show="regForm.email.$error.required || regForm.password.$error.required || regForm.nickname.$error.required">Enter required fields!</span>
+		<span class="error" ng-show="regForm.email.$error.pattern">Invalid email</span>
+		<span class="error" ng-show="regForm.password.$error.minlength">Password must consist of more than six symbols</span>
+		<span class="error" ng-show="regForm.password.$error.maxlength">Password is too long</span>
+		<button class="button" ng-click="register()" ng-disabled="regForm.email.$error.required || regForm.password.$error.required || regForm.email.$error.pattern || regForm.nickname.$error.required || regForm.password.$error.minlength">Submit</button>
+		<div class="info"><span style="color: red; font-size: 20px;">*</span> - Required fields</div>
+	</form>
+</div>
