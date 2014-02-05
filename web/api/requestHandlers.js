@@ -1,10 +1,9 @@
-function start() {
-	console.log("Request handler 'start' was called.");
+var crypto = require('crypto');
+
+function registration (data, response) {
+	var login = data.login,
+		password = data.password,
+		cryptoPass = crypto.createHash('md5').update(password).digest('hex');
 }
 
-function upload() {
-	console.log("Request handler 'upload' was called.");
-}
-
-exports.start = start;
-exports.upload = upload;
+exports.registration = registration;

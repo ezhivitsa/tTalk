@@ -1,10 +1,12 @@
 var server = require("./server"),
 	router = require('./router'),
 	requestHandlers = require('./requestHandlers'),
-	handle = {};
+	mongodb = require('./mongodb'),
+	handle = {},
+	host = '127.0.0.1',
+	port = 8888;
 
-handle['/'] = requestHandlers.start;
-handle['/start'] = requestHandlers.start;
-handle['/upload'] = requestHandlers.upload;
+handle['/api/registration'] = requestHandlers.registration;
 
-server.startServer(router.route, handle);
+server.startServer(host, port, router.route, handle);
+mongodb.createConnection();
