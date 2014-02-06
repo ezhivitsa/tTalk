@@ -7,6 +7,6 @@ var server = require("./server"),
 	port = 8888;
 
 handle['/api/registration'] = requestHandlers.registration;
+handle['/api/login'] = requestHandlers.login;
 
-server.startServer(host, port, router.route, handle);
-mongodb.createConnection();
+server.startServer(host, port, router.route, handle, mongodb);

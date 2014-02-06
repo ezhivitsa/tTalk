@@ -1,9 +1,10 @@
-var crypto = require('crypto');
+function registration (data, request, response, mongodb) {
+	mongodb.insertUser(data, response);	
+}
 
-function registration (data, response) {
-	var login = data.login,
-		password = data.password,
-		cryptoPass = crypto.createHash('md5').update(password).digest('hex');
+function login(data, request, response, mongodb) {
+	mongodb.userLogin(data, response);
 }
 
 exports.registration = registration;
+exports.login = login;
