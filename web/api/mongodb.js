@@ -207,7 +207,7 @@ function addTalk (talk, response) {
 	// db - talks
 }
 
-function checkExistingEmail (data, request) {
+function checkExistingEmail (data, response) {
 	if ( data.email ) {
 		openConnection(response, function (db) {
 			checkEmail(db, data.email, response);
@@ -215,7 +215,7 @@ function checkExistingEmail (data, request) {
 	}
 }
 
-function checkExistingNickname (data, request) {
+function checkExistingNickname (data, response) {
 	if ( data.nickname ) {
 		openConnection(response, function (db) {
 			checkNickname(db, data.nickname, response);
