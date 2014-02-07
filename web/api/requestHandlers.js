@@ -1,8 +1,8 @@
-function registration (data, request, response, mongodb) {
+function registration (data, response, mongodb) {
 	mongodb.insertUser(data, response);	
 }
 
-function login(data, request, response, mongodb) {
+function login(data, response, mongodb) {
 	mongodb.userLogin(data, response);
 }
 

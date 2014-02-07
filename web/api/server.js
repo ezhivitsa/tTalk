@@ -20,16 +20,17 @@ function processGetRequest (pathname, url, route, handle, request, response, mon
 	var url_parts = url.parse(request.url, true),
 		query = url_parts.query;
 
-	route(handle, pathname, query, request, response, mongodb);
+	route(handle, pathname, query, response, mongodb);
 }
 
-function processPostRequest (pathname, route, handle, request, response, mongodb) {
+function processPostRequest (pathname, route, handle, response, mongodb) {
+	var postData = '';
 	request.addListener("data", function(postDataChunk) {
       postData += postDataChunk;
     });
 
     request.addListener("end", function() {
-      route(handle, pathname, postData, request, response, mongodb);
+      route(handle, pathname, JSON.parse(postData), request, response, mongodb);
     });
 }
 
