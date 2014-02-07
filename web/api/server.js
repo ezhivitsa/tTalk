@@ -23,7 +23,7 @@ function processGetRequest (pathname, url, route, handle, request, response, mon
 	route(handle, pathname, query, response, mongodb);
 }
 
-function processPostRequest (pathname, route, handle, response, mongodb) {
+function processPostRequest (pathname, route, handle, request, response, mongodb) {
 	var postData = '';
 	request.addListener("data", function(postDataChunk) {
       postData += postDataChunk;
