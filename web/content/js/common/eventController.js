@@ -5,5 +5,4 @@ app.controller('EventCtrl',function($scope, $rootScope, $route, $location) {
 		self.errorMessage = resolve;
         $location.path("/error");
     });
-    console.log(self.backUrl);
 });

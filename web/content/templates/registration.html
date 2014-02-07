@@ -1,13 +1,16 @@
 <div class="registration">
 	<form name="regForm" class="regForm">
 		<div class="req">
-			<input type="email" placeholder="Email" name="email" ng-model="email" required ng-pattern="/^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i">
+			<input type="email" placeholder="Email" name="email" ng-model="email" required ng-pattern="/^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i" ng-change="emailChange()">
+			<span class="alert-box warning" ng-show="emailErrorVis">{{emailError}}</span>
 		</div>
 		<div class="req">
-			<input type="password" class="req" placeholder="Password" name="password" ng-model="password" required ng-minlength="6" ng-maxlength="20">
+			<input type="password" placeholder="Password" name="password" ng-model="password" required ng-minlength="6" ng-maxlength="20">
+			<span class="alert-box warning" ng-show="passwordErrorVis">{{passwordError}}</span>
 		</div>
 		<div class="req">
-			<input type="text" class="req" placeholder="Nickname" name="nickname" ng-model="nickname" required>
+			<input type="text" placeholder="Nickname" name="nickname" ng-model="nickname" required ng-pattern="/^[a-z0-9-]+$/" ng-minlength="2">
+			<span class="alert-box warning" ng-show="nicknameErrorVis">{{nicknameError}}</span>
 		</div>
 		<input type="text" placeholder="First Name" name="firstName" ng-model="firstName">
 		<input type="text" placeholder="Last Name" name="lastName" ng-model="lastName">
@@ -15,7 +18,8 @@
 		<span class="error" ng-show="regForm.email.$error.pattern">Invalid email</span>
 		<span class="error" ng-show="regForm.password.$error.minlength">Password must consist of more than six symbols</span>
 		<span class="error" ng-show="regForm.password.$error.maxlength">Password is too long</span>
-		<button class="button" ng-click="register()" ng-disabled="regForm.email.$error.required || regForm.password.$error.required || regForm.email.$error.pattern || regForm.nickname.$error.required || regForm.password.$error.minlength">Submit</button>
+		<span class="error" ng-show="regForm.nickname.$error.pattern || regForm.nickname.$error.minlength">Invalid nickname</span>
+		<button class="button" ng-click="register()" ng-disabled="regForm.email.$error.required || regForm.password.$error.required || regForm.email.$error.pattern || regForm.nickname.$error.required || regForm.password.$error.minlength || regForm.nickname.$error.pattern">Submit</button>
 		<div class="info"><span style="color: red; font-size: 20px;">*</span> - Required fields</div>
 	</form>
 </div>
