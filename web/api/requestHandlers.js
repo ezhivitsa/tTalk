@@ -10,7 +10,7 @@ function checkEmail (data, response, mongodb) {
 	mongodb.checkEmail(data, response);
 }
 
-function checkNickname (data, response) {
+function checkNickname (data, response, mongodb) {
 	mongodb.checkNickname(data, response);
 }
 

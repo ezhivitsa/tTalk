@@ -47,7 +47,9 @@ function insertUser(userData, response) {
 		openConnection(response, function (db) {
 			checkEmail(db, email, response, function (db) {
 				checkNickname(db, nickname, response, function (db) {
-					registerUser(db, data, response);
+					registerUser(db, data, response, function (db) {
+						setUserToken(db, data, response);
+					});
 				});
 			});
 		});
@@ -125,19 +127,20 @@ function checkNickname (db, nickname, response, callback) {
 	});
 }
 
-function registerUser (db, data, response) {
+function registerUser (db, data, response, callback) {
 	var collection = db.collection('users');
 	collection.insert(data, {w: 1, unique: true}, function (err, result) {
 		if ( err ) {
 			console.warn(err.message);
 			response.writeHead(500, {'Content-Type': 'application/json'});
-			response.end(JSON.stringify({error: dbErrod}));			
+			response.end(JSON.stringify({error: dbErrod}));
+			db.close();
 		}
 		else {
-			response.writeHead(200, {'Content-Type': 'application/json'});
-			response.end();
-		}
-		db.close();
+			( callback ) ? callback() : db.close();
+			// response.writeHead(200, {'Content-Type': 'application/json'});
+			// response.end();
+		}		
 	});
 }
 
@@ -176,24 +179,11 @@ function userLogin (user, response) {
 	}
 }
 
-function setUserToken (user, callback) {
+function setUserToken (data, response, callback) {
 	crypto.randomBytes(48, function(ex, buf) {
 		var token = buf.toString('hex');
-		db.open(function (err, db) {
-			assert.equal(err, null);
-			var collection = db.collection('users');
-			collection.findAndModify({email: user.email}, ['email'], {$set: {token: token}}, {}, function(err, object) {
-				if ( err ) {
-					console.warn(err.message);
-				}
-				else {
-					console.dir(object);
-				}
-			});
-		});
-		if ( callback ) {
-			callback();
-		}
+		
+		( callback ) && callback();
 	});
 }
 
@@ -210,7 +200,11 @@ function addTalk (talk, response) {
 function checkExistingEmail (data, response) {
 	if ( data.email ) {
 		openConnection(response, function (db) {
-			checkEmail(db, data.email, response);
+			checkEmail(db, data.email, response, function (db) {
+				response.writeHead(200, {'Content-Type': 'application/json'});
+				response.end();
+				db.close();
+			});
 		});
 	}
 }
@@ -218,7 +212,11 @@ function checkExistingEmail (data, response) {
 function checkExistingNickname (data, response) {
 	if ( data.nickname ) {
 		openConnection(response, function (db) {
-			checkNickname(db, data.nickname, response);
+			checkNickname(db, data.nickname, response, function (db) {
+				response.writeHead(200, {'Content-Type': 'application/json'});
+				response.end();
+				db.close();
+			});
 		});
 	}
 }
