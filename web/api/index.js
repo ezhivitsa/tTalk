@@ -9,5 +9,7 @@ var server = require("./server"),
 
 handle['/api/registration'] = requestHandlers.registration;
 handle['/api/login'] = requestHandlers.login;
+handle['/api/checkemail'] = requestHandlers.checkEmail;
+handle['/api/checknickname'] = requestHandlers.checkNickname;
 
 server.startServer(host, port, router.route, handle, mongodb);

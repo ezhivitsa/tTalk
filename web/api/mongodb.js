@@ -16,8 +16,9 @@ var db = new Db('ttalk', new Server('127.0.0.1', 27017)),
 		nicknameExist: 'This nickname is already in use',
 		emailExist: 'This email is already in use',
 		data: 'Not all data',
-		dbErrod: 'Database error'
-	}
+		dbErrod: 'Database error',
+		invalidEmail: 'Invalid email'
+	};
 	
 
 
@@ -66,31 +67,40 @@ function openConnection (response, callback) {
 			db.close();
 		}
 		else {
-			( callback ) && callback(db);
+			( callback ) ? callback(db) : db.close();
 		}
 	});
 }
 
 function checkEmail (db, email, response, callback) {
-	var collection = db.collection('users');
-	collection.findOne({email: email}, function (err, item) {
-		if ( err ) {
-			console.warn(err.message);
-			response.writeHead(500, {'Content-Type': 'application/json'});
-			response.end(JSON.stringify({error: dbErrod}));
-			db.close();
-		}
-		else {
-			if ( item ) {
-				response.writeHead(501, {'Content-Type': 'application/json'});
-	   			response.end(JSON.stringify({field: 'email', message: errors.emailExist}));
-		 		db.close();
+	var expr = /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i;
+
+	if ( expr.test(email) && email.length >= 6 && email.length <= 20 ) {
+		var collection = db.collection('users');
+		collection.findOne({email: email}, function (err, item) {
+			if ( err ) {
+				console.warn(err.message);
+				response.writeHead(500, {'Content-Type': 'application/json'});
+				response.end(JSON.stringify({error: dbErrod}));
+				db.close();
 			}
 			else {
-				( callback ) && callback(db);
+				if ( item ) {
+					response.writeHead(501, {'Content-Type': 'application/json'});
+		   			response.end(JSON.stringify({field: 'email', message: errors.emailExist}));
+			 		db.close();
+				}
+				else {
+					( callback ) ? callback(db) : db.close();
+				}
 			}
-		}
-	});
+		});
+	}
+	else {
+		response.writeHead(501, {'Content-Type': 'application/json'});
+		response.end(JSON.stringify({field: 'email', message: errors.invalidEmail}));
+ 		db.close();
+	}
 }
 
 function checkNickname (db, nickname, response, callback) {
@@ -109,7 +119,7 @@ function checkNickname (db, nickname, response, callback) {
 		 		db.close();
 			}
 			else {
-				( callback ) && callback(db);
+				( callback ) ? callback(db) : db.close();
 			}
 		}
 	});
@@ -197,8 +207,26 @@ function addTalk (talk, response) {
 	// db - talks
 }
 
+function checkExistingEmail (data, request) {
+	if ( data.email ) {
+		openConnection(response, function (db) {
+			checkEmail(db, data.email, response);
+		});
+	}
+}
+
+function checkExistingNickname (data, request) {
+	if ( data.nickname ) {
+		openConnection(response, function (db) {
+			checkNickname(db, data.nickname, response);
+		});
+	}
+}
+
 exports.insertUser = insertUser;
 exports.userLogin = userLogin;
+exports.checkEmail = checkExistingEmail;
+exports.checkNickname = checkExistingNickname;
 exports.addTalk = addTalk;
 exports.setUserToken = setUserToken;
 exports.verifyUserToken = verifyUserToken;
