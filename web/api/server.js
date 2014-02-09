@@ -1,36 +1,40 @@
 var http = require('http'),
-	url = require("url");
+	url = require("url"),
+	SessionHandler = require('./SessionHandler.js').SessionHandler,
+	sessionHandler = new SessionHandler();
 
-function startServer (host, port, route, handle, mongodb) {
+function startServer (host, port, route, handle) {
 	
 	http.createServer(function (request, response) {
 
-		var pathname = url.parse(request.url).pathname;
+		var pathname = url.parse(request.url).pathname,
+			session = sessionHandler.getSession(request, response);
+
 		if ( request.method.toLowerCase() === 'get' ) {
-			processGetRequest(pathname, url, route, handle, request, response, mongodb);
+			processGetRequest(pathname, url, route, handle, request, response, session);
 		}
 		else if ( request.method.toLowerCase() === 'post' ) {
-			processPostRequest(pathname, route, handle, request, response, mongodb);
+			processPostRequest(pathname, route, handle, request, response, session);
 		}
 
 	}).listen(port, host);
 }
 
-function processGetRequest (pathname, url, route, handle, request, response, mongodb) {
+function processGetRequest (pathname, url, route, handle, request, response, session) {
 	var url_parts = url.parse(request.url, true),
 		query = url_parts.query;
 
-	route(handle, pathname, query, response, mongodb);
+	route(handle, pathname, query, response, session);
 }
 
-function processPostRequest (pathname, route, handle, request, response, mongodb) {
+function processPostRequest (pathname, route, handle, request, response, session) {
 	var postData = '';
 	request.addListener("data", function(postDataChunk) {
     	postData += postDataChunk;
     });
 
     request.addListener("end", function() {
-     	route(handle, pathname, JSON.parse(postData), response, mongodb);
+     	route(handle, pathname, JSON.parse(postData), response, session);
     });
 }
 

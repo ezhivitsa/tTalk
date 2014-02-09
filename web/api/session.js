@@ -1,6 +1,16 @@
-function createSession (user, request) {
-	request.session.authorized = true;
-    request.session.username = request.body.login;
+module.exports.Session = function () {
+	var getRandom = function () {
+		return Math.floor(Math.random() * 1e16).toString(36);
+	}
+	
+	this.sessionId = getRandom() + '-' + new Date().getTime().toString(36) + '-' + getRandom();
+	this.doDestroy = false;
+ 
+	this.toString = function () {
+		return this.sessionId;
+	} 
+ 
+	this.getTime = function () {
+		return parseInt(this.sessionId.split('-')[1], 36);
+	} 
 }
-
-exports.createSession = createSession;

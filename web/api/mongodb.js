@@ -22,7 +22,7 @@ var db = new Db('ttalk', new Server('127.0.0.1', 27017)),
 	
 
 
-function insertUser(userData, response) {
+function insertUser(userData, response, callback) {
 	var email = userData.email,
 		password = userData.password,
 		nickname = userData.nickname,
@@ -48,7 +48,12 @@ function insertUser(userData, response) {
 			checkEmail(db, email, response, function (db) {
 				checkNickname(db, nickname, response, function (db) {
 					registerUser(db, data, response, function (db) {
-						setUserToken(db, data, response);
+						setUserToken(db, data, response, function (db, token) {
+							response.writeHead(200, {'Content-Type': 'application/json'});
+							response.end();
+							db.close();
+							//session.createSession(userData, token, request);
+						});
 					});
 				});
 			});
@@ -137,9 +142,7 @@ function registerUser (db, data, response, callback) {
 			db.close();
 		}
 		else {
-			( callback ) ? callback() : db.close();
-			// response.writeHead(200, {'Content-Type': 'application/json'});
-			// response.end();
+			( callback ) ? callback(db) : db.close();
 		}		
 	});
 }
@@ -179,11 +182,22 @@ function userLogin (user, response) {
 	}
 }
 
-function setUserToken (data, response, callback) {
+function setUserToken (db, data, response, callback) {
 	crypto.randomBytes(48, function(ex, buf) {
-		var token = buf.toString('hex');
-		
-		( callback ) && callback();
+		var token = buf.toString('hex'),
+			collection = db.collection('users');
+
+		collection.findAndModify({email: data.email}, [['email', 1]], {$set: {token: token}}, {}, function (err, object) {
+			if ( err ) {
+				console.warn(err.message);
+				response.writeHead(500, {'Content-Type': 'application/json'});
+				response.end(JSON.stringify({error: dbErrod}));
+				db.close()		
+			}
+			else {
+				( callback ) ? callback(db, token) : db.close();
+			}
+		});		
 	});
 }
 
