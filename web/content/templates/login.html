@@ -2,12 +2,13 @@
 	<h2>Please login to see our site</h2>
 	<a href="../#/registration">Or register if you didn't</a>
 	<form name="loginForm" class="loginForm">
-		<input type="email" placeholder="Email" name="email" ng-model="email" required ng-pattern="/^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i">
-		<input type="password" placeholder="Password" name="password" ng-model="password" required ng-minlength="6" ng-maxlength="20">
+		<input type="email" placeholder="Email" name="email" ng-model="logData.email" required ng-pattern="/^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i">
+		<input type="password" placeholder="Password" name="password" ng-model="logData.password" required ng-minlength="6" ng-maxlength="20">
 		<span class="error" ng-show="loginForm.email.$error.required || loginForm.password.$error.required">Email and Password required!</span>
 		<span class="error" ng-show="loginForm.email.$error.pattern">Invalid email</span>
 		<span class="error" ng-show="loginForm.password.$error.minlength">Password must consist of more than six symbols</span>
 		<span class="error" ng-show="loginForm.password.$error.maxlength">Password is too long</span>
-		<button class="button" ng-click="login()" ng-disabled="loginForm.email.$error.required || loginForm.password.$error.required || loginForm.email.$error.pattern || loginForm.password.$error.minlength || loginForm.password.$error.maxlength">Submit</button>
+		<span class="alert-box warning" ng-show="incorect">Incorrect login or password</span>
+		<button class="button" ng-click="login()" ng-disabled="!loginForm.email.$valid || !loginForm.password.$valid">Submit</button>
 	</form>
 </div>

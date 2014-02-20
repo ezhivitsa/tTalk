@@ -8,7 +8,7 @@ app.config(function($routeProvider) {
 			}
 		}).when('/registration', {
 			templateUrl: 'templates/registration.html',
-			controller: 'LoginCtrl',
+			controller: 'RegisterCtrl',
 			resolve: {
 				sessionVerification: app.sessionVerification
 			}
