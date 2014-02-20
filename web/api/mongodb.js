@@ -257,4 +257,3 @@ exports.checkNickname = checkExistingNickname;
 exports.checkToken = checkToken;
 exports.addTalk = addTalk;
 exports.setUserToken = setUserToken;
-exports.verifyUserToken = verifyUserToken;
