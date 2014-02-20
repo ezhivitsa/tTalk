@@ -9,5 +9,6 @@ handle['/api/registration'] = requestHandlers.registration;
 handle['/api/login'] = requestHandlers.login;
 handle['/api/checkemail'] = requestHandlers.checkEmail;
 handle['/api/checknickname'] = requestHandlers.checkNickname;
+handle['/api/checklogin'] = requestHandlers.checkLogin;
 
 server.startServer(host, port, router.route, handle);

@@ -29,40 +29,34 @@ function insertUser(userData, response, callback) {
 		firstname = userData.firstname,
 		lastname = userData.lastname;
 
-	if ( email && password && nickname ) {
-		var cryptoPass = crypto.createHash('md5').update(password).digest('hex'),
-			data = {
-				email: email,
-				password: cryptoPass,
-				nickname: nickname
-			};
+	var cryptoPass = crypto.createHash('md5').update(password).digest('hex'),
+		data = {
+			email: email,
+			password: cryptoPass,
+			nickname: nickname
+		};
 
-		if ( firstname ) {
-			data.firstname = firstname;
-		}
-		if ( lastname ) {
-			data.lastname = lastname;
-		}
+	if ( firstname ) {
+		data.firstname = firstname;
+	}
+	if ( lastname ) {
+		data.lastname = lastname;
+	}
 
-		openConnection(response, function (db) {
-			checkEmail(db, email, response, function (db) {
-				checkNickname(db, nickname, response, function (db) {
-					registerUser(db, data, response, function (db) {
-						setUserToken(db, data, response, function (db, token) {
-							response.writeHead(200, {'Content-Type': 'application/json'});
-							response.end();
-							db.close();
-							//session.createSession(userData, token, request);
-						});
+	openConnection(response, function (db) {
+		checkEmail(db, email, response, function (db) {
+			checkNickname(db, nickname, response, function (db) {
+				registerUser(db, data, response, function (db) {
+					setUserToken(db, data, response, function (db, token) {
+						response.writeHead(200, {'Content-Type': 'application/json'});
+						response.end();
+						db.close();
+						( callback ) && callback(token);
 					});
 				});
 			});
 		});
-	}
-	else {
-		response.writeHead(501, {'Content-Type': 'application/json'});
-    	response.end(JSON.stringify({field: 'data', message: errors.data}));
-	}
+	});
 }
 
 function openConnection (response, callback) {
@@ -149,37 +143,30 @@ function registerUser (db, data, response, callback) {
 
 function userLogin (user, response) {
 	var email = user.email,
-		password = user.password;		
+		password = user.password,
+		cryptoPass = crypto.createHash('md5').update(password).digest('hex');
 
-	if ( email && password ) {
-		var cryptoPass = crypto.createHash('md5').update(password).digest('hex');
-
-		openConnection(response, function (db) {
-			var collection = db.collection('users');
-			collection.findOne({email: email}, function (err, item) {
-				if ( err ) {
-					console.warn(err.message);
-					response.writeHead(500, {'Content-Type': 'application/json'});
-					response.end(JSON.stringify({error: dbErrod}));			
+	openConnection(response, function (db) {
+		var collection = db.collection('users');
+		collection.findOne({email: email}, function (err, item) {
+			if ( err ) {
+				console.warn(err.message);
+				response.writeHead(500, {'Content-Type': 'application/json'});
+				response.end(JSON.stringify({error: dbErrod}));			
+			}
+			else {
+				if ( item && item.password === cryptoPass ) {
+					response.writeHead(200, {'Content-Type': 'application/json'});
+					response.end();
 				}
 				else {
-					if ( item && item.password === cryptoPass ) {
-						response.writeHead(200, {'Content-Type': 'application/json'});
-						response.end();
-					}
-					else {
-						response.writeHead(501, {'Content-Type': 'application/json'});
-						response.end();
-					}
+					response.writeHead(501, {'Content-Type': 'application/json'});
+					response.end();
 				}
-				db.close();
-			});
+			}
+			db.close();
 		});
-	}
-	else {
-		response.writeHead(501, {'Content-Type': 'application/json'});
-    	response.end(JSON.stringify({email: errors.data}));
-	}
+	});
 }
 
 function setUserToken (db, data, response, callback) {
@@ -201,9 +188,37 @@ function setUserToken (db, data, response, callback) {
 	});
 }
 
-function verifyUserToken (user, request) {
-
+function checkToken (data, response, callback) {
+	openConnection(response, function (db) {
+		compareToken(db, data, response, callback);
+	});
 }
+
+function compareToken (db, data, response, callback) {
+	var collection = db.collection('users');
+	collection.findOne({email: data.email}, function (err, item) {
+		if ( err ) {
+			console.warn(err.message);
+			response.writeHead(500, {'Content-Type': 'application/json'});
+			response.end(JSON.stringify({error: dbErrod}));
+			db.close();
+		}
+		else {
+			if ( item.token == data.token ) {
+				response.writeHead(400, {'Content-Type': 'application/json'});
+				response.end();
+			}
+			else {
+				response.writeHead(200, {'Content-Type': 'application/json'});
+				response.end();
+			}
+			setUserToken(db, data, response, callback);
+		}
+
+	});
+}
+
+
 
 function addTalk (talk, response) {
 	var title = talk.title;
@@ -239,6 +254,7 @@ exports.insertUser = insertUser;
 exports.userLogin = userLogin;
 exports.checkEmail = checkExistingEmail;
 exports.checkNickname = checkExistingNickname;
+exports.checkToken = checkToken;
 exports.addTalk = addTalk;
 exports.setUserToken = setUserToken;
 exports.verifyUserToken = verifyUserToken;
