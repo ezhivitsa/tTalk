@@ -205,16 +205,16 @@ function compareToken (db, data, response, callback) {
 		}
 		else {
 			if ( item.token == data.token ) {
-				response.writeHead(400, {'Content-Type': 'application/json'});
-				response.end();
-			}
-			else {
 				response.writeHead(200, {'Content-Type': 'application/json'});
 				response.end();
+				setUserToken(db, data, response, callback);
 			}
-			setUserToken(db, data, response, callback);
+			else {
+				response.writeHead(400, {'Content-Type': 'application/json'});
+				response.end();
+				db.close();
+			}
 		}
-
 	});
 }
 

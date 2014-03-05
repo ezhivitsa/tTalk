@@ -10,5 +10,6 @@ handle['/api/login'] = requestHandlers.login;
 handle['/api/checkemail'] = requestHandlers.checkEmail;
 handle['/api/checknickname'] = requestHandlers.checkNickname;
 handle['/api/checklogin'] = requestHandlers.checkLogin;
+handle['/api/login'] = requestHandlers.login;
 
 server.startServer(host, port, router.route, handle);

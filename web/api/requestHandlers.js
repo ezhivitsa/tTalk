@@ -48,3 +48,4 @@ exports.registration = registration;
 exports.login = login;
 exports.checkEmail = checkEmail;
 exports.checkNickname = checkNickname;
+exports.checkLogin = checkLogin;
