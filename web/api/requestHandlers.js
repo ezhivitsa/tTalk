@@ -20,7 +20,7 @@ function registration (data, response, session) {
 		});
 	}
 	else {
-		response.writeHead(501, {'Content-Type': 'application/json'});
+		response.writeHead(403, {'Content-Type': 'application/json'});
     	response.end(JSON.stringify({field: 'data', message: errors.data}));
 	}
 	
@@ -31,7 +31,7 @@ function login (data, response, session) {
 		mongodb.userLogin(data, response);
 	}
 	else {
-		response.writeHead(501, {'Content-Type': 'application/json'});
+		response.writeHead(403, {'Content-Type': 'application/json'});
     	response.end(JSON.stringify({email: errors.data}));
 	}	
 }

@@ -91,7 +91,7 @@ function checkEmail (db, email, response, callback) {
 			}
 			else {
 				if ( item ) {
-					response.writeHead(501, {'Content-Type': 'application/json'});
+					response.writeHead(403, {'Content-Type': 'application/json'});
 		   			response.end(JSON.stringify({field: 'email', message: errors.emailExist}));
 			 		db.close();
 				}
@@ -102,7 +102,7 @@ function checkEmail (db, email, response, callback) {
 		});
 	}
 	else {
-		response.writeHead(501, {'Content-Type': 'application/json'});
+		response.writeHead(403, {'Content-Type': 'application/json'});
 		response.end(JSON.stringify({field: 'email', message: errors.invalidEmail}));
  		db.close();
 	}
@@ -119,7 +119,7 @@ function checkNickname (db, nickname, response, callback) {
 		}
 		else {
 			if ( item ) {
-				response.writeHead(501, {'Content-Type': 'application/json'});
+				response.writeHead(403, {'Content-Type': 'application/json'});
 	   			response.end(JSON.stringify({field: 'nickname', message: errors.nicknameExist}));
 		 		db.close();
 			}
@@ -168,7 +168,7 @@ function userLogin (user, response) {
 					}));
 				}
 				else {
-					response.writeHead(501, {'Content-Type': 'application/json'});
+					response.writeHead(403, {'Content-Type': 'application/json'});
 					response.end();
 				}
 			}
