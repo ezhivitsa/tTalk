@@ -26,8 +26,8 @@ function insertUser(userData, response, callback) {
 	var email = userData.email,
 		password = userData.password,
 		nickname = userData.nickname,
-		firstname = userData.firstname,
-		lastname = userData.lastname;
+		firstName = userData.firstName,
+		lastName = userData.lastName;
 
 	var cryptoPass = crypto.createHash('md5').update(password).digest('hex'),
 		data = {
@@ -36,11 +36,11 @@ function insertUser(userData, response, callback) {
 			nickname: nickname
 		};
 
-	if ( firstname ) {
-		data.firstname = firstname;
+	if ( firstName ) {
+		data.firstName = firstName;
 	}
-	if ( lastname ) {
-		data.lastname = lastname;
+	if ( lastName ) {
+		data.lastName = lastName;
 	}
 
 	openConnection(response, function (db) {
@@ -49,7 +49,11 @@ function insertUser(userData, response, callback) {
 				registerUser(db, data, response, function (db) {
 					setUserToken(db, data, response, function (db, token) {
 						response.writeHead(200, {'Content-Type': 'application/json'});
-						response.end();
+						response.end(JSON.stringify({
+							nickname: nickname,
+							firstName: firstName,
+							lastName: lastName
+						}));
 						db.close();
 						( callback ) && callback(token);
 					});
@@ -157,7 +161,11 @@ function userLogin (user, response) {
 			else {
 				if ( item && item.password === cryptoPass ) {
 					response.writeHead(200, {'Content-Type': 'application/json'});
-					response.end();
+					response.end(JSON.stringify({
+						nickname: item.nickname,
+						firstName: item.firstName,
+						lastName: item.lastName
+					}));
 				}
 				else {
 					response.writeHead(501, {'Content-Type': 'application/json'});
@@ -210,7 +218,7 @@ function compareToken (db, data, response, callback) {
 				setUserToken(db, data, response, callback);
 			}
 			else {
-				response.writeHead(400, {'Content-Type': 'application/json'});
+				response.writeHead(401, {'Content-Type': 'application/json'});
 				response.end();
 				db.close();
 			}

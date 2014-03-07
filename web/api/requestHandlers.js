@@ -8,7 +8,7 @@ function checkLogin (data, response, session) {
 		});
 	}
 	else {
-		response.writeHead(400, {'Content-Type': 'application/json'});
+		response.writeHead(401, {'Content-Type': 'application/json'});
 		response.end();
 	}
 }
