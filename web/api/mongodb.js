@@ -145,7 +145,7 @@ function registerUser (db, data, response, callback) {
 	});
 }
 
-function userLogin (user, response) {
+function userLogin (user, response, callback) {
 	var email = user.email,
 		password = user.password,
 		cryptoPass = crypto.createHash('md5').update(password).digest('hex');
@@ -160,19 +160,32 @@ function userLogin (user, response) {
 			}
 			else {
 				if ( item && item.password === cryptoPass ) {
-					response.writeHead(200, {'Content-Type': 'application/json'});
-					response.end(JSON.stringify({
-						nickname: item.nickname,
-						firstName: item.firstName,
-						lastName: item.lastName
-					}));
+					setUserToken(db, item, response, function (db, token) {
+						response.writeHead(200, {'Content-Type': 'application/json'});
+						response.end(JSON.stringify({
+							nickname: item.nickname,
+							firstName: item.firstName,
+							lastName: item.lastName
+						}));
+						db.close();
+						( callback ) && callback(token);
+					});
+
+					// response.writeHead(200, {'Content-Type': 'application/json'});
+					// response.end(JSON.stringify({
+					// 	nickname: item.nickname,
+					// 	firstName: item.firstName,
+					// 	lastName: item.lastName
+					// }));
+					//db.close();
+					//( callback ) && callback(token);
 				}
 				else {
 					response.writeHead(403, {'Content-Type': 'application/json'});
 					response.end();
+					db.close();
 				}
-			}
-			db.close();
+			}			
 		});
 	});
 }
@@ -212,9 +225,7 @@ function compareToken (db, data, response, callback) {
 			db.close();
 		}
 		else {
-			if ( item.token == data.token ) {
-				response.writeHead(200, {'Content-Type': 'application/json'});
-				response.end();
+			if ( item.token == data.token ) {				
 				setUserToken(db, data, response, callback);
 			}
 			else {
