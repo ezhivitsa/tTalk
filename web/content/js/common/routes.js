@@ -15,8 +15,8 @@ app.config(function($routeProvider) {
 		}).when('/main', {
 			templateUrl: 'templates/main.html',
 			controller: 'MainCtrl',
-			resolve: {
-				sessionVerification: app.sessionVerification
+			resolve: {sessionVerification: app.sessionVerification
+				// sessionVerification: app.loadTalks
 			}
 		}).when('/error', {
 			templateUrl: 'templates/error.html',

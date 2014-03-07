@@ -1,5 +1,6 @@
 app.factory('HttpService', ['$q','$http','$location','$timeout',function($q, $http, $location, $timeout) {
 	return {
+
 		userLogin: function( myScope, logData ) {
 			var defer = $q.defer();
 			$http({
@@ -10,15 +11,19 @@ app.factory('HttpService', ['$q','$http','$location','$timeout',function($q, $ht
 				defer.resolve();				
 				$location.path("/main");
 			}).error(function(data, status, headers, config) {
-				if (status == "501") {
+				if (status == "403") {
 					myScope.incorect = true;
 					defer.resolve();
 				} else {
-					defer.rject(data.message);
+					defer.reject({
+						message : data.message,
+						status: status
+					});	
 				}
 			});
 			return defer.promise;
 		},
+
 		checkField: function( myScope, filedVal, checkUrl, fieldName ) {
 			var defer = $q.defer(),
 				val = {};
@@ -27,19 +32,24 @@ app.factory('HttpService', ['$q','$http','$location','$timeout',function($q, $ht
 				method: 'POST', 
 				url: checkUrl,
 				data: val
-			}).success(function(data, status, headers, config) {				
+			}).success(function(data, status, headers, config) {
+				myScope[fieldName + 'ErrorVis'] = false;				
 				defer.resolve();
 			}).error(function(data, status, headers, config) {
-				if (status == "501") {
+				if (status == "403") {
 					myScope[fieldName + 'ErrorVis'] = true;
 					myScope[fieldName + 'Error'] = data.message;
 					defer.resolve();
 				} else {
-					defer.rject(data.message);
+					defer.reject({
+						message : data.message,
+						status: status
+					});	
 				}				
 			});
 			return defer.promise;
 		},
+
 		userRegistrate: function( myScope, regData ) {
 			console.log(regData)
 			var defer = $q.defer();
@@ -57,7 +67,7 @@ app.factory('HttpService', ['$q','$http','$location','$timeout',function($q, $ht
 				defer.resolve();
 				$location.path("/main");
 			}).error(function(data, status, headers, config) {
-				if (status == "501") {
+				if (status == "403") {
 					switch(data.field) {
 						case "email":
 							myScope.emailErrorVis = true;
@@ -75,10 +85,16 @@ app.factory('HttpService', ['$q','$http','$location','$timeout',function($q, $ht
 							defer.resolve();
 							break;
 						case "data":
-							defer.reject(data.message);
+							defer.reject({
+								message : data.message,
+								status: status
+							});	
 							break;
 						default:
-							defer.reject(data.message);
+							defer.reject({
+								message : data.message,
+								status: status
+							});	
 					}
 				}				
 			});
@@ -86,14 +102,33 @@ app.factory('HttpService', ['$q','$http','$location','$timeout',function($q, $ht
 		}
 	}
 }]);
+
 app.sessionVerification = function($q, $http, $location) {
 	var defer = $q.defer();
-	// $http
-	// $location.path("/main");
-	defer.resolve("Session anabled");
-	// defer.reject("Session verification error");
+	$http({
+		method: 'GET', 
+		url: 'api/checklogin',
+	}).success(function(data, status, headers, config) {
+		if ($location.$$path == "/" || $location.$$path == "/registration") {
+			$location.path("/main");
+		}				
+		defer.resolve();
+	}).error(function(data, status, headers, config) {
+		if (status == "401") {
+			if ($location.$$path != "/" && $location.$$path != "/registration") {
+				$location.path("/");
+			}
+			defer.resolve();
+		} else {
+			defer.reject({
+				message : "data.message",
+				status: status
+			});
+		}			
+	});
 	return defer.promise;
 };
+
 app.loadTalks = function($q, $http, $location) {
 	var defer = $q.defer();
 	// $http

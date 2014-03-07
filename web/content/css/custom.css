@@ -1,3 +1,63 @@
+header {
+	position: relative;
+	width: 100%;
+	height: 190px;
+	margin-bottom: 30px;
+	background: #CCECFA;
+}
+
+.myHeader {
+	position: absolute;
+	top: 20px;
+	left: 50%;
+	width: 980px;
+	margin-left: -490px;
+	background: #008cba;
+	-webkit-transform: rotate(1deg);
+}
+
+.myHeader nav,
+.myHeader .logo {
+}
+
+.myHeader .logo {
+	float: left;
+	display: block;
+	margin: 20px;
+}
+
+.myHeader .logo img {
+	width: 280px;
+}
+
+.myHeader .userWrapper {
+	float: right;
+	width: 200px;
+	height: 100px;
+	margin: 10px;
+}
+
+.myHeader .myMenu {
+	float: left;
+}
+
+.myHeader .myMenu .verticalNav {
+	list-style-type: none;
+	padding: 0;
+	margin: 0;
+}
+
+.myHeader .myMenu .verticalNav li {
+	float: left;
+	width: 150px;
+	margin: 0 30px;
+	line-height: 30px;
+	background: #fff;
+	border: 3px solid red;
+	text-align: center;
+	-webkit-transform: rotate(-2deg);
+}
+
 .login, 
 .registration {
 	text-align: center;

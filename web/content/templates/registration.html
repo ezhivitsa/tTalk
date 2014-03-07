@@ -23,7 +23,7 @@
 		<span class="error" ng-show="regForm.password.$error.minlength">Password must consist of more than six symbols</span>
 		<span class="error" ng-show="regForm.password.$error.maxlength">Password is too long</span>
 		<span class="error" ng-show="regForm.nickname.$error.pattern || regForm.nickname.$error.minlength">Invalid nickname</span>
-		<button class="button" ng-click="register()" ng-disabled="!regForm.email.$valid || !regForm.password.$valid || !regForm.nickname.$valid || myPermisson">Submit</button>
+		<button class="button" ng-click="register()" ng-disabled="!regForm.email.$valid || !regForm.password.$valid || !regForm.nickname.$valid || myPermisson || emailErrorVis || nicknameErrorVis">Submit</button>
 		<div class="info"><span style="color: red; font-size: 20px;">*</span> - Required fields</div>
 	</form>
 </div>

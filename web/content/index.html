@@ -6,9 +6,29 @@
 	<link rel="stylesheet" href="css/foundation.css">
 	<link rel="stylesheet" href="css/custom.css">
 </head>
-<body ng-app="tTalk">
-	<header>
-		<div class="logo">Maybe a logo will be here</div>
+<body ng-app="tTalk" id="myTop">
+	<header ng-controller="HeadCtrl">
+		<div class="myHeader">
+			<a href="/main" class="logo"><img src="/img/logo.png" alt="tTalk"></a>
+			<nav class="userWrapper"></nav>
+			<nav class="myMenu">
+				<ul class="verticalNav">
+					<li>
+						<a href="/main">Main</a>
+					</li>
+					<li>
+						<a href="/add">Apply Talk</a>
+					</li>
+					<li>
+						<a href="/about">About tTalk</a>
+					</li>
+					<li>
+						<a href="/us">About us</a>
+					</li>
+				</ul>
+				<a href="#myTop" class="top"></a>
+			</nav>
+		</div>
 	</header>
 	<section ng-controller="EventCtrl as eve">
 		<ng-view></ng-view>
@@ -20,6 +40,7 @@
 	<script src="js/common/EventController.js"></script>
 	<script src="js/helpers/HttpService.js" ></script>
 	<script src="js/common/routes.js"></script>
+	<script src="js/common/HeaderController.js"></script>
 	<script src="js/user/LoginController.js"></script>
 	<script src="js/user/RegisterController.js"></script>
 	<script src="js/talks/MainController.js"></script>

@@ -9,6 +9,7 @@ app.controller('RegisterCtrl',function($scope,$timeout,HttpService) {
 	$scope.nicknameErrorVis = false;
 	$scope.rPasswordErrorVis = false;
 	$scope.myPermisson = true;
+
 	$scope.emailChange = function() {
 		$timeout.cancel(self.emailPromise);
 		self.tmpEmail = $scope.regData.email;
@@ -18,6 +19,7 @@ app.controller('RegisterCtrl',function($scope,$timeout,HttpService) {
 			}
 		},2000);
 	};
+
 	$scope.nicknameChange = function() {
 		$timeout.cancel(self.nicknamePromise);
 		self.tmpNickname = $scope.regData.nickname;
@@ -27,7 +29,10 @@ app.controller('RegisterCtrl',function($scope,$timeout,HttpService) {
 			}
 		},2000);
 	};
+	
 	$scope.register = function() {
+		$timeout.cancel(self.emailPromise);
+		$timeout.cancel(self.nicknamePromise);
 		HttpService.userRegistrate($scope,$scope.regData);
 	};
 
