@@ -226,7 +226,17 @@ function compareToken (db, data, response, callback) {
 		}
 		else {
 			if ( item.token == data.token ) {				
-				setUserToken(db, data, response, callback);
+				//setUserToken(db, data, response, callback);
+				setUserToken(db, item, response, function (db, token) {
+						response.writeHead(200, {'Content-Type': 'application/json'});
+						response.end(JSON.stringify({
+							nickname: item.nickname,
+							firstName: item.firstName,
+							lastName: item.lastName
+						}));
+						db.close();
+						( callback ) && callback(token);
+					});
 			}
 			else {
 				response.writeHead(401, {'Content-Type': 'application/json'});
