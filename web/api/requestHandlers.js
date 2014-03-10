@@ -1,5 +1,9 @@
 var mongodb = require('./mongodb'),
-	sessionActions = require('./sessionActions');
+	sessionActions = require('./sessionActions'),
+	errors  = {
+		data: 'Not all data',
+		cookie: 'Errors with cookie'
+	};
 
 function checkLogin (data, response, session) {
 	checkIsUserLogined(data, response, session, function () {
@@ -42,8 +46,20 @@ function login (data, response, session) {
 	}
 	else {
 		response.writeHead(403, {'Content-Type': 'application/json'});
-    	response.end(JSON.stringify({email: errors.data}));
+    	response.end(JSON.stringify({field: 'data', message: errors.cookie}));
 	}	
+}
+
+function logout (data, response, session) {
+	if( session ) {
+		sessionActions.setSessionData({}, '', session);
+		response.writeHead(200, {'Content-Type': 'application/json'});
+		response.end();
+	}
+	else {
+		response.writeHead(401, {'Content-Type': 'application/json'});
+		response.end();
+	}
 }
 
 function checkEmail (data, response, session) {
@@ -56,7 +72,7 @@ function checkNickname (data, response, session) {
 
 function createTalk (data, response, session) {
 	checkIsUserLogined(data, response, session, function () {
-		console.log('user logined');
+		//console.log('user logined');
 	});
 }
 
@@ -65,3 +81,4 @@ exports.login = login;
 exports.checkEmail = checkEmail;
 exports.checkNickname = checkNickname;
 exports.checkLogin = checkLogin;
+exports.logout = logout;
