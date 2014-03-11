@@ -1,2 +1,2 @@
-app.controller('HeadCtrl',function($scope) {
-})
+app.controller('HeadCtrl',['$scope', function($scope) {
+}]);

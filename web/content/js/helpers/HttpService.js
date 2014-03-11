@@ -1,4 +1,4 @@
-app.factory('HttpService', ['$q','$http','$location','$timeout',function($q, $http, $location, $timeout) {
+app.factory('HttpService', ['$q','$http','$location','$timeout', function($q, $http, $location, $timeout) {
 	return {
 
 		userLogin: function( myScope, logData ) {
@@ -121,7 +121,7 @@ app.sessionVerification = function($q, $http, $location) {
 			defer.resolve();
 		} else {
 			defer.reject({
-				message : "data.message",
+				message : data,
 				status: status
 			});
 		}			

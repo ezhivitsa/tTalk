@@ -9,21 +9,21 @@
 <body ng-app="tTalk" id="myTop">
 	<header ng-controller="HeadCtrl">
 		<div class="myHeader">
-			<a href="/main" class="logo"><img src="/img/logo.png" alt="tTalk"></a>
+			<a href="#/main" class="logo"><img src="/img/logo.png" alt="tTalk"></a>
 			<nav class="userWrapper"></nav>
 			<nav class="myMenu">
 				<ul class="verticalNav">
 					<li>
-						<a href="/main">Main</a>
+						<a href="#/main">Main</a>
 					</li>
 					<li>
-						<a href="/add">Apply Talk</a>
+						<a href="#/add">Apply Talk</a>
 					</li>
 					<li>
-						<a href="/about">About tTalk</a>
+						<a href="#/about">About tTalk</a>
 					</li>
 					<li>
-						<a href="/us">About us</a>
+						<a href="#/us">About us</a>
 					</li>
 				</ul>
 				<a href="#myTop" class="top"></a>
@@ -36,6 +36,7 @@
 	<footer></footer>
 	<script src="vendor/angular.js"></script>
 	<script src="vendor/angular-route.js"></script>
+	<script src="vendor/autofill-event.js"></script>
 	<script src="js/common/configs.js"></script>
 	<script src="js/common/EventController.js"></script>
 	<script src="js/helpers/HttpService.js" ></script>

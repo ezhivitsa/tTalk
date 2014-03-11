@@ -9,6 +9,6 @@
 		<span class="error" ng-show="loginForm.password.$error.minlength">Password must consist of more than six symbols</span>
 		<span class="error" ng-show="loginForm.password.$error.maxlength">Password is too long</span>
 		<span class="alert-box warning" ng-show="incorect">Incorrect login or password</span>
-		<button class="button" ng-click="login()" ng-disabled="!loginForm.email.$valid || !loginForm.password.$valid">Submit</button>
+		<button class="button" ng-click="login($event)" ng-disabled="!loginForm.$valid">Submit</button>
 	</form>
 </div>
