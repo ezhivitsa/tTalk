@@ -35,6 +35,16 @@ header {
 	width: 200px;
 	height: 100px;
 	margin: 10px;
+	font-size: 20px;
+	-webkit-transform: rotate(-1deg);
+}
+
+.myHeader .userWrapper .user {
+	color: #fff;
+}
+
+.myHeader .userWrapper a {
+	color: #fff;
 }
 
 .myHeader .myMenu {
@@ -58,29 +68,39 @@ header {
 	-webkit-transform: rotate(-2deg);
 }
 
-.login, 
-.registration {
+.content {
+	width: 980px;
+	margin: 0 auto;
+}
+
+.content .login, 
+.content .registration {
 	text-align: center;
 }
-.login .loginForm,
-.registration .regForm {
+
+.content .login .loginForm,
+.content .registration .regForm {
 	width: 500px;
 	margin: 20px auto;
 }
-.login .error, 
-.login button,
-.registration .error,
-.registration button {
+
+.content .login .error, 
+.content .login button,
+.content .registration .error,
+.content .registration button {
 	border-radius: 5px;
 }
-.login .button,
-.registration .button {
+
+.content .login .button,
+.content .registration .button {
 	width: 200px;
 }
-.registration .req {
+
+.content .registration .req {
 	position: relative;
 }
-.registration .req:after {
+
+.content .registration .req:after {
 	content: "*";
 	display: inline-block;
 	color: red;
@@ -91,20 +111,20 @@ header {
 	font-size: 20px;
 }
 
-.registration .info {
+.content .registration .info {
 	text-align: start;
 }
 
-.errorBlock {
+.content .errorBlock {
 	width: 500px;
 	margin: 10% auto;
 	text-align: center;
 }
-.errorBlock .error {
+.content .errorBlock .error {
 	font-size: 20px;
 	line-height: 50px;
 	border-radius: 5px;
 }
-.errorBlock .vcard {
+.content .errorBlock .vcard {
 	width: 100%;
 }

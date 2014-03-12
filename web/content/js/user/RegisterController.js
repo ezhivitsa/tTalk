@@ -1,4 +1,4 @@
-app.controller('RegisterCtrl',['$scope', '$timeout', 'HttpService' ,function($scope,$timeout,HttpService) {
+app.controller('RegisterCtrl',['$scope', '$timeout', 'HttpService' ,function($scope, $timeout, HttpService) {
 	var self = this;
 	self.emailPromise = null;
 	self.nicknamePromise = null;

@@ -1,4 +1,4 @@
-app.factory('HttpService', ['$q','$http','$location','$timeout', function($q, $http, $location, $timeout) {
+app.factory('HttpService', ['$q', '$http', '$location', '$timeout', '$rootScope', function($q, $http, $location, $timeout, $rootScope) {
 	return {
 
 		userLogin: function( myScope, logData ) {
@@ -7,13 +7,40 @@ app.factory('HttpService', ['$q','$http','$location','$timeout', function($q, $h
 				method: 'POST', 
 				url: '../api/login',
 				data: logData
-			}).success(function(data, status, headers, config) {				
+			}).success(function(data, status, headers, config) {	
+				localStorage.setItem("nickname", data.nickname);
+				$rootScope.$broadcast('logged');
 				defer.resolve();				
 				$location.path("/main");
 			}).error(function(data, status, headers, config) {
 				if (status == "403") {
 					myScope.incorect = true;
 					defer.resolve();
+				} else {
+					defer.reject({
+						message : data.message,
+						status: status
+					});	
+				}
+			});
+			return defer.promise;
+		},
+
+		userLogout: function() {
+			var defer = $q.defer();
+			$http({
+				method: 'GET', 
+				url: '../api/logout'
+			}).success(function(data, status, headers, config) {
+				
+				$rootScope.$broadcast('unlogged');
+				defer.resolve();				
+				$location.path("/");
+			}).error(function(data, status, headers, config) {
+				if (status == "403") {
+					$rootScope.$broadcast('unlogged');
+					defer.resolve();
+					$location.path("/");
 				} else {
 					defer.reject({
 						message : data.message,
@@ -63,7 +90,9 @@ app.factory('HttpService', ['$q','$http','$location','$timeout', function($q, $h
 					'firstname': regData.firstName,
 					'lastname': regData.lastName
 				}
-			}).success(function(data, status, headers, config) {				
+			}).success(function(data, status, headers, config) {
+				localStorage.setItem("nickname", data.nickname);
+				$rootScope.$broadcast('logged');				
 				defer.resolve();
 				$location.path("/main");
 			}).error(function(data, status, headers, config) {
@@ -103,7 +132,7 @@ app.factory('HttpService', ['$q','$http','$location','$timeout', function($q, $h
 	}
 }]);
 
-app.sessionVerification = function($q, $http, $location) {
+app.sessionVerification = function($q, $http, $location, $rootScope) {
 	var defer = $q.defer();
 	$http({
 		method: 'GET', 
@@ -112,12 +141,14 @@ app.sessionVerification = function($q, $http, $location) {
 		if ($location.$$path == "/" || $location.$$path == "/registration") {
 			$location.path("/main");
 		}				
+		$rootScope.$broadcast('logged');
 		defer.resolve();
 	}).error(function(data, status, headers, config) {
 		if (status == "401") {
 			if ($location.$$path != "/" && $location.$$path != "/registration") {
 				$location.path("/");
-			}
+			}				
+			$rootScope.$broadcast('unlogged');
 			defer.resolve();
 		} else {
 			defer.reject({

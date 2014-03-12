@@ -10,7 +10,12 @@
 	<header ng-controller="HeadCtrl">
 		<div class="myHeader">
 			<a href="#/main" class="logo"><img src="/img/logo.png" alt="tTalk"></a>
-			<nav class="userWrapper"></nav>
+			<nav class="userWrapper" ng-show="visHeader">
+				<div class="user">
+					Hello <a href="">{{userNickname}}</a>
+				</div>
+				<a href="#" class="logout" ng-click="logout($event)">Logout</a>
+			</nav>
 			<nav class="myMenu">
 				<ul class="verticalNav">
 					<li>
@@ -30,7 +35,7 @@
 			</nav>
 		</div>
 	</header>
-	<section ng-controller="EventCtrl as eve">
+	<section ng-controller="EventCtrl as eve" class="content">
 		<ng-view></ng-view>
 	</section>
 	<footer></footer>
