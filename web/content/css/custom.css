@@ -32,8 +32,6 @@ header {
 
 .myHeader .userWrapper {
 	float: right;
-	width: 200px;
-	height: 100px;
 	margin: 10px;
 	font-size: 20px;
 	-webkit-transform: rotate(-1deg);

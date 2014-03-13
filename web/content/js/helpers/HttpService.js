@@ -83,13 +83,7 @@ app.factory('HttpService', ['$q', '$http', '$location', '$timeout', '$rootScope'
 			$http({
 				method: 'POST', 
 				url: '../api/registration',
-				data: {
-					'email': regData.email,
-					'password': regData.password,
-					'nickname': regData.nickname,
-					'firstname': regData.firstName,
-					'lastname': regData.lastName
-				}
+				data: regData
 			}).success(function(data, status, headers, config) {
 				localStorage.setItem("nickname", data.nickname);
 				$rootScope.$broadcast('logged');				

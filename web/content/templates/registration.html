@@ -1,28 +1,28 @@
 <div class="registration">
 	<form name="regForm" class="regForm">
 		<div class="req">
-			<input type="email" placeholder="Email" name="email" ng-model="regData.email" required ng-pattern="/^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i" ng-change="emailChange()">
+			<input type="email" placeholder="Email" name="regEmail" ng-model="regData.email" required ng-pattern="/^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i" ng-change="emailChange()">
 			<span class="alert-box warning" ng-show="emailErrorVis">{{emailError}}</span>
 		</div>
 		<div class="req">
-			<input type="password" placeholder="Password" name="password" ng-model="regData.password" required ng-minlength="6" ng-maxlength="20" ng-change="passwordChange()">
+			<input type="password" placeholder="Password" name="regPassword" ng-model="regData.password" required ng-minlength="6" ng-maxlength="20" ng-change="passwordChange()">
 			<span class="alert-box warning" ng-show="passwordErrorVis">Please enter the same value again.</span>
 		</div>
 		<div class="req">
-			<input type="password" placeholder="Confirm Password" name="rPassword" ng-model="rPassword" required ng-minlength="6" ng-maxlength="20" ng-change="rPasswordChange()">
+			<input type="password" placeholder="Confirm Password" name="repeateRegPassword" ng-model="rPassword" required ng-minlength="6" ng-maxlength="20" ng-change="rPasswordChange()">
 			<span class="alert-box warning" ng-show="rPasswordErrorVis">Please enter the same value again.</span>
 		</div>
 		<div class="req">
-			<input type="text" placeholder="Nickname" name="nickname" ng-model="regData.nickname" required ng-pattern="/^[A-z0-9-]+$/" ng-minlength="2" ng-change="nicknameChange()">
+			<input type="text" placeholder="Nickname" name="regNickname" ng-model="regData.nickname" required ng-pattern="/^[A-z0-9-]+$/" ng-minlength="2" ng-change="nicknameChange()">
 			<span class="alert-box warning" ng-show="nicknameErrorVis">{{nicknameError}}</span>
 		</div>
 		<input type="text" placeholder="First Name" name="firstName" ng-model="regData.firstName">
 		<input type="text" placeholder="Last Name" name="lastName" ng-model="regData.lastName">
-		<span class="error" ng-show="regForm.email.$error.required || regForm.password.$error.required || regForm.nickname.$error.required">Enter required fields!</span>
-		<span class="error" ng-show="regForm.email.$error.pattern">Invalid email</span>
-		<span class="error" ng-show="regForm.password.$error.minlength">Password must consist of more than six symbols</span>
-		<span class="error" ng-show="regForm.password.$error.maxlength">Password is too long</span>
-		<span class="error" ng-show="regForm.nickname.$error.pattern || regForm.nickname.$error.minlength">Invalid nickname</span>
+		<span class="error" ng-show="regForm.regEmail.$error.required || regForm.regPassword.$error.required || regForm.regNickname.$error.required">Enter required fields!</span>
+		<span class="error" ng-show="regForm.regEmail.$error.pattern">Invalid email</span>
+		<span class="error" ng-show="regForm.regPassword.$error.minlength">Password must consist of more than six symbols</span>
+		<span class="error" ng-show="regForm.regPassword.$error.maxlength">Password is too long</span>
+		<span class="error" ng-show="regForm.regNickname.$error.pattern || regForm.regNickname.$error.minlength">Invalid nickname</span>
 		<button class="button" ng-click="register()" ng-disabled="!regForm.$valid || myPermisson || emailErrorVis || nicknameErrorVis">Submit</button>
 		<div class="info"><span style="color: red; font-size: 20px;">*</span> - Required fields</div>
 	</form>
