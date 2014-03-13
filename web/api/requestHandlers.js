@@ -1,14 +1,10 @@
 var mongodb = require('./mongodb'),
 	sessionActions = require('./sessionActions'),
-	errors  = {
-		data: 'Not all data',
-		cookie: 'Errors with cookie'
-	};
+	responseActions = require('./responseActions');
 
 function checkLogin (data, response, session) {
 	checkIsUserLogined(data, response, session, function () {
-		response.writeHead(200, {'Content-Type': 'application/json'});
-		response.end();
+		responseActions.sendResponse(response, 200);
 	});
 }
 
@@ -20,8 +16,7 @@ function checkIsUserLogined (data, response, session, callback) {
 		});
 	}
 	else {
-		response.writeHead(401, {'Content-Type': 'application/json'});
-		response.end();
+		responseActions.sendResponse(response, 401);
 	}
 }
 
@@ -32,8 +27,7 @@ function registration (data, response, session) {
 		});
 	}
 	else {
-		response.writeHead(403, {'Content-Type': 'application/json'});
-    	response.end(JSON.stringify({field: 'data', message: errors.data}));
+		responseActions.sendResponse(response, 403, {field: 'data', message: responseActions.errors.data});
 	}
 	
 }
@@ -45,20 +39,17 @@ function login (data, response, session) {
 		});
 	}
 	else {
-		response.writeHead(403, {'Content-Type': 'application/json'});
-    	response.end(JSON.stringify({field: 'data', message: errors.cookie}));
+		responseActions.sendResponse(response, 403, {field: 'data', message: responseActions.errors.cookie});
 	}	
 }
 
 function logout (data, response, session) {
 	if( session ) {
 		sessionActions.setSessionData({}, '', session);
-		response.writeHead(200, {'Content-Type': 'application/json'});
-		response.end();
+		responseActions.sendResponse(response, 200);
 	}
 	else {
-		response.writeHead(401, {'Content-Type': 'application/json'});
-		response.end();
+		responseActions.sendResponse(response, 401);
 	}
 }
 
@@ -72,7 +63,13 @@ function checkNickname (data, response, session) {
 
 function createTalk (data, response, session) {
 	checkIsUserLogined(data, response, session, function () {
-		//console.log('user logined');
+		if ( data.title && data.author ) {
+
+		}
+		else {
+
+		}
+		console.log('talk creation');
 	});
 }
 
@@ -82,3 +79,4 @@ exports.checkEmail = checkEmail;
 exports.checkNickname = checkNickname;
 exports.checkLogin = checkLogin;
 exports.logout = logout;
+exports.createTalk = createTalk;

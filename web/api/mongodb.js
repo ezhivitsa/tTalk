@@ -11,16 +11,7 @@ var Db = require('mongodb').Db,
 	assert = require('assert'),
 	crypto = require('crypto');
 
-var db = new Db('ttalk', new Server('127.0.0.1', 27017)),
-	errors  = {
-		nicknameExist: 'This nickname is already in use',
-		emailExist: 'This email is already in use',
-		data: 'Not all data',
-		dbErrod: 'Database error',
-		invalidEmail: 'Invalid email'
-	};
-	
-
+var DB = new Db('ttalk', new Server('ds063307.mongolab.com', 63307));
 
 function insertUser(userData, response, callback) {
 	var email = userData.email,
@@ -48,16 +39,6 @@ function insertUser(userData, response, callback) {
 			checkNickname(db, nickname, response, function (db) {
 				registerUser(db, data, response, function (db) {
 					setUserToken(db, data, response, callback);
-					// setUserToken(db, data, response, function (db, token) {
-					// 	response.writeHead(200, {'Content-Type': 'application/json'});
-					// 	response.end(JSON.stringify({
-					// 		nickname: nickname,
-					// 		firstName: firstName,
-					// 		lastName: lastName
-					// 	}));
-					// 	db.close();
-					// 	( callback ) && callback(token);
-					// });
 				});
 			});
 		});
@@ -65,15 +46,19 @@ function insertUser(userData, response, callback) {
 }
 
 function openConnection (response, callback) {
-	db.open(function (err, db) {
+	DB.open(function (err, db) {
 		if ( err ) {
-			console.warn(err.message);
-			response.writeHead(500, {'Content-Type': 'application/json'});
-			response.end(JSON.stringify({error: dbErrod}));
-			db.close();
+			responseActions.sendDataBaseError(response, err, db);
 		}
 		else {
-			( callback ) ? callback(db) : db.close();
+			DB.authenticate('ttalk', 'ttalk123', function(err, p_client) { 
+				if ( err ) {
+					responseActions.sendDataBaseError(response, err, db);
+				}
+				else {
+                	( callback ) ? callback(db) : db.close();					
+				}
+        	});			
 		}
 	});
 }
@@ -85,16 +70,11 @@ function checkEmail (db, email, response, callback) {
 		var collection = db.collection('users');
 		collection.findOne({email: email}, function (err, item) {
 			if ( err ) {
-				console.warn(err.message);
-				response.writeHead(500, {'Content-Type': 'application/json'});
-				response.end(JSON.stringify({error: dbErrod}));
-				db.close();
+				responseActions.sendDataBaseError(response, err, db);
 			}
 			else {
 				if ( item ) {
-					response.writeHead(403, {'Content-Type': 'application/json'});
-		   			response.end(JSON.stringify({field: 'email', message: errors.emailExist}));
-			 		db.close();
+					responseActions.sendResponse(response, 403, {field: 'email', message: responseActions.errors.emailExist}, db);
 				}
 				else {
 					( callback ) ? callback(db) : db.close();
@@ -103,9 +83,7 @@ function checkEmail (db, email, response, callback) {
 		});
 	}
 	else {
-		response.writeHead(403, {'Content-Type': 'application/json'});
-		response.end(JSON.stringify({field: 'email', message: errors.invalidEmail}));
- 		db.close();
+		responseActions.sendResponse(response, 403, {field: 'email', message: responseActions.errors.invalidEmail}, db);
 	}
 }
 
@@ -113,16 +91,11 @@ function checkNickname (db, nickname, response, callback) {
 	var collection = db.collection('users');
 	collection.findOne({nickname: nickname}, function (err, item) {
 		if ( err ) {
-			console.warn(err.message);
-			response.writeHead(500, {'Content-Type': 'application/json'});
-			response.end(JSON.stringify({error: dbErrod}));
-			db.close();
+			responseActions.sendDataBaseError(response, err, db);
 		}
 		else {
 			if ( item ) {
-				response.writeHead(403, {'Content-Type': 'application/json'});
-	   			response.end(JSON.stringify({field: 'nickname', message: errors.nicknameExist}));
-		 		db.close();
+				responseActions.sendResponse(response, 403, {field: 'nickname', message: responseActions.errors.nicknameExist}, db);
 			}
 			else {
 				( callback ) ? callback(db) : db.close();
@@ -135,10 +108,7 @@ function registerUser (db, data, response, callback) {
 	var collection = db.collection('users');
 	collection.insert(data, {w: 1, unique: true}, function (err, result) {
 		if ( err ) {
-			console.warn(err.message);
-			response.writeHead(500, {'Content-Type': 'application/json'});
-			response.end(JSON.stringify({error: dbErrod}));
-			db.close();
+			responseActions.sendDataBaseError(response, err, db);
 		}
 		else {
 			( callback ) ? callback(db) : db.close();
@@ -155,28 +125,14 @@ function userLogin (user, response, callback) {
 		var collection = db.collection('users');
 		collection.findOne({email: email}, function (err, item) {
 			if ( err ) {
-				console.warn(err.message);
-				response.writeHead(500, {'Content-Type': 'application/json'});
-				response.end(JSON.stringify({error: dbErrod}));			
+				responseActions.sendDataBaseError(response, err, db);		
 			}
 			else {
 				if ( item && item.password === cryptoPass ) {
 					setUserToken(db, item, response, callback);
-					// setUserToken(db, item, response, function (db, token) {
-					// 	response.writeHead(200, {'Content-Type': 'application/json'});
-					// 	response.end(JSON.stringify({
-					// 		nickname: item.nickname,
-					// 		firstName: item.firstName,
-					// 		lastName: item.lastName
-					// 	}));
-					// 	db.close();
-					// 	( callback ) && callback(token);
-					// });
 				}
 				else {
-					response.writeHead(403, {'Content-Type': 'application/json'});
-					response.end();
-					db.close();
+					responseActions.sendResponse(response, 403, {}, db);
 				}
 			}			
 		});
@@ -190,21 +146,15 @@ function setUserToken (db, data, response, callback) {
 
 		collection.findAndModify({email: data.email}, [['email', 1]], {$set: {token: token}}, {}, function (err, object) {
 			if ( err ) {
-				console.warn(err.message);
-				response.writeHead(500, {'Content-Type': 'application/json'});
-				response.end(JSON.stringify({error: dbErrod}));
-				db.close()		
+				responseActions.sendDataBaseError(response, err, db);
 			}
 			else {
-				response.writeHead(200, {'Content-Type': 'application/json'});
-				response.end(JSON.stringify({
+				responseActions.sendResponse(response, 200, {
 					nickname: data.nickname,
 					firstName: data.firstName,
 					lastName: data.lastName
-				}));
-				db.close();
+				}, db);
 				( callback ) && callback(token);
-				//( callback ) ? callback(db, token) : db.close();
 			}
 		});		
 	});
@@ -220,29 +170,14 @@ function compareToken (db, data, response, callback) {
 	var collection = db.collection('users');
 	collection.findOne({email: data.email}, function (err, item) {
 		if ( err ) {
-			console.warn(err.message);
-			response.writeHead(500, {'Content-Type': 'application/json'});
-			response.end(JSON.stringify({error: dbErrod}));
-			db.close();
+			responseActions.sendDataBaseError(response, err, db);
 		}
 		else {
 			if ( item.token == data.token ) {
 				setUserToken(db, item, response, callback);
-				// setUserToken(db, item, response, function (db, token) {
-				// 	response.writeHead(200, {'Content-Type': 'application/json'});
-				// 	response.end(JSON.stringify({
-				// 		nickname: item.nickname,
-				// 		firstName: item.firstName,
-				// 		lastName: item.lastName
-				// 	}));
-				// 	db.close();
-				// 	( callback ) && callback(token);
-				// });
 			}
 			else {
-				response.writeHead(401, {'Content-Type': 'application/json'});
-				response.end();
-				db.close();
+				responseActions.sendResponse(response, 401, {}, db);
 			}
 		}
 	});
@@ -260,9 +195,7 @@ function checkExistingEmail (data, response) {
 	if ( data.email ) {
 		openConnection(response, function (db) {
 			checkEmail(db, data.email, response, function (db) {
-				response.writeHead(200, {'Content-Type': 'application/json'});
-				response.end();
-				db.close();
+				responseActions.sendResponse(response, 200, {}, db);
 			});
 		});
 	}
@@ -272,9 +205,7 @@ function checkExistingNickname (data, response) {
 	if ( data.nickname ) {
 		openConnection(response, function (db) {
 			checkNickname(db, data.nickname, response, function (db) {
-				response.writeHead(200, {'Content-Type': 'application/json'});
-				response.end();
-				db.close();
+				responseActions.sendResponse(response, 200, {}, db);
 			});
 		});
 	}
