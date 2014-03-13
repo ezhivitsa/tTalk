@@ -9,7 +9,8 @@ var Db = require('mongodb').Db,
 	Code = require('mongodb').Code,
 	BSON = require('mongodb').pure().BSON,
 	assert = require('assert'),
-	crypto = require('crypto');
+	crypto = require('crypto'),
+	responseActions = require('./responseActions');
 
 var DB = new Db('ttalk', new Server('ds063307.mongolab.com', 63307));
 
@@ -24,7 +25,8 @@ function insertUser(userData, response, callback) {
 		data = {
 			email: email,
 			password: cryptoPass,
-			nickname: nickname
+			nickname: nickname,
+			rating: 0
 		};
 
 	if ( firstName ) {
