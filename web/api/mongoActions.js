@@ -18,7 +18,8 @@ function insertUser(userData, response, callback) {
 			email: email,
 			password: cryptoPass,
 			nickname: nickname,
-			rating: 0
+			rating: 0,
+			talks: []
 		};
 
 	if ( firstName ) {
@@ -107,7 +108,7 @@ function setUserToken (data, response, callback) {
 				});
 				( callback ) && callback(token, data);
 			}
-		});		
+		});
 	});
 }
 
@@ -126,7 +127,7 @@ function userLogin (user, response, callback) {
 				setUserToken(item, response, callback);
 			}
 			else {
-				responseActions.sendResponse(response, 403, {});
+				responseActions.sendResponse(response, 403);
 			}
 		}			
 	});
@@ -147,7 +148,7 @@ function compareToken (data, response, callback) {
 				setUserToken(item, response, callback);
 			}
 			else {
-				responseActions.sendResponse(response, 401, {});
+				responseActions.sendResponse(response, 401);
 			}
 		}
 	});
@@ -156,7 +157,7 @@ function compareToken (data, response, callback) {
 function checkExistingEmail (data, response) {
 	if ( data.email ) {
 		checkEmail(data.email, response, function () {
-			responseActions.sendResponse(response, 200, {});
+			responseActions.sendResponse(response, 200);
 		});
 	}
 }
@@ -164,7 +165,7 @@ function checkExistingEmail (data, response) {
 function checkExistingNickname (data, response) {
 	if ( data.nickname ) {
 		checkNickname(data.nickname, response, function () {
-			responseActions.sendResponse(response, 200, {});
+			responseActions.sendResponse(response, 200);
 		});
 	}
 }
@@ -173,13 +174,23 @@ function addTalk (talk, user, response) {
 	talk.participants = [];
 	talk.author = user._id;
 
-	var collection = db.collection('talks');
-	collection.insert(talk, {w: 1, unique: true}, function (err, result) {
+	var talksCollection = db.collection('talks'),
+		usersCollection = db.collection('users');
+	talksCollection.insert(talk, {w: 1, unique: true}, function (err, result) {
 		if ( err ) {
 			responseActions.sendDataBaseError(response, err, db);
 		}
 		else {
-			console.log('talk created');
+			usersCollection.findOne({email: user.email}, function (err, item) {
+				if ( err ) {
+					responseActions.sendDataBaseError(response, err);
+				}
+				else {
+					item.talks.push(result[0]._id);
+					collection.update({email: user.email}, {$set: {talks: item.talks}});
+					responseActions.sendResponse(response, 200);
+				}
+			});
 		}		
 	});
 }

@@ -65,7 +65,7 @@ function createTalk (data, response, session) {
 	checkIsUserLogined(data, response, session, function (user) {
 		if ( data.title ) {
 			if ( user.rating > 20 ) {
-
+				mongoActions.addTalk(data, user, response);
 			}
 			else {
 				responseActions.sendResponse(response, 403, {field: 'rating', message: responseActions.errors.rating});
