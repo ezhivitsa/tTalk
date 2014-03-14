@@ -1,4 +1,4 @@
-var mongodb = require('./mongodb'),
+var mongoActions = require('./mongoActions'),
 	sessionActions = require('./sessionActions'),
 	responseActions = require('./responseActions');
 
@@ -10,9 +10,9 @@ function checkLogin (data, response, session) {
 
 function checkIsUserLogined (data, response, session, callback) {
 	if ( session && session.email && session.token ) {
-		mongodb.checkToken(session, response, function (token) {
+		mongoActions.checkToken(session, response, function (token, user) {
 			sessionActions.setSessionData(session, token, session);
-			( callback ) && callback();
+			( callback ) && callback(user);
 		});
 	}
 	else {
@@ -22,7 +22,7 @@ function checkIsUserLogined (data, response, session, callback) {
 
 function registration (data, response, session) {
 	if ( data.email && data.password && data.nickname ) {
-		mongodb.insertUser(data, response, function (token) {
+		mongoActions.insertUser(data, response, function (token) {
 			sessionActions.setSessionData(data, token, session);
 		});
 	}
@@ -34,7 +34,7 @@ function registration (data, response, session) {
 
 function login (data, response, session) {
 	if ( data.email && data.password ) {
-		mongodb.userLogin(data, response, function (token) {
+		mongoActions.userLogin(data, response, function (token) {
 			sessionActions.setSessionData(data, token, session);
 		});
 	}
@@ -54,22 +54,26 @@ function logout (data, response, session) {
 }
 
 function checkEmail (data, response, session) {
-	mongodb.checkEmail(data, response);
+	mongoActions.checkEmail(data, response);
 }
 
 function checkNickname (data, response, session) {
-	mongodb.checkNickname(data, response);
+	mongoActions.checkNickname(data, response);
 }
 
 function createTalk (data, response, session) {
-	checkIsUserLogined(data, response, session, function () {
-		if ( data.title && data.author ) {
+	checkIsUserLogined(data, response, session, function (user) {
+		if ( data.title ) {
+			if ( user.rating > 20 ) {
 
+			}
+			else {
+				responseActions.sendResponse(response, 403, {field: 'rating', message: responseActions.errors.rating});
+			}
 		}
 		else {
-
+			responseActions.sendResponse(response, 403, {field: 'data', message: responseActions.errors.data});
 		}
-		console.log('talk creation');
 	});
 }
 

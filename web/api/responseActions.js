@@ -4,21 +4,20 @@ var errors = {
 	nicknameExist: 'This nickname is already in use',
 	emailExist: 'This email is already in use',
 	dbErrod: 'Database error',
-	invalidEmail: 'Invalid email'
+	invalidEmail: 'Invalid email',
+	rating: 'Rating of the user less than 20'
 }
 
-function sendResponse (response, statusCode, responseJSON, db) {
+function sendResponse (response, statusCode, responseJSON) {
 	responseJSON = responseJSON || {};
 	response.writeHead(statusCode, {'Content-Type': 'application/json'});
 	response.end(JSON.stringify(responseJSON));
-	( db ) && db.close();
 }
 
-function sendDataBaseError (response, err, db) {
+function sendDataBaseError (response, err) {
 	console.warn(err.message);
 	response.writeHead(500, {'Content-Type': 'application/json'});
 	response.end(JSON.stringify({error: dbErrod}));
-	db.close();
 }
 
 exports.errors = errors;

@@ -1,7 +1,8 @@
 var http = require('http'),
 	url = require("url"),
 	SessionHandler = require('./SessionHandler.js').SessionHandler,
-	sessionHandler = new SessionHandler();
+	sessionHandler = new SessionHandler(),
+	mongodb = require('./mongodb.js');
 
 function startServer (host, port, route, handle) {
 	
@@ -18,6 +19,8 @@ function startServer (host, port, route, handle) {
 		}
 
 	}).listen(port, host);
+
+	mongodb.openConnection();
 }
 
 function processGetRequest (pathname, url, route, handle, request, response, session) {
