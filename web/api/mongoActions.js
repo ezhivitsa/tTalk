@@ -101,11 +101,11 @@ function setUserToken (data, response, callback) {
 				responseActions.sendDataBaseError(response, err);
 			}
 			else {
-				responseActions.sendResponse(response, 200, {
-					nickname: data.nickname,
-					firstName: data.firstName,
-					lastName: data.lastName
-				});
+				// responseActions.sendResponse(response, 200, {
+				// 	nickname: data.nickname,
+				// 	firstName: data.firstName,
+				// 	lastName: data.lastName
+				// });
 				( callback ) && callback(token, data);
 			}
 		});
@@ -188,7 +188,7 @@ function addTalk (talk, user, response) {
 				else {
 					item.talks.push(result[0]._id);
 					collection.update({email: user.email}, {$set: {talks: item.talks}});
-					responseActions.sendResponse(response, 200);
+					responseActions.sendResponse(response, 200, {talkId: result[0]._id});
 				}
 			});
 		}		

@@ -1,17 +1,18 @@
 var server = require("./server"),
 	router = require('./router'),
 	requestHandlers = require('./requestHandlers'),
-	handle = {},
 	host = '127.0.0.1',
-	port = 8888;
-
-handle['/api/registration'] = requestHandlers.registration;
-handle['/api/login'] = requestHandlers.login;
-handle['/api/checkemail'] = requestHandlers.checkEmail;
-handle['/api/checknickname'] = requestHandlers.checkNickname;
-handle['/api/checklogin'] = requestHandlers.checkLogin;
-handle['/api/login'] = requestHandlers.login;
-handle['/api/logout'] = requestHandlers.logout;
-handle['/api/createtalk'] = requestHandlers.createTalk;
+	port = 8888,
+	handle = {
+		'/api/registration': requestHandlers.registration,
+		'/api/login': requestHandlers.login,
+		'/api/checkemail': requestHandlers.checkEmail,
+		'/api/checknickname': requestHandlers.checkNickname,
+		'/api/checklogin': requestHandlers.checkLogin,
+		'/api/login': requestHandlers.login,
+		'/api/logout': requestHandlers.logout,
+		'/api/createtalk': requestHandlers.createTalk,
+		'/api/talks': requestHandlers.getTalks
+	};
 
 server.startServer(host, port, router.route, handle);

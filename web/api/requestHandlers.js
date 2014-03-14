@@ -22,7 +22,12 @@ function checkIsUserLogined (data, response, session, callback) {
 
 function registration (data, response, session) {
 	if ( data.email && data.password && data.nickname ) {
-		mongoActions.insertUser(data, response, function (token) {
+		mongoActions.insertUser(data, response, function (token, data) {
+			responseActions.sendResponse(response, 200, {
+				nickname: data.nickname,
+				firstName: data.firstName,
+				lastName: data.lastName
+			});
 			sessionActions.setSessionData(data, token, session);
 		});
 	}
@@ -34,7 +39,12 @@ function registration (data, response, session) {
 
 function login (data, response, session) {
 	if ( data.email && data.password ) {
-		mongoActions.userLogin(data, response, function (token) {
+		mongoActions.userLogin(data, response, function (token, data) {
+			responseActions.sendResponse(response, 200, {
+				nickname: data.nickname,
+				firstName: data.firstName,
+				lastName: data.lastName
+			});
 			sessionActions.setSessionData(data, token, session);
 		});
 	}
@@ -77,6 +87,12 @@ function createTalk (data, response, session) {
 	});
 }
 
+function getTalks (data, response, session) {
+	checkIsUserLogined(data, response, session, function (user) {
+		
+	});
+}
+
 exports.registration = registration;
 exports.login = login;
 exports.checkEmail = checkEmail;
@@ -84,3 +100,4 @@ exports.checkNickname = checkNickname;
 exports.checkLogin = checkLogin;
 exports.logout = logout;
 exports.createTalk = createTalk;
+exports.getTalks = getTalks;
