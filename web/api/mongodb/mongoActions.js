@@ -1,6 +1,6 @@
-var mongodb = require('./mongodb'),
+var mongodb = require('./mongodb.js'),
 	crypto = require('crypto'),
-	responseActions = require('./responseActions');
+	responseActions = require('../responseActions.js');
 
 function setDB(dataBase) {
 	db = dataBase;
@@ -101,11 +101,6 @@ function setUserToken (data, response, callback) {
 				responseActions.sendDataBaseError(response, err);
 			}
 			else {
-				// responseActions.sendResponse(response, 200, {
-				// 	nickname: data.nickname,
-				// 	firstName: data.firstName,
-				// 	lastName: data.lastName
-				// });
 				( callback ) && callback(token, data);
 			}
 		});
@@ -195,6 +190,28 @@ function addTalk (talk, user, response) {
 	});
 }
 
+function getAllTalks (data, response) {
+	var perPage = ( data.perPage < 1 || !data.perPage ) ? 10 : data.perPage,
+		page = ( data.page < 1 || !data.page ) ? 1 : data.page,
+		collection = db.collection('talks'),
+		result = [];
+
+	collection.find({}).toArray(function (err, items) {
+		if ( err ) {
+			responseActions.sendDataBaseError(response, err, db);
+		}
+		else {
+			items.reverse();
+			for ( var i = perPage * (page - 1), len = items.length; i < perPage * page && i < len; i++ ) {
+				result.push({title: items[i].title});// add image, date and maybe author
+			}
+			responseActions.sendResponse(response, 200, {talks: result});
+		}
+	});
+}
+
+function
+
 exports.setDB = setDB;
 exports.insertUser = insertUser;
 exports.userLogin = userLogin;
@@ -203,3 +220,4 @@ exports.checkNickname = checkExistingNickname;
 exports.checkToken = checkToken;
 exports.addTalk = addTalk;
 exports.setUserToken = setUserToken;
+exports.getAllTalks = getAllTalks;

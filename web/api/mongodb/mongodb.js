@@ -2,7 +2,7 @@ var Db = require('mongodb').Db,
 	MongoClient = require('mongodb').MongoClient,
 	Server = require('mongodb').Server,
 	ObjectID = require('mongodb').ObjectID,
-	mongoActions = require('./mongoActions');
+	mongoActions = require('./mongoActions.js');
 	
 
 var DB = new Db('ttalk', new Server('ds063307.mongolab.com', 63307));

@@ -1,6 +1,6 @@
-var mongoActions = require('./mongoActions'),
-	sessionActions = require('./sessionActions'),
-	responseActions = require('./responseActions');
+var mongoActions = require('./mongodb/mongoActions.js'),
+	sessionActions = require('./session/sessionActions.js'),
+	responseActions = require('./responseActions.js');
 
 function checkLogin (data, response, session) {
 	checkIsUserLogined(data, response, session, function () {
@@ -88,8 +88,8 @@ function createTalk (data, response, session) {
 }
 
 function getTalks (data, response, session) {
-	checkIsUserLogined(data, response, session, function (user) {
-		
+	checkIsUserLogined(data, response, session, function () {
+		mongoActions.getAllTalks(data, response);
 	});
 }
 
