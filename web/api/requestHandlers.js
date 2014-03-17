@@ -59,7 +59,7 @@ function logout (data, response, session) {
 		responseActions.sendResponse(response, 200);
 	}
 	else {
-		responseActions.sendResponse(response, 401);
+		responseActions.sendResponse(response, 403);
 	}
 }
 
