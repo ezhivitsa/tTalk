@@ -166,11 +166,15 @@ function checkExistingNickname (data, response) {
 }
 
 function addTalk (talk, user, response) {
+	var talksCollection = db.collection('talks'),
+		usersCollection = db.collection('users'),
+		date = new Date();
+
 	talk.participants = [];
 	talk.author = user._id;
+	talk.created = date.getTime();
+	talk.lastModified = date.getTime();
 
-	var talksCollection = db.collection('talks'),
-		usersCollection = db.collection('users');
 	talksCollection.insert(talk, {w: 1, unique: true}, function (err, result) {
 		if ( err ) {
 			responseActions.sendDataBaseError(response, err, db);
@@ -201,16 +205,22 @@ function getAllTalks (data, response) {
 			responseActions.sendDataBaseError(response, err, db);
 		}
 		else {
-			items.reverse();
+			if ( !data.sort || data.sort === 'date' ) {
+				items.sort(function (a, b) {
+					return b.date - a.date;
+				});
+			}
 			for ( var i = perPage * (page - 1), len = items.length; i < perPage * page && i < len; i++ ) {
-				result.push({title: items[i].title});// add image, date and maybe author
+				// Todo add image
+				result.push({
+					title: items[i].title,
+					date: items[i].date
+				});
 			}
 			responseActions.sendResponse(response, 200, {talks: result});
 		}
 	});
 }
-
-function
 
 exports.setDB = setDB;
 exports.insertUser = insertUser;

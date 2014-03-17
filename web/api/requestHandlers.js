@@ -73,7 +73,7 @@ function checkNickname (data, response, session) {
 
 function createTalk (data, response, session) {
 	checkIsUserLogined(data, response, session, function (user) {
-		if ( data.title ) {
+		if ( data.title && data.date ) {
 			if ( user.rating > 20 ) {
 				mongoActions.addTalk(data, user, response);
 			}
