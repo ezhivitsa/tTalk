@@ -18,10 +18,12 @@
 		</div>
 		<input type="text" placeholder="First Name" name="firstName" ng-model="regData.firstName">
 		<input type="text" placeholder="Last Name" name="lastName" ng-model="regData.lastName">
-		<span class="error" ng-show="regForm.regEmail.$error.required || regForm.regPassword.$error.required || regForm.regNickname.$error.required">Enter required fields!</span>
-		<span class="error" ng-show="regForm.regEmail.$error.pattern">Invalid email</span>
-		<span class="error" ng-show="regForm.regPassword.$error.minlength">Password must consist of more than six symbols</span>
-		<span class="error" ng-show="regForm.regPassword.$error.maxlength">Password is too long</span>
+		<div class="errorContainer">
+			<span class="error" ng-show="regForm.regEmail.$error.required || regForm.regPassword.$error.required || regForm.regNickname.$error.required">Enter required fields!</span>
+			<span class="error" ng-show="regForm.regEmail.$error.pattern">Invalid email</span>
+			<span class="error" ng-show="regForm.regPassword.$error.minlength">Password must consist of more than six symbols</span>
+			<span class="error" ng-show="regForm.regPassword.$error.maxlength">Password is too long</span>
+		</div>
 		<span class="error" ng-show="regForm.regNickname.$error.pattern || regForm.regNickname.$error.minlength">Invalid nickname</span>
 		<button class="button" ng-click="register()" ng-disabled="!regForm.$valid || myPermisson || emailErrorVis || nicknameErrorVis">Submit</button>
 		<div class="info"><span style="color: red; font-size: 20px;">*</span> - Required fields</div>

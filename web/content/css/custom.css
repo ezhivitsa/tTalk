@@ -82,10 +82,16 @@ header {
 	margin: 20px auto;
 }
 
+.content .registration .regForm input[type=email],
+.content .registration .regForm input[type=password] {
+	-webkit-box-shadow: 0 0 0px 1000px white inset;
+}
+
 .content .login .error, 
 .content .login button,
 .content .registration .error,
-.content .registration button {
+.content .registration button,
+.content .createTalk .talkForm button {
 	border-radius: 5px;
 }
 
@@ -94,11 +100,11 @@ header {
 	width: 200px;
 }
 
-.content .registration .req {
+.content .req {
 	position: relative;
 }
 
-.content .registration .req:after {
+.content .req:after {
 	content: "*";
 	display: inline-block;
 	color: red;
@@ -109,7 +115,7 @@ header {
 	font-size: 20px;
 }
 
-.content .registration .info {
+.content .info {
 	text-align: start;
 }
 
@@ -125,4 +131,43 @@ header {
 }
 .content .errorBlock .vcard {
 	width: 100%;
+}
+
+.content .createTalk legend {
+	margin: 20px auto;
+	font-size: 36px;;
+	text-transform: uppercase;
+}
+
+.content .createTalk .talkForm {
+	width: 90%;
+	margin: 0 auto;
+}
+
+.content .createTalk .talkForm label {
+	margin: 5px 0 5px 5px;
+	font-size: 14px;
+}
+
+.content .createTalk .talkForm .title {
+	width: 250px;
+}
+
+.content .createTalk .talkForm .description textarea {
+	height: 205px;
+	resize:none;
+}
+
+.content .createTalk .talkForm .date {
+	width: 190px;
+}
+
+.content .createTalk .talkForm .button {
+	display: block;
+	width: 200px;
+	margin: 0 auto;
+}
+
+.content .createTalk .req:after  {
+	top: 20px;
 }

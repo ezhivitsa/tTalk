@@ -1,0 +1,24 @@
+<div class="createTalk">
+	<legend>
+		Add talk
+	</legend>
+	<form name="tlakForm" class="talkForm">
+		<div class="req title">
+			<label>Title</label>
+			<input type="text" placeholder="Enter title here" name="title" ng-model="talk.title" required>
+		</div>
+		<div class="description">
+			<label>Description</label>
+			<textarea name="description" placeholder="Enter description here" cols="50" rows="10" ng-model="talk.description"></textarea>
+		</div>
+		<div class="req date">
+			<label>Date of talk</label>
+			<input type="datetime-local" name="date" ng-model="talk.date" required>
+		</div>
+		<div class="errorContainer">
+			<span class="error" ng-show="tlakForm.title.$error.required || tlakForm.date.$error.required">Enter required fields!</span>
+		</div>
+		<button class="button" ng-click="createTalk($event)" ng-disabled="tlakForm.$invalid">Create</button>
+		<div class="info"><span style="color: red; font-size: 20px;">*</span> - Required fields</div>
+	</form>
+</div>

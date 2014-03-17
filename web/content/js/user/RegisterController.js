@@ -33,7 +33,7 @@ app.controller('RegisterCtrl',['$scope', '$timeout', 'HttpService' ,function($sc
 	$scope.register = function() {
 		$timeout.cancel(self.emailPromise);
 		$timeout.cancel(self.nicknamePromise);
-		HttpService.userRegistrate($scope,$scope.regData);
+		HttpService.userRegistrate($scope);
 	};
 
 	$scope.passwordChange = function() {		
@@ -61,4 +61,12 @@ app.controller('RegisterCtrl',['$scope', '$timeout', 'HttpService' ,function($sc
 			$scope.myPermisson = false;
 		}
 	}
+
+	$timeout(function() {
+		var inputs = document.querySelectorAll('input[ng-model]');
+		for (var i = 0; i < inputs.length; i++) {
+			angular.element(inputs[i]).checkAndTriggerAutoFillEvent();
+		}
+		$scope.regData = null;
+	}, 500);
 }]);

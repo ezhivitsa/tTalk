@@ -2,7 +2,7 @@ app.controller('LoginCtrl',['$scope', '$timeout', 'HttpService' ,function($scope
 	$scope.incorect = false;
 	
 	$scope.login = function(event) {
-		HttpService.userLogin($scope,$scope.logData);
+		HttpService.userLogin($scope);
 	};
 	$timeout(function() {
 		var inputs = document.querySelectorAll('input[ng-model]');

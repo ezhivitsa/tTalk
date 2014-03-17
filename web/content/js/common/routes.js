@@ -15,12 +15,24 @@ app.config(function($routeProvider) {
 		}).when('/main', {
 			templateUrl: 'templates/main.html',
 			controller: 'MainCtrl',
-			resolve: {sessionVerification: app.sessionVerification
-				// sessionVerification: app.loadTalks
+			resolve: {
+				sessionVerification: app.loadTalks
 			}
 		}).when('/error', {
 			templateUrl: 'templates/error.html',
 			controller: 'EventCtrl'
+		}).when('/createTalk', {
+			templateUrl: 'templates/createTalk.html',
+			controller: 'CreateTalkCtrl',
+			resolve: {
+				sessionVerification: app.sessionVerification
+			}
+		}).when('/talk/:id', {
+			templateUrl: 'templates/talk.html',
+			controller: 'TalkCtrl',
+			resolve: {
+				sessionVerification: app.sessionVerification
+			}
 		}).otherwise({ 
 			redirectTo: '/main'
 		});

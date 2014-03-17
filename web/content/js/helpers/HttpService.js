@@ -1,14 +1,15 @@
 app.factory('HttpService', ['$q', '$http', '$location', '$timeout', '$rootScope', function($q, $http, $location, $timeout, $rootScope) {
 	return {
 
-		userLogin: function( myScope, logData ) {
+		userLogin: function( myScope ) {
 			var defer = $q.defer();
 			$http({
 				method: 'POST', 
 				url: '../api/login',
-				data: logData
+				data:  myScope.logData
 			}).success(function(data, status, headers, config) {	
 				localStorage.setItem("nickname", data.nickname);
+				localStorage.setItem("full", data.firstName + " " + data.lastName);
 				$rootScope.$broadcast('logged');
 				defer.resolve();				
 				$location.path("/main");
@@ -77,15 +78,15 @@ app.factory('HttpService', ['$q', '$http', '$location', '$timeout', '$rootScope'
 			return defer.promise;
 		},
 
-		userRegistrate: function( myScope, regData ) {
-			console.log(regData)
+		userRegistrate: function( myScope ) {
 			var defer = $q.defer();
 			$http({
 				method: 'POST', 
 				url: '../api/registration',
-				data: regData
+				data: myScope.regData
 			}).success(function(data, status, headers, config) {
-				localStorage.setItem("nickname", data.nickname);
+				localStorage.setItem("nickname", data.nickname);				
+				localStorage.setItem("full", data.firstName + " " + data.lastName);
 				$rootScope.$broadcast('logged');				
 				defer.resolve();
 				$location.path("/main");
@@ -119,14 +120,46 @@ app.factory('HttpService', ['$q', '$http', '$location', '$timeout', '$rootScope'
 								status: status
 							});	
 					}
+				} else {
+					defer.reject({
+						message : data.message,
+						status: status
+					});	
 				}				
 			});
 			return defer.promise;
+		},
+
+		createTalk: function( myScope ) {
+			var defer = $q.defer();
+			$http({
+				method: 'POST', 
+				url: '../api/createtalk',
+				data: {
+					title: myScope.talk.title,
+					description: myScope.talk.description,
+					date: (new Date(myScope.talk.date)).toUTCString()
+				}
+			}).success(function(data, status, headers, config) {				
+				defer.resolve();
+				$location.path("/talk/" + data.talkId);
+			}).error(function(data, status, headers, config) {
+				if (status == "403") {
+					$rootScope.$broadcast('unlogged');
+					defer.resolve();
+					$location.path("/");
+				} else {
+					defer.reject({
+						message : data.message,
+						status: status
+					});	
+				}
+			});
 		}
 	}
 }]);
 
-app.sessionVerification = function($q, $http, $location, $rootScope) {
+app.sessionVerification = function( $q, $http, $location, $rootScope ) {
 	var defer = $q.defer();
 	$http({
 		method: 'GET', 
@@ -154,10 +187,29 @@ app.sessionVerification = function($q, $http, $location, $rootScope) {
 	return defer.promise;
 };
 
-app.loadTalks = function($q, $http, $location) {
+app.loadTalks = function( $q, $http, $location, $rootScope ) {
 	var defer = $q.defer();
-	// $http
-	// $location.path("/main");
+	$http({
+		method: 'GET', 
+		url: '/api/talks',
+	}).success(function(data, status, headers, config) {			
+		$rootScope.$broadcast('logged');
+		console.log(data)
+		defer.resolve();
+	}).error(function(data, status, headers, config) {
+		if (status == "401") {
+			if ($location.$$path != "/" && $location.$$path != "/registration") {
+				$location.path("/");
+			}				
+			$rootScope.$broadcast('unlogged');
+			defer.resolve();
+		} else {
+			defer.reject({
+				message : data,
+				status: status
+			});
+		}			
+	});
 	defer.resolve();
 	return defer.promise;
 }
