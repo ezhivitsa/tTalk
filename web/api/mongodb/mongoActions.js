@@ -168,12 +168,14 @@ function checkExistingNickname (data, response) {
 function addTalk (talk, user, response) {
 	var talksCollection = db.collection('talks'),
 		usersCollection = db.collection('users'),
-		date = new Date();
+		now = new Date(),
+		date = new Date(talk.date);
 
 	talk.participants = [];
 	talk.author = user._id;
-	talk.created = date.getTime();
-	talk.lastModified = date.getTime();
+	talk.created = now.getTime();
+	talk.lastModified = now.getTime();
+	talk.date = date.getTime();
 
 	talksCollection.insert(talk, {w: 1, unique: true}, function (err, result) {
 		if ( err ) {

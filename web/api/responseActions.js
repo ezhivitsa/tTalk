@@ -22,3 +22,4 @@ function sendDataBaseError (response, err) {
 
 exports.errors = errors;
 exports.sendResponse = sendResponse;
+exports.sendDataBaseError = sendDataBaseError;
