@@ -2,7 +2,7 @@ var Session = require('./Session.js').Session
  
 module.exports.SessionHandler = function (cookieName, maxAge, checkInterval) {
 	var cookieName = cookieName ? cookieName : 'SESSION';
-	var maxAge = maxAge ? maxAge * 1000 : 3600000; //10 minutes
+	var maxAge = maxAge ? maxAge * 1000 : 3600000; //60 minutes
 	var checkInterval = checkInterval ? checkInterval : 1000; //default 1 sec.
 	var sessions = new Array();
  

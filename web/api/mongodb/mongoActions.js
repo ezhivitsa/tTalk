@@ -173,9 +173,9 @@ function addTalk (talk, user, response) {
 
 	talk.participants = [];
 	talk.author = user._id;
-	talk.created = now.getTime();
-	talk.lastModified = now.getTime();
-	talk.date = date.getTime();
+	talk.created = now.getTime() + 60 * 1000 * now.getTimezoneOffset();
+	talk.lastModified = now.getTime() + 60 * 1000 * now.getTimezoneOffset();
+	talk.date = date.getTime() + 60 * 1000 * date.getTimezoneOffset();
 
 	talksCollection.insert(talk, {w: 1, unique: true}, function (err, result) {
 		if ( err ) {
