@@ -1,4 +1,8 @@
-<section>
-	I'm main page
-	<a href="#/createTalk">Create Talk</a>
+<section class="main">
+	<div class="canCreate" ng-show="status">You are best of the best and can <a href="#/createTalk">Create Talk</a></div>
+	<ul class="talks">
+		<li ng-repeat="talk in talks">			
+			<talk  data="talk"></talk>
+		</li>
+	</ul>
 </section>

@@ -2,7 +2,7 @@
 	<legend>
 		Add talk
 	</legend>
-	<form name="tlakForm" class="talkForm">
+	<form action="../api/createtalk" name="tlakForm" class="talkForm">
 		<div class="req title">
 			<label>Title</label>
 			<input type="text" placeholder="Enter title here" name="title" ng-model="talk.title" required>
@@ -14,6 +14,10 @@
 		<div class="req date">
 			<label>Date of talk</label>
 			<input type="datetime-local" name="date" ng-model="talk.date" required>
+		</div>
+		<div class="file">
+			<label>Image</label>
+			<input type="file" id="image" name="image" ng-model="talk.image">
 		</div>
 		<div class="errorContainer">
 			<span class="error" ng-show="tlakForm.title.$error.required || tlakForm.date.$error.required">Enter required fields!</span>

@@ -194,7 +194,7 @@ app.loadTalks = function( $q, $http, $location, $rootScope ) {
 		url: '/api/talks',
 	}).success(function(data, status, headers, config) {			
 		$rootScope.$broadcast('logged');
-		console.log(data)
+		$rootScope.talks = data.talks;
 		defer.resolve();
 	}).error(function(data, status, headers, config) {
 		if (status == "401") {
