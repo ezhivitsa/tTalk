@@ -12,7 +12,9 @@ var server = require("./server"),
 		'/api/login': requestHandlers.login,
 		'/api/logout': requestHandlers.logout,
 		'/api/createtalk': requestHandlers.createTalk,
-		'/api/talks': requestHandlers.getTalks
+		'/api/talks': requestHandlers.getTalks,
+		'/api/talk': requestHandlers.getTalk,
+		'/api/image': requestHandlers.image
 	};
 
 server.startServer(host, port, router.route, handle);

@@ -215,6 +215,7 @@ function getAllTalks (data, response) {
 			for ( var i = perPage * (page - 1), len = items.length; i < perPage * page && i < len; i++ ) {
 				// Todo add image
 				result.push({
+					id: items[i]._id,
 					title: items[i].title,
 					date: items[i].date
 				});
@@ -222,6 +223,10 @@ function getAllTalks (data, response) {
 			responseActions.sendResponse(response, 200, {talks: result});
 		}
 	});
+}
+
+function getTalk (date, response) {
+
 }
 
 exports.setDB = setDB;

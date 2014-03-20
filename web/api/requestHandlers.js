@@ -43,7 +43,8 @@ function login (data, response, session) {
 			responseActions.sendResponse(response, 200, {
 				nickname: data.nickname,
 				firstName: data.firstName,
-				lastName: data.lastName
+				lastName: data.lastName,
+				isPositiveRating: (date.rating > 20)
 			});
 			sessionActions.setSessionData(data, token, session);
 		});
@@ -93,6 +94,16 @@ function getTalks (data, response, session) {
 	});
 }
 
+function getTalk (data, response, session) {
+	checkIsUserLogined(data, response, session, function () {
+		mongoActions.getTalk(data, response);
+	});
+}
+
+function image (data, response, session) {
+	console.log(data);
+}
+
 exports.registration = registration;
 exports.login = login;
 exports.checkEmail = checkEmail;
@@ -101,3 +112,5 @@ exports.checkLogin = checkLogin;
 exports.logout = logout;
 exports.createTalk = createTalk;
 exports.getTalks = getTalks;
+exports.getTalk = getTalk;
+exports.image = image;

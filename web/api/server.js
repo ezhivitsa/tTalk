@@ -37,6 +37,7 @@ function processPostRequest (pathname, route, handle, request, response, session
     });
 
     request.addListener("end", function() {
+    	postData = postData || '{}';
      	route(handle, pathname, JSON.parse(postData), response, session);
     });
 }

@@ -7,7 +7,6 @@ var GoogleTokenProvider = require("refresh-token").GoogleTokenProvider,
 const CLIENT_ID = "216940919489-8mi409l6gacjgfknj5c2v5n3jfo29g9a.apps.googleusercontent.com";
 const CLIENT_SECRET = "aJA1P5YHIJneugDDXbghjg9V";
 const REFRESH_TOKEN = "1/E73r5PGX8-inCAoZjRNRtRHXMSQD_LtwU5erVLe0D1ss";
-
 const ENDPOINT_OF_GDRIVE = 'https://www.googleapis.com/drive/v2';
 const FOLDER_ID = '0Bwl9paG4iXtCRlBrcTJva2xNa0k';
 
@@ -68,7 +67,7 @@ async.waterfall([
           'title': body.title,
           'md5Checksum': body.md5Checksum
         });
-      }
+      });
     }, callback);
   }
 ], function(err, results) {
@@ -76,3 +75,18 @@ async.waterfall([
     console.log(results);
   }
 });
+
+
+request.get({
+        'url': ENDPOINT_OF_GDRIVE + '/files/' + child.id,
+        'qs': {
+          'access_token': _accessToken
+        }
+      }, 
+      function(err, response, body) {
+        body = JSON.parse(body);
+        cback(null, {
+          'title': body.title,
+          'md5Checksum': body.md5Checksum
+        });
+      });
