@@ -155,6 +155,30 @@ app.factory('HttpService', ['$q', '$http', '$location', '$timeout', '$rootScope'
 					});	
 				}
 			});
+		},
+
+		file: function( form ) {
+			var defer = $q.defer();
+			console.log(form);
+			$http({
+				method: 'POST', 
+				url: '../api/image',
+				data: form
+			}).success(function(data, status, headers, config) {				
+				defer.resolve();
+				alert('good');
+			}).error(function(data, status, headers, config) {
+				if (status == "403") {
+					$rootScope.$broadcast('unlogged');
+					defer.resolve();
+					$location.path("/");
+				} else {
+					defer.reject({
+						message : data.message,
+						status: status
+					});	
+				}
+			});
 		}
 	}
 }]);
