@@ -165,7 +165,7 @@ function checkExistingNickname (data, response) {
 	}
 }
 
-function addTalk (talk, user, response) {
+function addTalk (talk, user, response, callback) {
 	var talksCollection = db.collection('talks'),
 		usersCollection = db.collection('users'),
 		now = new Date(),
@@ -189,7 +189,7 @@ function addTalk (talk, user, response) {
 				else {
 					item.talks.push(result[0]._id);
 					collection.update({email: user.email}, {$set: {talks: item.talks}});
-					responseActions.sendResponse(response, 200, {talkId: result[0]._id});
+					( callback ) ? callback(result[0]._id) : responseActions.sendResponse(response, 200, {talkId: result[0]._id});
 				}
 			});
 		}		

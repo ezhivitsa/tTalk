@@ -73,18 +73,44 @@ function checkNickname (data, response, session) {
 	mongoActions.checkNickname(data, response);
 }
 
-function createTalk (data, response, session) {
+function createTalk (data, response, session, request) {
 	checkIsUserLogined(data, response, session, function (user) {
-		if ( data.title && data.date ) {
-			if ( user.rating > 20 ) {
-				mongoActions.addTalk(data, user, response);
-			}
-			else {
-				responseActions.sendResponse(response, 403, {field: 'rating', message: responseActions.errors.rating});
-			}
+		if ( user.rating > 20 ) {
+			var form = new formidable.IncomingForm();
+		    form.parse(request, function(err, fields, files) {
+		    	if ( fields.title && fields.date ) {
+		    		//----------------------------//
+					mongoActions.addTalk(fields, user, response, function (talk.id) {			
+					 
+					    form.on('error', function(err) {
+					        responseActions.sendResponse(response, 403, {field: 'upload', message: responseActions.errors.upload});
+					    });
+					 
+					    form.on('end', function(fields, files) {
+					        var temp_path = this.openedFiles[0].path;
+					        var file_name = this.openedFiles[0].name;
+					        var new_location = '../content/uploads/img/';
+					 
+					        fs.copy(temp_path, new_location + file_name, function(err) {  
+					            if ( err ) {
+					            	responseActions.sendResponse(response, 403, {field: 'upload', message: responseActions.errors.upload});
+					            } 
+					            else {
+					                responseActions.sendResponse(response, 200);
+					            }
+					        });
+					    });
+					});
+					//------------------------------//
+		    	}
+		    	else {
+		    		responseActions.sendResponse(response, 403, {field: 'data', message: responseActions.errors.data});
+		    	}
+		    });
+
 		}
 		else {
-			responseActions.sendResponse(response, 403, {field: 'data', message: responseActions.errors.data});
+			responseActions.sendResponse(response, 403, {field: 'rating', message: responseActions.errors.rating});
 		}
 	});
 }
@@ -101,8 +127,9 @@ function getTalk (data, response, session) {
 	});
 }
 
-function upload (data, response, session) {
-	console.log(data);
+function upload (data, response, session, request) {
+
+	
 }
 
 exports.registration = registration;

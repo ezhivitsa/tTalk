@@ -5,7 +5,8 @@ var errors = {
 	emailExist: 'This email is already in use',
 	dbErrod: 'Database error',
 	invalidEmail: 'Invalid email',
-	rating: 'Rating of the user less than 20'
+	rating: 'Rating of the user less than 20',
+	upload: 'Error of the file upload'
 }
 
 function sendResponse (response, statusCode, responseJSON) {
