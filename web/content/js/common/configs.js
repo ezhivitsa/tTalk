@@ -1,1 +1,1 @@
-var app = angular.module('tTalk', ['ngRoute']);
+var app = angular.module('tTalk', ['ngRoute','angularFileUpload']);

@@ -2,7 +2,7 @@
 	<legend>
 		Add talk
 	</legend>
-	<form action="../api/createtalk" name="tlakForm" class="talkForm">
+	<form name="tlakForm" class="talkForm">
 		<div class="req title">
 			<label>Title</label>
 			<input type="text" placeholder="Enter title here" name="title" ng-model="talk.title" required>
@@ -17,12 +17,13 @@
 		</div>
 		<div class="file">
 			<label>Image</label>
-			<input type="file" id="image" name="image" ng-model="talk.image">
+			<input type="file" id="image" name="image" ng-model="talk.image" ng-file-select>
 		</div>
 		<div class="errorContainer">
 			<span class="error" ng-show="tlakForm.title.$error.required || tlakForm.date.$error.required">Enter required fields!</span>
 		</div>
-		<button class="button" ng-click="createTalk($event)" ng-disabled="tlakForm.$invalid">Create</button>
+		<button class="button" ng-click="createTalk($event)" >Create</button>
+		ng-disabled="tlakForm.$invalid"
 		<div class="info"><span style="color: red; font-size: 20px;">*</span> - Required fields</div>
 	</form>
 </div>
