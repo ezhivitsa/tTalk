@@ -26,7 +26,8 @@ function registration (data, response, session) {
 			responseActions.sendResponse(response, 200, {
 				nickname: data.nickname,
 				firstName: data.firstName,
-				lastName: data.lastName
+				lastName: data.lastName,
+				isPositiveRating: (data.rating > 20)
 			});
 			sessionActions.setSessionData(data, token, session);
 		});
@@ -44,7 +45,7 @@ function login (data, response, session) {
 				nickname: data.nickname,
 				firstName: data.firstName,
 				lastName: data.lastName,
-				isPositiveRating: (date.rating > 20)
+				isPositiveRating: (data.rating > 20)
 			});
 			sessionActions.setSessionData(data, token, session);
 		});
@@ -100,7 +101,7 @@ function getTalk (data, response, session) {
 	});
 }
 
-function image (data, response, session) {
+function upload (data, response, session) {
 	console.log(data);
 }
 
@@ -113,4 +114,4 @@ exports.logout = logout;
 exports.createTalk = createTalk;
 exports.getTalks = getTalks;
 exports.getTalk = getTalk;
-exports.image = image;
+exports.upload = upload;

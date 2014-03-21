@@ -14,7 +14,7 @@ var server = require("./server"),
 		'/api/createtalk': requestHandlers.createTalk,
 		'/api/talks': requestHandlers.getTalks,
 		'/api/talk': requestHandlers.getTalk,
-		'/api/image': requestHandlers.image
+		'/api/upload': requestHandlers.upload
 	};
 
 server.startServer(host, port, router.route, handle);
