@@ -20,11 +20,12 @@ app.controller('CreateTalkCtrl', ['$scope','HttpService', '$fileUploader', funct
 	});
 
 	$scope.createTalk = function( event ) {
-		uploader.formData.push({
+		uploader.getNotUploadedItems()[0].formData.push({
 			title: $scope.talk.title,
 			description: $scope.talk.description,
 			date: $scope.talk.date
 		});
+		console.log(uploader.getNotUploadedItems())
 	    uploader.uploadAll();
 	};
 	

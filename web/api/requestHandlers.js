@@ -1,6 +1,8 @@
 var mongoActions = require('./mongodb/mongoActions.js'),
 	sessionActions = require('./session/sessionActions.js'),
-	responseActions = require('./responseActions.js');
+	responseActions = require('./responseActions.js'),
+	formidable = require('formidable'),
+	fs = require('fs-extra');
 
 function checkLogin (data, response, session) {
 	checkIsUserLogined(data, response, session, function () {
@@ -77,21 +79,23 @@ function createTalk (data, response, session, request) {
 	checkIsUserLogined(data, response, session, function (user) {
 		if ( user.rating > 20 ) {
 			var form = new formidable.IncomingForm();
-		    form.parse(request, function(err, fields, files) {
-		    	if ( fields.title && fields.date ) {
-		    		//----------------------------//
-					mongoActions.addTalk(fields, user, response, function (talkId) {			
-					 
-					    form.on('error', function(err) {
-					        responseActions.sendResponse(response, 403, {field: 'upload', message: responseActions.errors.upload});
-					    });
-					 
-					    form.on('end', function(fields, files) {
-					    	console.log(files)
-					        var temp_path = this.openedFiles[0].path;
-					        var file_name = this.openedFiles[0].name;
+	    	
+    		//----------------------------//
+		    form.on('error', function(err) {
+		        responseActions.sendResponse(response, 403, {field: 'upload', message: responseActions.errors.upload});
+		    });
+
+		    form.on('end', function(fields, files) {
+		    	console.log('done')
+		    	console.log(this.openedFiles[0]);
+				var temp_path = this.openedFiles[0].path,
+		        	file_name = this.openedFiles[0].name;
+
+			    form.parse(request, function(err, fields, files) {
+			    	if ( fields.title && fields.date ) {
+						mongoActions.addTalk(fields, user, response, function (talkId) {
 					        var new_location = '../content/uploads/img/';
-					 
+
 					        fs.copy(temp_path, new_location + file_name, function(err) {  
 					            if ( err ) {
 					            	responseActions.sendResponse(response, 403, {field: 'upload', message: responseActions.errors.upload});
@@ -99,16 +103,15 @@ function createTalk (data, response, session, request) {
 					            else {
 					                responseActions.sendResponse(response, 200);
 					            }
-					        });
-					    });
-					});
-					//------------------------------//
-		    	}
-		    	else {
-		    		responseActions.sendResponse(response, 403, {field: 'data', message: responseActions.errors.data});
-		    	}
+					        });				 
+						});
+			    	}
+			    	else {
+			    		responseActions.sendResponse(response, 403, {field: 'data', message: responseActions.errors.data});
+			    	}
+			    });	
 		    });
-
+			//------------------------------//	    	
 		}
 		else {
 			responseActions.sendResponse(response, 403, {field: 'rating', message: responseActions.errors.rating});

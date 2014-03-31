@@ -1,8 +1,5 @@
 var http = require('http'),
-	url = require('url'),
-	formidable = require('formidable'),
-    util = require('util'),
-    fs   = require('fs-extra');
+	url = require('url'),    
 	SessionHandler = require('./session/SessionHandler.js').SessionHandler,
 	sessionHandler = new SessionHandler(),
 	mongodb = require('./mongodb/mongodb.js');

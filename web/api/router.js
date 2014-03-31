@@ -1,6 +1,6 @@
 function route(handle, pathname, data, response, session, request) {
 	if (typeof handle[pathname] === 'function') {
-		if ( pathname === '/api/upload' ) {
+		if ( pathname === '/api/createtalk' ) {
 			handle[pathname](data, response, session, request);
 		}
 		else {
