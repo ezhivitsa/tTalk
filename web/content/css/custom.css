@@ -16,10 +16,6 @@ header {
 	-webkit-transform: rotate(1deg);
 }
 
-.myHeader nav,
-.myHeader .logo {
-}
-
 .myHeader .logo {
 	float: left;
 	display: block;
@@ -46,6 +42,7 @@ header {
 }
 
 .myHeader .myMenu {
+	width: 1000px;
 	float: left;
 }
 
@@ -203,6 +200,7 @@ header {
 	display: block;
 	height: 180px;
 	margin: 10px;
+	overflow: hidden;
 	box-sizing: border-box;
 	-webkit-box-shadow: 0px 0px 5px 0px rgba(50, 50, 50, 0.75);
 	-moz-box-shadow:    0px 0px 5px 0px rgba(50, 50, 50, 0.75);
@@ -213,13 +211,19 @@ header {
 	position: absolute;
 	display: block;
 	left: 0;
-	right: 0;
-	bottom: 0;
+	right: 0;	
+	bottom: -30px;
 	font-size: 20px;
 	line-height: 30px;
 	color: white;
 	background-color: rgba(183, 183, 183, 0.5);
 	text-align: center;
+	-webkit-transition: bottom 0.3s;
+	transition: bottom 0.3s;
+}
+
+.content .main .talks .talkPrev:hover .title {	
+	bottom: 0px;
 }
 
 .content .main .canCreate {

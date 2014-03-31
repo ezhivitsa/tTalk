@@ -17,13 +17,12 @@
 		</div>
 		<div class="file">
 			<label>Image</label>
-			<input type="file" id="image" name="image" ng-model="talk.image" ng-file-select>
+			<input type="file" id="image" name="image" ng-model="talk.image"  accept="image/*" ng-file-select required>
 		</div>
 		<div class="errorContainer">
-			<span class="error" ng-show="tlakForm.title.$error.required || tlakForm.date.$error.required">Enter required fields!</span>
+			<span class="error" ng-show="tlakForm.title.$error.required || tlakForm.date.$error.required || tlakForm.image.$error.required">Enter required fields!</span>
 		</div>
-		<button class="button" ng-click="createTalk($event)" >Create</button>
-		ng-disabled="tlakForm.$invalid"
+		<button class="button" ng-click="createTalk($event)" ng-disabled="tlakForm.$invalid">Create</button>		
 		<div class="info"><span style="color: red; font-size: 20px;">*</span> - Required fields</div>
 	</form>
 </div>

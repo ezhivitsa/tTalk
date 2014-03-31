@@ -1,10 +1,5 @@
 app.controller('MainCtrl',['$scope', '$rootScope' ,function( $scope ) {
-	// if (localStorage.getItem("status") && localStorage.getItem("status") >= 100) {
-	// 	$scope.status = true;
-	// } else {
-	// 	$scope.status = false;
-	// }
-	$scope.status = true;
+	$scope.status = localStorage.getItem('isPositiveRating');
 }]);
 
 app.directive('talk', ["HttpService", function ( HttpService ) {
@@ -13,7 +8,7 @@ app.directive('talk', ["HttpService", function ( HttpService ) {
 			data: '=data'
 		},
 		restrict: 'E',
-		template: '<a href="" ng-click="loadTalk($event)" class="talkPrev" ng-mouseenter="myVis=true" ng-mouseleave="myVis=false"><span class="title" ng-show="myVis">{{data.title}}</span></a>',
+		template: '<a href="#/talk/{{data.id}}" ng-click="loadTalk($event)" class="talkPrev"><span class="title">{{data.title}}</span></a>',
 		replace: true,
 		link: function ( $scope ) {
 			$scope.loadTalk = function( event ) {

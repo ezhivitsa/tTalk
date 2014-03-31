@@ -1,17 +1,11 @@
 app.controller('CreateTalkCtrl', ['$scope','HttpService', '$fileUploader', function ( $scope, HttpService, $fileUploader ) {
 	var uploader = $scope.uploader = $fileUploader.create({
 		scope: $scope,
-		url: '../api/upload',
-		formData: [
-			{ 
-				title: "",
-				description: "",
-				date: ""
-			}
-		],
+		url: '../api/createtalk',
+		formData: [],
 		filters: [
 			function (item) {
-				console.info('filter1');
+				// console.info(item);
 				return true;
 			}
 		]
@@ -26,9 +20,11 @@ app.controller('CreateTalkCtrl', ['$scope','HttpService', '$fileUploader', funct
 	});
 
 	$scope.createTalk = function( event ) {
-		uploader.formData[0].title = $scope.talk.title;
-		uploader.formData[0].description = $scope.talk.description;
-		uploader.formData[0].date = $scope.talk.date;
+		uploader.formData.push({
+			title: $scope.talk.title,
+			description: $scope.talk.description,
+			date: $scope.talk.date
+		});
 	    uploader.uploadAll();
 	};
 	

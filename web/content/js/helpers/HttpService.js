@@ -10,6 +10,7 @@ app.factory('HttpService', ['$q', '$http', '$location', '$timeout', '$rootScope'
 			}).success(function(data, status, headers, config) {	
 				localStorage.setItem("nickname", data.nickname);
 				localStorage.setItem("full", data.firstName + " " + data.lastName);
+				localStorage.setItem('isPositiveRating',data.isPositiveRating);
 				$rootScope.$broadcast('logged');
 				defer.resolve();				
 				$location.path("/main");
