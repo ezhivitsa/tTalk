@@ -80,13 +80,14 @@ function createTalk (data, response, session, request) {
 		    form.parse(request, function(err, fields, files) {
 		    	if ( fields.title && fields.date ) {
 		    		//----------------------------//
-					mongoActions.addTalk(fields, user, response, function (talk.id) {			
+					mongoActions.addTalk(fields, user, response, function (talkId) {			
 					 
 					    form.on('error', function(err) {
 					        responseActions.sendResponse(response, 403, {field: 'upload', message: responseActions.errors.upload});
 					    });
 					 
 					    form.on('end', function(fields, files) {
+					    	console.log(files)
 					        var temp_path = this.openedFiles[0].path;
 					        var file_name = this.openedFiles[0].name;
 					        var new_location = '../content/uploads/img/';
