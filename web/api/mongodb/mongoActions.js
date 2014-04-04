@@ -222,7 +222,7 @@ function getAllTalks (data, response) {
 					id: items[i]._id,
 					title: items[i].title,
 					date: items[i].date,
-					image: items[i]._id + items[i].extension
+					image: items[i].path + items[i]._id + items[i].extension
 				});
 			}
 			responseActions.sendResponse(response, 200, {talks: result});

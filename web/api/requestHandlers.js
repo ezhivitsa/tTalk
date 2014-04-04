@@ -103,6 +103,7 @@ function createTalk (data, response, session, request) {
 		    		if ( formFields ) {
 		    			var name = file.name
 		    			formFields.extension = file.name.substring(file.name.lastIndexOf('.'));
+		    			formFields.path = './uploads/img/'
 
 						mongoActions.addTalk(formFields, user, response, function (talkId) {
 					        var new_location = '../content/uploads/img/',
