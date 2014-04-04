@@ -177,6 +177,11 @@ function addTalk (talk, user, response, callback) {
 	talk.lastModified = now.getTime() + 60 * 1000 * now.getTimezoneOffset();
 	talk.date = date.getTime() + 60 * 1000 * date.getTimezoneOffset();
 
+	if ( this.date != this.date ) {
+		responseActions.sendResponse(response, 403, {field: 'date', message: responseActions.errors.date});
+		return;
+	}
+
 	talksCollection.insert(talk, {w: 1, unique: true}, function (err, result) {
 		if ( err ) {
 			responseActions.sendDataBaseError(response, err, db);

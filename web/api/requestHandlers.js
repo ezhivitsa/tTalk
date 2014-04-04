@@ -78,40 +78,53 @@ function checkNickname (data, response, session) {
 function createTalk (data, response, session, request) {
 	checkIsUserLogined(data, response, session, function (user) {
 		if ( user.rating > 20 ) {
-			var form = new formidable.IncomingForm();
-	    	
-    		//----------------------------//
+			var form = new formidable.IncomingForm(),
+				formFields = null;
+	    	form.parse(request, function(err, fields, files) {
+		   		if ( fields.title && fields.date ) {
+		   			formFields = fields;
+		   			if ( !fields.description ) {
+		   				formFields.description = '';
+		   			}
+		    	}
+		    	else {
+		    		responseActions.sendResponse(response, 403, {field: 'data', message: responseActions.errors.data});
+		    	}
+		    });
 		    form.on('error', function(err) {
 		        responseActions.sendResponse(response, 403, {field: 'upload', message: responseActions.errors.upload});
 		    });
 
 		    form.on('end', function(fields, files) {
-		    	console.log('done')
-		    	console.log(this.openedFiles[0]);
-				var temp_path = this.openedFiles[0].path,
-		        	file_name = this.openedFiles[0].name;
+		    	var type = this.openedFiles[0].type,
+		    		file = this.openedFiles[0];
 
-			    form.parse(request, function(err, fields, files) {
-			    	if ( fields.title && fields.date ) {
-						mongoActions.addTalk(fields, user, response, function (talkId) {
-					        var new_location = '../content/uploads/img/';
+		    	if ( type.indexOf('image/') + 1 ) {
+		    		if ( formFields ) {
+		    			var name = file.name
+		    			formFields.extension = file.name.substring(file.name.lastIndexOf('.'));
+
+						mongoActions.addTalk(formFields, user, response, function (talkId) {
+					        var new_location = '../content/uploads/img/',
+								temp_path = file.path,
+					        	file_name = talkId + formFields.extension;
 
 					        fs.copy(temp_path, new_location + file_name, function(err) {  
 					            if ( err ) {
 					            	responseActions.sendResponse(response, 403, {field: 'upload', message: responseActions.errors.upload});
 					            } 
 					            else {
-					                responseActions.sendResponse(response, 200);
+					                responseActions.sendResponse(response, 200, {talkId: talkId});
 					            }
 					        });				 
 						});
-			    	}
-			    	else {
-			    		responseActions.sendResponse(response, 403, {field: 'data', message: responseActions.errors.data});
-			    	}
-			    });	
-		    });
-			//------------------------------//	    	
+
+		    		}
+		    	}
+		    	else {
+		    		responseActions.sendResponse(response, 403, {field: 'data', message: responseActions.errors.filetype});
+		    	} 
+		    });  	
 		}
 		else {
 			responseActions.sendResponse(response, 403, {field: 'rating', message: responseActions.errors.rating});

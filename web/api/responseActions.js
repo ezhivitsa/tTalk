@@ -6,7 +6,9 @@ var errors = {
 	dbErrod: 'Database error',
 	invalidEmail: 'Invalid email',
 	rating: 'Rating of the user less than 20',
-	upload: 'Error of the file upload'
+	upload: 'Error of the file upload',
+	filetype: 'Incorrect type of the file',
+	date: 'invalid date'
 }
 
 function sendResponse (response, statusCode, responseJSON) {
