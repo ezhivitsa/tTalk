@@ -115,7 +115,7 @@ function createTalk (data, response, session, request) {
 					            	responseActions.sendResponse(response, 403, {field: 'upload', message: responseActions.errors.upload});
 					            } 
 					            else {
-					                responseActions.sendResponse(response, 200, {talkId: talkId});
+					                responseActions.sendResponse(response, 200, talkId);
 					            }
 					        });				 
 						});

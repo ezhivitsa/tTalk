@@ -194,7 +194,7 @@ function addTalk (talk, user, response, callback) {
 				else {
 					item.talks.push(result[0]._id);
 					collection.update({email: user.email}, {$set: {talks: item.talks}});
-					( callback ) ? callback(result[0]._id) : responseActions.sendResponse(response, 200, {talkId: result[0]._id});
+					( callback ) ? callback(result[0]._id) : responseActions.sendResponse(response, 200, result[0]._id);
 				}
 			});
 		}		
@@ -225,13 +225,21 @@ function getAllTalks (data, response) {
 					image: items[i].path + items[i]._id + items[i].extension
 				});
 			}
-			responseActions.sendResponse(response, 200, {talks: result});
+			responseActions.sendResponse(response, 200, result);
 		}
 	});
 }
 
-function getTalk (date, response) {
-
+function getTalk (data, response) {
+	collection.findOne({_id: data.id}, function (err, item) {
+		if ( err ) {
+			responseActions.sendDataBaseError(response, err, db);
+		}
+		else {
+			item.image: items[i].path + items[i]._id + items[i].extension
+			responseActions.sendResponse(response, 200, talk);
+		}
+	});
 }
 
 exports.setDB = setDB;
