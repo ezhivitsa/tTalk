@@ -202,31 +202,21 @@ function addTalk (talk, user, response, callback) {
 }
 
 function getAllTalks (data, response) {
-	var perPage = ( data.perPage < 1 || !data.perPage ) ? 10 : data.perPage,
+	var perPage = ( data.page_size < 1 || !data.page_size ) ? 10 : data.page_size,
 		page = ( data.page < 1 || !data.page ) ? 1 : data.page,
 		collection = db.collection('talks'),
 		result = [];
 
-	collection.find({}).toArray(function (err, items) {
-		if ( err ) {
-			responseActions.sendDataBaseError(response, err, db);
+	collection.find({}).sort({date: -1}).skip(perPage * (page - 1)).limit(perPage).toArray(function (err, items) {
+		for ( var i = perPage * (page - 1), len = items.length; i < perPage * page && i < len; i++ ) {
+			result.push({
+				id: items[i]._id,
+				title: items[i].title,
+				date: items[i].date,
+				image: items[i].path + items[i]._id + items[i].extension
+			});
 		}
-		else {
-			if ( !data.sort || data.sort === 'date' ) {
-				items.sort(function (a, b) {
-					return b.date - a.date;
-				});
-			}
-			for ( var i = perPage * (page - 1), len = items.length; i < perPage * page && i < len; i++ ) {
-				result.push({
-					id: items[i]._id,
-					title: items[i].title,
-					date: items[i].date,
-					image: items[i].path + items[i]._id + items[i].extension
-				});
-			}
-			responseActions.sendResponse(response, 200, result);
-		}
+		responseActions.sendResponse(response, 200, result);		
 	});
 }
 
@@ -236,7 +226,6 @@ function getTalk (data, response) {
 			responseActions.sendDataBaseError(response, err, db);
 		}
 		else {
-			item.image: items[i].path + items[i]._id + items[i].extension
 			responseActions.sendResponse(response, 200, talk);
 		}
 	});
