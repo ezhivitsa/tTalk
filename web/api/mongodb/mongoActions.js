@@ -207,8 +207,14 @@ function getAllTalks (data, response) {
 		collection = db.collection('talks'),
 		result = [];
 
-	collection.find({}).sort({date: -1}).skip(perPage * (page - 1)).limit(perPage).toArray(function (err, items) {
-		for ( var i = perPage * (page - 1), len = items.length; i < perPage * page && i < len; i++ ) {
+	collection.find({}).sort({date: -1}).skip(perPage * (page - 1)).limit(perPage + 1).toArray(function (err, items) {
+		var len = items.length,
+			isEnd = true;
+		if ( items.length == perPage + 1 ) {
+			len--;
+			isEnd = false;
+		}
+		for ( var i = 0; i < len; i++ ) {
 			result.push({
 				id: items[i]._id,
 				title: items[i].title,
@@ -216,7 +222,7 @@ function getAllTalks (data, response) {
 				image: items[i].path + items[i]._id + items[i].extension
 			});
 		}
-		responseActions.sendResponse(response, 200, result);		
+		responseActions.sendResponse(response, 200, {talks: result, isEnd: isEnd});
 	});
 }
 
