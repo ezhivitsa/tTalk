@@ -1,20 +1,17 @@
-app.controller('MainCtrl',['$scope', '$rootScope' ,function( $scope ) {
+app.controller('MainCtrl',['$scope', '$resource', '$q', '$location', function ( $scope, $resource, $q, $location ) {
+	var talksService = $resource('../api/talks');
 	$scope.status = localStorage.getItem('isPositiveRating');
+
+	$scope.talks = talksService.query();
 }]);
 
-app.directive('talk', ["HttpService", function ( HttpService ) {
+app.directive('talk', function ( ) {
 	return {
 		scope: {
 			data: '=data'
 		},
 		restrict: 'E',
-		template: '<a href="#/talk/{{data.id}}" ng-click="loadTalk($event)" class="talkPrev"><span class="title">{{data.title}}</span></a>',
-		replace: true,
-		link: function ( $scope ) {
-			$scope.loadTalk = function( event ) {
-				event.preventDefault();
-				console.log($scope.data);
-			};
-		}
+		template: '<a href="#/talk/{{data.id}}" class="talkPrev"><img src="{{data.image}}" title="{{data.title}}" /><span class="title">{{data.title}}</span></a>',
+		replace: true
 	};
-}])
+});

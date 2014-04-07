@@ -1,4 +1,6 @@
-app.controller('HeadCtrl',['$scope', 'HttpService', function($scope, HttpService) {
+app.controller('HeadCtrl',['$scope', '$resource', '$rootScope', '$q', '$location', function( $scope, $resource, $rootScope, $q, $location ) {
+	$scope.visHeader = false;
+	var logoutService = $resource('../api/logout');
 
 	$scope.$on('logged',function(){
 		if (localStorage.getItem("full")) {
@@ -17,6 +19,25 @@ app.controller('HeadCtrl',['$scope', 'HttpService', function($scope, HttpService
 
 	$scope.logout = function(event) {
 		event.preventDefault();
-		HttpService.userLogout();
+		var defer = $q.defer();
+
+		logoutService.get({},function(response, getReponseHeaders) {
+				$rootScope.$broadcast('unlogged');
+				defer.resolve();				
+				$location.path("/");
+			},function(response, getReponseHeaders) {
+				if (response.status == "403") {
+					$rootScope.$broadcast('unlogged');
+					defer.resolve();
+					$location.path("/");
+				} else {
+					defer.reject({
+						message : data.message,
+						status: status
+					});	
+				}
+			});
+
+		return defer.promise;
 	};
 }]);

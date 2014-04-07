@@ -1,4 +1,4 @@
-app.controller('CreateTalkCtrl', ['$scope','HttpService', '$fileUploader', function ( $scope, HttpService, $fileUploader ) {
+app.controller('CreateTalkCtrl', ['$scope', '$fileUploader', function ( $scope, $fileUploader ) {
 	var uploader = $scope.uploader = $fileUploader.create({
 		scope: $scope,
 		url: '../api/createtalk',

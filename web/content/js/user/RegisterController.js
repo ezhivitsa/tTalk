@@ -1,5 +1,9 @@
-app.controller('RegisterCtrl',['$scope', '$timeout', 'HttpService' ,function($scope, $timeout, HttpService) {
-	var self = this;
+app.controller('RegisterCtrl',['$scope', '$timeout', '$resource', '$rootScope', '$q', '$location', function( $scope, $timeout, $resource, $rootScope, $q, $location ) {
+	var self = this,
+		registerService = $resource('../api/:action',{
+			action: '@action'
+		});
+
 	self.emailPromise = null;
 	self.nicknamePromise = null;
 	self.tmpEmail = null;
@@ -14,8 +18,14 @@ app.controller('RegisterCtrl',['$scope', '$timeout', 'HttpService' ,function($sc
 		$timeout.cancel(self.emailPromise);
 		self.tmpEmail = $scope.regData.email;
 		self.emailPromise = $timeout(function () {
-			if ($scope.regForm.email.$valid) {
-				HttpService.checkField($scope,self.tmpEmail,'../api/checkemail','email');
+			if ($scope.regForm.regEmail.$valid) {
+				
+				registerService.save({ action: 'checkemail' },{ email: self.tmpEmail },function(response) {
+						$scope.emailError = "";
+					},function(response) {
+						$scope.emailError = response.data.message;
+					});
+
 			}
 		},2000);
 	};
@@ -24,8 +34,14 @@ app.controller('RegisterCtrl',['$scope', '$timeout', 'HttpService' ,function($sc
 		$timeout.cancel(self.nicknamePromise);
 		self.tmpNickname = $scope.regData.nickname;
 		self.nicknamePromise = $timeout(function () {
-			if ($scope.regForm.nickname.$valid) {
-				HttpService.checkField($scope,self.tmpNickname,'../api/checknickname','nickname');
+			if ($scope.regForm.regNickname.$valid) {
+
+				registerService.save({ action: 'checknickname' },{ nickname: self.tmpNickname },function(response) {
+						$scope.nicknameError = "";
+					},function(response) {
+						$scope.nicknameError = response.data.message;
+					});
+				
 			}
 		},2000);
 	};
@@ -33,18 +49,38 @@ app.controller('RegisterCtrl',['$scope', '$timeout', 'HttpService' ,function($sc
 	$scope.register = function() {
 		$timeout.cancel(self.emailPromise);
 		$timeout.cancel(self.nicknamePromise);
-		HttpService.userRegistrate($scope);
+		var defer = $q.defer();
+		registerService.save({ action: 'registration' },$scope.regData,function(response) {
+				localStorage.setItem("nickname", response.nickname);				
+				if (response.firstName) {
+					localStorage.setItem("full", response.firstName + " " + response.lastName);
+				}
+				localStorage.setItem('isPositiveRating',response.isPositiveRating);
+				$rootScope.$broadcast('logged');				
+				defer.resolve();
+				$location.path("/main");
+			},function(response) {
+				if (response.status == "403") {
+					$scope[response.data.field + "Error"] = response.data.message;
+				} else {
+					defer.reject({
+						message : response.data.message,
+						status: response.status
+					});	
+				}	
+			});
+		return defer.promise;
 	};
 
 	$scope.passwordChange = function() {		
 		if (!$scope.rPassword) {
 			return;
 		} else if ($scope.rPassword != $scope.regData.password) {
-			$scope.passwordErrorVis = true;
+			$scope.passwordError = 'Please enter the same value again.';
 			$scope.myPermisson = true;
 		} else {
-			$scope.passwordErrorVis = false;
-			$scope.rPasswordErrorVis = false;
+			$scope.passwordError = '';
+			$scope.rPasswordError = '';
 			$scope.myPermisson = false;
 		}
 	}
@@ -53,11 +89,11 @@ app.controller('RegisterCtrl',['$scope', '$timeout', 'HttpService' ,function($sc
 		if (!$scope.regData.password) {
 			return;
 		} else if ($scope.rPassword != $scope.regData.password) {
-			$scope.rPasswordErrorVis = true;
+			$scope.rPasswordError = 'Please enter the same value again.';
 			$scope.myPermisson = true;
 		} else {
-			$scope.passwordErrorVis = false;
-			$scope.rPasswordErrorVis = false;
+			$scope.passwordError = '';
+			$scope.rPasswordError = '';
 			$scope.myPermisson = false;
 		}
 	}

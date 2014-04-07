@@ -113,7 +113,7 @@ header {
 	color: red;
 	position: absolute;
 	z-index: 2;
-	right: -10px;
+	left: -10px;
 	top: 0;
 	font-size: 20px;
 }
@@ -192,19 +192,23 @@ header {
 	float: left;
 	display: block;
 	width: 310px;
-	height: 200px;
 }
 
 .content .main .talks .talkPrev {
 	position: relative;
 	display: block;
-	height: 180px;
+	max-height: 180px;
+	vertical-align: middle;
 	margin: 10px;
 	overflow: hidden;
 	box-sizing: border-box;
 	-webkit-box-shadow: 0px 0px 5px 0px rgba(50, 50, 50, 0.75);
 	-moz-box-shadow:    0px 0px 5px 0px rgba(50, 50, 50, 0.75);
 	box-shadow:         0px 0px 5px 0px rgba(50, 50, 50, 0.75);	
+}
+
+.content .main .talks .talkPrev img {
+	width: 290px;
 }
 
 .content .main .talks .talkPrev .title {

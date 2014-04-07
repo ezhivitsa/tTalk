@@ -2,19 +2,19 @@
 	<form name="regForm" class="regForm">
 		<div class="req">
 			<input type="email" placeholder="Email" name="regEmail" ng-model="regData.email" required ng-pattern="/^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i" ng-change="emailChange()">
-			<span class="alert-box warning" ng-show="emailErrorVis">{{emailError}}</span>
+			<span class="alert-box warning" ng-show="!!emailError">{{emailError}}</span>
 		</div>
 		<div class="req">
 			<input type="password" placeholder="Password" name="regPassword" ng-model="regData.password" required ng-minlength="6" ng-maxlength="20" ng-change="passwordChange()">
-			<span class="alert-box warning" ng-show="passwordErrorVis">Please enter the same value again.</span>
+			<span class="alert-box warning" ng-show="!!passwordError">{{passwordError}}</span>
 		</div>
 		<div class="req">
 			<input type="password" placeholder="Confirm Password" name="repeateRegPassword" ng-model="rPassword" required ng-minlength="6" ng-maxlength="20" ng-change="rPasswordChange()">
-			<span class="alert-box warning" ng-show="rPasswordErrorVis">Please enter the same value again.</span>
+			<span class="alert-box warning" ng-show="!!rPasswordError">{{rPasswordError}}</span>
 		</div>
 		<div class="req">
 			<input type="text" placeholder="Nickname" name="regNickname" ng-model="regData.nickname" required ng-pattern="/^[A-z0-9-]+$/" ng-minlength="2" ng-change="nicknameChange()">
-			<span class="alert-box warning" ng-show="nicknameErrorVis">{{nicknameError}}</span>
+			<span class="alert-box warning" ng-show="!!nicknameError">{{nicknameError}}</span>
 		</div>
 		<input type="text" placeholder="First Name" name="firstName" ng-model="regData.firstName">
 		<input type="text" placeholder="Last Name" name="lastName" ng-model="regData.lastName">
