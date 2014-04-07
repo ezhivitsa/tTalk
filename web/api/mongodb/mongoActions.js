@@ -202,27 +202,34 @@ function addTalk (talk, user, response, callback) {
 }
 
 function getAllTalks (data, response) {
-	var perPage = ( data.page_size < 1 || !data.page_size ) ? 10 : data.page_size,
+	data.page_size = Number(data.page_size);
+	data.page = Number(data.page);
+	var perPage = ( data.page_size < 1 || !data.page_size ) ? 10 : Number(data.page_size),
 		page = ( data.page < 1 || !data.page ) ? 1 : data.page,
 		collection = db.collection('talks'),
 		result = [];
 
 	collection.find({}).sort({date: -1}).skip(perPage * (page - 1)).limit(perPage + 1).toArray(function (err, items) {
-		var len = items.length,
-			isEnd = true;
-		if ( items.length == perPage + 1 ) {
-			len--;
-			isEnd = false;
+		if ( err ) {
+			responseActions.sendDataBaseError(response, err, db);
 		}
-		for ( var i = 0; i < len; i++ ) {
-			result.push({
-				id: items[i]._id,
-				title: items[i].title,
-				date: items[i].date,
-				image: items[i].path + items[i]._id + items[i].extension
-			});
+		else {
+			var len = items.length,
+				isEnd = true;
+			if ( items.length == perPage + 1 ) {
+				len--;
+				isEnd = false;
+			}
+			for ( var i = 0; i < len; i++ ) {
+				result.push({
+					id: items[i]._id,
+					title: items[i].title,
+					date: items[i].date,
+					image: items[i].path + items[i]._id + items[i].extension
+				});
+			}
+			responseActions.sendResponse(response, 200, {talks: result, isEnd: isEnd});
 		}
-		responseActions.sendResponse(response, 200, {talks: result, isEnd: isEnd});
 	});
 }
 
