@@ -34,6 +34,18 @@ var app = angular.module('tTalk', ['ngRoute','angularFileUpload','ngResource'])
 				resolve: {
 					sessionVerification: app.sessionVerification
 				}
+			}).when('/userprofile', {
+				templateUrl: 'templates/userProfile.html',
+				controller: 'UserProfileCtrl',
+				resolve: {
+					sessionVerification: app.sessionVerification
+				}
+			}).when('/userinfo/:id', {
+				templateUrl: 'templates/userInfo.html',
+				controller: 'UserInfoCtrl',
+				resolve: {
+					sessionVerification: app.sessionVerification
+				}
 			}).otherwise({ 
 				redirectTo: '/main'
 			});

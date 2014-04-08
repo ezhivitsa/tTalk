@@ -37,6 +37,10 @@ header {
 	color: #fff;
 }
 
+.myHeader .userWrapper a:hover {
+	text-decoration: underline;
+}
+
 .myHeader .userWrapper a {
 	color: #fff;
 }
@@ -192,6 +196,7 @@ header {
 	float: left;
 	display: block;
 	width: 310px;
+	height: 200px;
 }
 
 .content .main .talks .talkPrev {
@@ -233,4 +238,9 @@ header {
 .content .main .canCreate {
 	text-align: center;
 	line-height: 50px;
+}
+
+.content .main .moreButton {
+	display: block;
+	margin: 0 auto;
 }

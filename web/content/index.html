@@ -12,7 +12,7 @@
 			<a href="#/main" class="logo"><img src="/img/logo.png" alt="tTalk"></a>
 			<nav class="userWrapper" ng-show="visHeader">
 				<div class="user">
-					Hello <a href="">{{userNickname}}</a>
+					Hello <a href="#/userprofile">{{userNickname}}</a>
 				</div>
 				<a href="#" class="logout" ng-click="logout($event)">Logout</a>
 			</nav>
@@ -49,5 +49,6 @@
 	<script src="js/talks/MainController.js"></script>
 	<script src="js/talks/CreateTalkController.js"></script>
 	<script src="js/talks/TalkController.js"></script>
+	<script src="js/user/UserController.js"></script>
 </body>
 </html>
