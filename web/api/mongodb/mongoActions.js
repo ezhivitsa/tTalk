@@ -249,7 +249,12 @@ function getTalk (data, response) {
 function getUser (data, response) {
 	var collection = db.collection('users');
 	collection.findOne({_id: data.id}, function (err, item) {
-		
+		if ( err ) {
+			responseActions.sendDataBaseError(response, err, db);
+		}
+		else {
+			responseActions.sendResponse(response, 200, item);
+		}
 	});
 }
 

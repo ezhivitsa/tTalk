@@ -149,9 +149,12 @@ function myAccount (data, response, session) {
 	checkIsUserLogined(data, response, session, function (user) {
 		var userInfo = {
 			email: user.email,
-			firstName: user.firstName,
-			lastName: user.lastName,
-			nickname: user.nickname
+			nickname: user.nickname,
+			firstName: ( user.firstName ) ? user.firstName : '',
+			lastName: ( user.lastName ) ? user.lastName : '',
+			city: ( user.city ) ? user.city : '',
+			about: ( user.about ) ? user.about : '',
+			job: ( user.job ) ? user.job : ''
 		};
 		responseActions.sendResponse(response, 200, userInfo);
 	});
