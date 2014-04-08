@@ -234,13 +234,22 @@ function getAllTalks (data, response) {
 }
 
 function getTalk (data, response) {
+	var collection = db.collection('talks');
 	collection.findOne({_id: data.id}, function (err, item) {
 		if ( err ) {
 			responseActions.sendDataBaseError(response, err, db);
 		}
 		else {
-			responseActions.sendResponse(response, 200, talk);
+			item.image = items[i].path + items[i]._id + items[i].extension;
+			responseActions.sendResponse(response, 200, item);
 		}
+	});
+}
+
+function getUser (data, response) {
+	var collection = db.collection('users');
+	collection.findOne({_id: data.id}, function (err, item) {
+		
 	});
 }
 
@@ -253,3 +262,4 @@ exports.checkToken = checkToken;
 exports.addTalk = addTalk;
 exports.setUserToken = setUserToken;
 exports.getAllTalks = getAllTalks;
+exports.getUser = getUser;
