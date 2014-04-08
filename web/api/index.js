@@ -13,7 +13,8 @@ var server = require("./server"),
 		'/api/logout': requestHandlers.logout,
 		'/api/createtalk': requestHandlers.createTalk,
 		'/api/talks': requestHandlers.getTalks,
-		'/api/talk': requestHandlers.getTalk
+		'/api/talk': requestHandlers.getTalk,
+		'/api/myaccount': requestHandlers.myAccount
 	};
 
 server.startServer(host, port, router.route, handle);

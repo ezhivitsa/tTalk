@@ -145,9 +145,16 @@ function getTalk (data, response, session) {
 	});
 }
 
-function upload (data, response, session, request) {
-
-	
+function myAccount (data, response, session) {
+	checkIsUserLogined(data, response, session, function (user) {
+		var userInfo = {
+			email: user.email,
+			firstName: user.firstName,
+			lastName: user.lastName,
+			nickname: user.nickname
+		};
+		responseActions.sendResponse(response, 200, userInfo);
+	});
 }
 
 exports.registration = registration;
@@ -159,4 +166,4 @@ exports.logout = logout;
 exports.createTalk = createTalk;
 exports.getTalks = getTalks;
 exports.getTalk = getTalk;
-exports.upload = upload;
+exports.myAccount = myAccount;
