@@ -2,6 +2,7 @@ var errors = {
 	data: 'Not all data',
 	cookie: 'Errors with cookie',
 	nicknameExist: 'This nickname is already in use',
+	password: 'Incorrect password',
 	emailExist: 'This email is already in use',
 	dbErrod: 'Database error',
 	invalidEmail: 'Invalid email',

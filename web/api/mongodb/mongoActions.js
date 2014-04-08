@@ -258,6 +258,27 @@ function getUser (data, response) {
 	});
 }
 
+function changeAccount (data, response) {
+	var collection = db.collection('users'),
+		newData = {
+			password: data.password,
+			city: (data.city) ? data.city : '',
+			firstName: (data.firstName) ? data.firstName : '',
+			lastName: (data.firstName) ? data.lastName : '',
+			about: (data.about) ? data.about : '',
+			job: (data.job) ? data.job : ''
+		};
+	collection.findAndModify({_id: data.id}, [['email', 1]], {$set: newData}, {}, function (err, object) {
+		if ( err ) {
+			responseActions.sendDataBaseError(response, err);
+		}
+		else {
+			responseActions.sendResponse(response, 200);
+		}
+	});
+
+}
+
 exports.setDB = setDB;
 exports.insertUser = insertUser;
 exports.userLogin = userLogin;
@@ -268,3 +289,4 @@ exports.addTalk = addTalk;
 exports.setUserToken = setUserToken;
 exports.getAllTalks = getAllTalks;
 exports.getUser = getUser;
+exports.changeAccount = changeAccount;

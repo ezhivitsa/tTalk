@@ -2,7 +2,8 @@ var mongoActions = require('./mongodb/mongoActions.js'),
 	sessionActions = require('./session/sessionActions.js'),
 	responseActions = require('./responseActions.js'),
 	formidable = require('formidable'),
-	fs = require('fs-extra');
+	fs = require('fs-extra'),
+	crypto = require('crypto');
 
 function checkLogin (data, response, session) {
 	checkIsUserLogined(data, response, session, function () {
@@ -24,15 +25,20 @@ function checkIsUserLogined (data, response, session, callback) {
 
 function registration (data, response, session) {
 	if ( data.email && data.password && data.nickname ) {
-		mongoActions.insertUser(data, response, function (token, data) {
-			responseActions.sendResponse(response, 200, {
-				nickname: data.nickname,
-				firstName: data.firstName,
-				lastName: data.lastName,
-				isPositiveRating: (data.rating > 20)
+		if ( 6 <= data.password.length && data.password.length <= 20 ) {
+			mongoActions.insertUser(data, response, function (token, data) {
+				responseActions.sendResponse(response, 200, {
+					nickname: data.nickname,
+					firstName: data.firstName,
+					lastName: data.lastName,
+					isPositiveRating: (data.rating > 20)
+				});
+				sessionActions.setSessionData(data, token, session);
 			});
-			sessionActions.setSessionData(data, token, session);
-		});
+		}
+		else {
+			responseActions.sendResponse(response, 403, {field: 'password', message: responseActions.errors.password});
+		}
 	}
 	else {
 		responseActions.sendResponse(response, 403, {field: 'data', message: responseActions.errors.data});
@@ -160,6 +166,31 @@ function myAccount (data, response, session) {
 	});
 }
 
+function changeAccount (data, response, session) {
+	checkIsUserLogined(data, response, session, function (user) {
+		data.id = user._id;
+		if ( data.password.length < 6 || data.password.length > 20 ) {
+			responseActions.sendResponse(response, 403, {field: 'password', message: responseActions.errors.password});
+		}
+		else {
+			if ( !data.password || data.password === '' ) {
+				data.password = user.password;
+			}
+			else {
+				var cryptoPass = crypto.createHash('md5').update(data.password).digest('hex');
+				data.password = cryptoPass;
+			}			
+			mongoActions.changeAccount(data, response);
+		}
+	});
+}
+
+function getUser (data, response, session) {
+	checkIsUserLogined(data, response, session, function () {
+		mongoActions.getUser(data, response);
+	});
+}
+
 exports.registration = registration;
 exports.login = login;
 exports.checkEmail = checkEmail;
@@ -170,3 +201,5 @@ exports.createTalk = createTalk;
 exports.getTalks = getTalks;
 exports.getTalk = getTalk;
 exports.myAccount = myAccount;
+exports.getUser = getUser;
+exports.changeAccount = changeAccount;
