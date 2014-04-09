@@ -169,7 +169,7 @@ function myAccount (data, response, session) {
 function changeAccount (data, response, session) {
 	checkIsUserLogined(data, response, session, function (user) {
 		data.id = user._id;
-		if ( data.password.length < 6 || data.password.length > 20 ) {
+		if ( data.password && ( data.password.length < 6 || data.password.length > 20 ) ) {
 			responseActions.sendResponse(response, 403, {field: 'password', message: responseActions.errors.password});
 		}
 		else {

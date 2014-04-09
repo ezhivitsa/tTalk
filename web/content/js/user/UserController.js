@@ -44,7 +44,7 @@ app.controller('UserProfileCtrl', ['$scope', '$resource', '$q', '$location', fun
 		var defer = $q.defer();
 		saveUserDataService.save({},$scope.userData,
 			function ( response ) {
-				defer.resolove();
+				defer.resolve();
 				$location.path("/main");
 			},
 			function ( response ) {
