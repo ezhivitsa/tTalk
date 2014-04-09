@@ -8,10 +8,6 @@ app.controller('RegisterCtrl',['$scope', '$timeout', '$resource', '$rootScope', 
 	self.nicknamePromise = null;
 	self.tmpEmail = null;
 	self.tmpNickname = null;
-	$scope.emailErrorVis = false;
-	$scope.passwordErrorVis = false;
-	$scope.nicknameErrorVis = false;
-	$scope.rPasswordErrorVis = false;
 	$scope.myPermisson = true;
 
 	$scope.emailChange = function() {

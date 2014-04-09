@@ -98,7 +98,8 @@ header {
 .content .login button,
 .content .registration .error,
 .content .registration button,
-.content .createTalk .talkForm button {
+.content .createTalk .talkForm button,
+.content .userprofile .userForm button {
 	border-radius: 5px;
 }
 
@@ -242,5 +243,37 @@ header {
 
 .content .main .moreButton {
 	display: block;
+	margin: 0 auto;
+}
+
+.content .userprofile .userForm {
+	width: 80%;
+	margin: 0 auto;
+}
+
+.content .userprofile .userForm label {
+	display: inline-block;
+	margin: 10px 5px 5px 0px;
+	font-size: 14px;
+	width: 17%;
+	vertical-align: top;
+	text-align: right;
+}
+
+.content .userprofile .userForm input {
+	display: inline-block;
+	width: 50%;
+}
+
+.content .userprofile .userForm textarea {
+	display: inline-block;
+	width: 80%;
+	height: 205px;
+	resize:none;
+}
+
+.content .userprofile .userForm .button {
+	display: block;
+	width: 200px;
 	margin: 0 auto;
 }

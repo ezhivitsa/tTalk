@@ -15,7 +15,7 @@ var server = require("./server"),
 		'/api/talks': requestHandlers.getTalks,
 		'/api/talk': requestHandlers.getTalk,
 		'/api/myaccount': requestHandlers.myAccount,
-		'/api/changeaccount': requestHandlers.chanchangeAccount,
+		'/api/changeaccount': requestHandlers.changeAccount,
 		'/api/user': requestHandlers.getUser
 	};
 
