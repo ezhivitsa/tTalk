@@ -33,7 +33,7 @@ function processGetRequest (pathname, url, route, handle, request, response, ses
 	var url_parts = url.parse(request.url, true),
 		query = url_parts.query;
 
-	route(handle, pathname, query, response, session);
+	route('get', handle, pathname, query, response, session);
 }
 
 function processPostRequest (pathname, route, handle, request, response, session) {
@@ -44,7 +44,7 @@ function processPostRequest (pathname, route, handle, request, response, session
 
     request.addListener("end", function() {
     	postData = postData || '{}';
-     	route(handle, pathname, JSON.parse(postData), response, session);
+     	route('post', handle, pathname, JSON.parse(postData), response, session);
     });
 }
 
