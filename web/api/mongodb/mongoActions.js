@@ -264,7 +264,7 @@ function changeAccount (data, response) {
 			password: data.password,
 			city: (data.city) ? data.city : '',
 			firstName: (data.firstName) ? data.firstName : '',
-			lastName: (data.firstName) ? data.lastName : '',
+			lastName: (data.lastName) ? data.lastName : '',
 			about: (data.about) ? data.about : '',
 			job: (data.job) ? data.job : ''
 		};

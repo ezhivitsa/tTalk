@@ -1,1 +1,48 @@
-I'm user
+<div class="userprofile">
+	<form name="userForm" class="userForm">
+		<div class="staticField">
+			<label>Your E-mail</label>
+			<input type="email" name="email" ng-model="userData.email" ng-disabled="true">
+		</div>
+		<div class="staticField">
+			<label>Your Nickname</label>
+			<input type="text" name="nickname" ng-model="userData.nickname" ng-disabled="true">
+		</div>
+		<div>
+			<label>Change Password</label>
+			<input type="password" placeholder="Password" name="password" ng-model="userData.password" ng-minlength="6" ng-maxlength="20" ng-change="passwordChange()">
+			<span class="alert-box warning" ng-show="!!passwordError">{{passwordError}}</span>
+		</div>
+		<div ng-show="!!userData.password || !!passwordError">
+			<label>Password confirmation</label>
+			<input type="password" placeholder="Confirm Password" name="repeatePassword" ng-model="rPassword" ng-minlength="6" ng-maxlength="20" ng-change="rPasswordChange()">
+			<span class="alert-box warning" ng-show="!!rPasswordError">{{rPasswordError}}</span>
+		</div>
+		<div>
+			<label>Your Last Name</label>
+			<input type="text" placeholder="First Name" name="firstName" ng-model="userData.firstName">
+		</div>
+		<div>
+			<label>Your First Name</label>
+			<input type="text" placeholder="Last Name" name="lastName" ng-model="userData.lastName">
+		</div>
+		<div>
+			<label>Address</label>
+			<input type="text" placeholder="Addres" name="addres" ng-model="userData.city">
+		</div>
+		<div>
+			<label>Add information about you</label>
+			<textarea placeholder="About" name="about" ng-model="userData.about"></textarea>
+		</div>
+		<div>
+			<label>Job</label>
+			<input  type="text" placeholder="Job" name="job" ng-model="userData.job">
+		</div>
+		<div class="errorContainer">
+			<span class="error" ng-show="userForm.password.$error.minlength">Password must consist of more than six symbols</span>
+			<span class="error" ng-show="userForm.password.$error.maxlength">Password is too long</span>
+			<span class="error" ng-show="!!userData.password && !rPassword">Confirm Password</span>
+		</div>
+		<button class="button" ng-click="updateProfile($event)" ng-disabled="myPermisson || !userForm.$valid || (!!userData.password ? !!rPassword ? (!!rPasswordError || !!passwordError) : true : false )">Change</button>
+	</form>
+</div>
