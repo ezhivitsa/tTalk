@@ -1,7 +1,6 @@
 app.controller('UserProfileCtrl', ['$scope', '$resource', '$q', '$location', function ( $scope, $resource, $q, $location ){
 
-	var userDataService = $resource('../api/myaccount'),
-		saveUserDataService = $resource('../api/changeaccount');
+	var userDataService = $resource('../api/myaccount');
 	$scope.myPermisson = false;
 
 	$scope.userData = userDataService.get();
@@ -42,7 +41,7 @@ app.controller('UserProfileCtrl', ['$scope', '$resource', '$q', '$location', fun
 	$scope.updateProfile = function ( event ) {
 		event.preventDefault();
 		var defer = $q.defer();
-		saveUserDataService.save({},$scope.userData,
+		userDataService.save({},$scope.userData,
 			function ( response ) {
 				defer.resolve();
 				$location.path("/main");
@@ -58,6 +57,23 @@ app.controller('UserProfileCtrl', ['$scope', '$resource', '$q', '$location', fun
 	
 }]);
 
-app.controller('UserInfoCtrl', ['$scope', '$resource', function ( $scope, $resource ){
-	
+app.controller('UserInfoCtrl', ['$scope', '$resource', '$routeParams', '$q', function ( $scope, $resource, $routeParams, $q ){
+
+	var userDataService = $resource('../api/user');
+	console.log($routeParams);
+
+	var defer = $q.defer();
+	$scope.userData = userDataService.get({ nickname: $routeParams.nickname },
+		function ( response ) {
+			console.log($scope.userData);
+			defer.resolve();
+		},
+		function ( response ) {
+			defer.reject({
+				message: response.data.message,
+				status: response.status
+			});
+		});
+
+	return defer.promise;
 }]);

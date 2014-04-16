@@ -1,51 +1,22 @@
-var http = require('http'),
-	url = require('url'),    
-	SessionHandler = require('./session/SessionHandler.js').SessionHandler,
-	sessionHandler = new SessionHandler(),
-	mongodb = require('./mongodb/mongodb.js');
-
-function startServer (host, port, route, handle) {
+var server = require("./serverUtil"),
+	router = require('./router'),
+	requestHandlers = require('./requestHandlers'),
+	host = '127.0.0.1',
+	port = 8888,
+	handler = requestHandlers.handler;
 	
-	http.createServer(function (request, response) {
-
-		var pathname = url.parse(request.url).pathname,
-			session = sessionHandler.getSession(request, response);
-
-		if ( pathname == '/api/createtalk' ) {
-			route(handle, pathname, {}, response, session, request);
-		}
-		else {
-			if ( request.method.toLowerCase() === 'get' ) {
-				processGetRequest(pathname, url, route, handle, request, response, session);
-			}
-			else if ( request.method.toLowerCase() === 'post' ) {
-				processPostRequest(pathname, route, handle, request, response, session);
-			}
-		}
-
-
-	}).listen(port, host);
-
-	mongodb.openConnection();
+handler.handle = {
+	'/api/registration': 'registration',
+	'/api/checkemail': 'checkEmail',
+	'/api/checknickname': 'checkNickname',
+	'/api/checklogin': 'checkLogin',
+	'/api/login': 'login',
+	'/api/logout': 'logout',
+	'/api/createtalk': 'createTalk',
+	'/api/talks': 'talks',
+	'/api/talk': 'talk',
+	'/api/myaccount': 'myAccount',
+	'/api/user': 'user'
 }
 
-function processGetRequest (pathname, url, route, handle, request, response, session) {
-	var url_parts = url.parse(request.url, true),
-		query = url_parts.query;
-
-	route('get', handle, pathname, query, response, session);
-}
-
-function processPostRequest (pathname, route, handle, request, response, session) {
-	var postData = '';
-	request.addListener("data", function(postDataChunk) {
-    	postData += postDataChunk;
-    });
-
-    request.addListener("end", function() {
-    	postData = postData || '{}';
-     	route('post', handle, pathname, JSON.parse(postData), response, session);
-    });
-}
-
-exports.startServer = startServer;
+server.startServer(host, port, router.route, handler);

@@ -1,1 +1,17 @@
-I'm user
+<div class="userInfo">
+	<div class="wrapper">
+		<h3>User {{(!!userData.firstName && !!userData.lastName) ? userData.firstName + " " + userData.lastName : user.nickname}}</h3>
+		<div ng-show="!!userData.city">
+			Address
+			<span>{{userData.city}}</span>
+		</div>
+		<div ng-show="!!userData.about">
+			Information about user
+			<span class="big">{{userData.about}}</span>
+		</div>
+		<div ng-show="!!userData.job">
+			Information about user
+			<span>{{userData.job}}</span>
+		</div>
+	</div>
+</div>

@@ -1,6 +1,7 @@
 var mongodb = require('./mongodb.js'),
 	crypto = require('crypto'),
-	responseActions = require('../responseActions.js');
+	responseActions = require('../responseActions.js'),
+	mongo = require('mongodb');
 
 function setDB(dataBase) {
 	db = dataBase;
@@ -235,12 +236,14 @@ function getAllTalks (data, response) {
 
 function getTalk (data, response) {
 	var collection = db.collection('talks');
+		//BSON = mongo.BSONPure,
+		//o_id = new BSON.ObjectID(data.id);
 	collection.findOne({_id: data.id}, function (err, item) {
 		if ( err ) {
 			responseActions.sendDataBaseError(response, err, db);
 		}
 		else {
-			item.image = items[i].path + items[i]._id + items[i].extension;
+			item.image = item.path + item._id + item.extension;
 			responseActions.sendResponse(response, 200, item);
 		}
 	});
@@ -248,7 +251,7 @@ function getTalk (data, response) {
 
 function getUser (data, response) {
 	var collection = db.collection('users');
-	collection.findOne({_id: data.id}, function (err, item) {
+	collection.findOne({nickname: data.nickname}, function (err, item) {
 		if ( err ) {
 			responseActions.sendDataBaseError(response, err, db);
 		}

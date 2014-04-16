@@ -40,7 +40,7 @@ var app = angular.module('tTalk', ['ngRoute','angularFileUpload','ngResource'])
 				resolve: {
 					sessionVerification: app.sessionVerification
 				}
-			}).when('/userinfo/:id', {
+			}).when('/userinfo/:nickname', {
 				templateUrl: 'templates/userInfo.html',
 				controller: 'UserInfoCtrl',
 				resolve: {

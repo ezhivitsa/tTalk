@@ -198,7 +198,12 @@ var requestHandler = (function () {
 		user: {
 			get: function (data, response, session) {
 				checkIsUserLogined(data, response, session, function () {
-					mongoActions.getUser(data, response);
+					if ( data.nickname ) {
+						mongoActions.getUser(data, response);						
+					}
+					else {
+						responseActions.sendResponse(response, 403, {field: 'data', message: responseActions.errors.data});
+					}
 				});
 			}
 		}
