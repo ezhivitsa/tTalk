@@ -173,6 +173,10 @@ function addTalk (talk, user, response, callback) {
 		date = new Date(talk.date);
 
 	talk.participants = [];
+	talk.numberOfParticipants = 0;
+	talk.listOfParticipants = [];
+	talk.comments = [];
+	talk.rating = 0;
 	talk.author = user._id;
 	talk.created = now.getTime() + 60 * 1000 * now.getTimezoneOffset();
 	talk.lastModified = now.getTime() + 60 * 1000 * now.getTimezoneOffset();
@@ -235,28 +239,43 @@ function getAllTalks (data, response) {
 }
 
 function getTalk (data, response) {
-	var collection = db.collection('talks');
-		//BSON = mongo.BSONPure,
-		//o_id = new BSON.ObjectID(data.id);
-	collection.findOne({_id: data.id}, function (err, item) {
+	var collection = db.collection('talks'),
+		fields = ['title', 'description', 'path', 'extension', 'date', 'author', 'numberOfParticipants', 'comments', 'rating', 'listOfParticipants'],
+		BSON = mongo.BSONPure,
+		o_id = new BSON.ObjectID(data.id);
+	collection.findOne({_id: o_id}, fields, function (err, item) {
 		if ( err ) {
 			responseActions.sendDataBaseError(response, err, db);
 		}
 		else {
-			item.image = item.path + item._id + item.extension;
+			if ( item ) {
+				item.image = item.path + item._id + item.extension;				
+			}
 			responseActions.sendResponse(response, 200, item);
 		}
 	});
 }
 
 function getUser (data, response) {
-	var collection = db.collection('users');
-	collection.findOne({nickname: data.nickname}, function (err, item) {
+	var collection = db.collection('users'),
+		fields = ['firstName', 'lastName', 'nickname', 'city', 'about', 'job', 'talks'];
+	collection.findOne({nickname: data.nickname}, fields, function (err, item) {
 		if ( err ) {
 			responseActions.sendDataBaseError(response, err, db);
 		}
 		else {
-			responseActions.sendResponse(response, 200, item);
+			var talksCollection = db.collection('talks'),
+				talkFields = ['title'],
+				idTalks = item.talks || [];
+			talksCollection.find({'_id': { $in: idTalks}}, talkFields).toArray(function(err, docs){
+			    if ( err ) {
+					responseActions.sendDataBaseError(response, err, db);
+				}
+				else {
+					item.talks = docs || [];
+					responseActions.sendResponse(response, 200, item);
+				}
+			});
 		}
 	});
 }
@@ -292,4 +311,5 @@ exports.addTalk = addTalk;
 exports.setUserToken = setUserToken;
 exports.getAllTalks = getAllTalks;
 exports.getUser = getUser;
+exports.getTalk = getTalk;
 exports.changeAccount = changeAccount;
