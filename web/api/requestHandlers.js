@@ -177,12 +177,12 @@ var requestHandler = (function () {
 				});
 			},
 			post: function (data, response, session) {
-				checkIsUserLogined(data, response, session, function (user) {
-					data.id = user._id;
-					if ( data.password.length < 6 || data.password.length > 20 ) {
-						responseActions.sendResponse(response, 403, {field: 'password', message: responseActions.errors.password});
-					}
-					else {
+				if ( data.password.length < 6 || data.password.length > 20 ) {
+					responseActions.sendResponse(response, 403, {field: 'password', message: responseActions.errors.password});
+				}
+				else {
+					checkIsUserLogined(data, response, session, function (user) {
+						data.id = user._id;
 						if ( !data.password || data.password === '' ) {
 							data.password = user.password;
 						}
@@ -191,20 +191,37 @@ var requestHandler = (function () {
 							data.password = cryptoPass;
 						}			
 						mongoActions.changeAccount(data, response);
-					}
-				});
+					});					
+				}
 			}
 		},
 		user: {
 			get: function (data, response, session) {
-				checkIsUserLogined(data, response, session, function () {
-					if ( data.nickname ) {
+				if ( data.nickname ) {
+					checkIsUserLogined(data, response, session, function () {						
 						mongoActions.getUser(data, response);						
-					}
-					else {
-						responseActions.sendResponse(response, 403, {field: 'data', message: responseActions.errors.data});
-					}
-				});
+					});
+				}
+				else {
+					responseActions.sendResponse(response, 403, {field: 'data', message: responseActions.errors.data});
+				}
+			}
+		},
+		subscribe: {
+			post: function (data, response, session) {
+				if ( data.id ) {
+					checkIsUserLogined(data, response, session, function (user) {
+						if ( user.subscribedTalks.indexOf(data.id) + 1 ) {
+							responseActions.sendResponse(response, 403, {field: 'subscribe', message: responseActions.errors.subscribe});	
+						}
+						else {
+							mongoActions.subscribe(data, user, response);
+						}
+					});
+				}
+				else {
+					responseActions.sendResponse(response, 403, {field: 'data', message: responseActions.errors.data});					
+				}
 			}
 		}
 	}

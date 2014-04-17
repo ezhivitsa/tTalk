@@ -9,7 +9,8 @@ var errors = {
 	rating: 'Rating of the user less than 20',
 	upload: 'Error of the file upload',
 	filetype: 'Incorrect type of the file',
-	date: 'invalid date'
+	date: 'Invalid date',
+	subscribe: 'You are already subscribed to this talk'
 }
 
 function sendResponse (response, statusCode, responseJSON) {

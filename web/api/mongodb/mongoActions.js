@@ -1,7 +1,8 @@
 var mongodb = require('./mongodb.js'),
 	crypto = require('crypto'),
 	responseActions = require('../responseActions.js'),
-	mongo = require('mongodb');
+	mongo = require('mongodb'),
+	BSON = mongo.BSONPure;
 
 function setDB(dataBase) {
 	db = dataBase;
@@ -20,7 +21,8 @@ function insertUser(userData, response, callback) {
 			password: cryptoPass,
 			nickname: nickname,
 			rating: 0,
-			talks: []
+			talks: [],
+			subscribedTalks: []
 		};
 
 	if ( firstName ) {
@@ -241,7 +243,6 @@ function getAllTalks (data, response) {
 function getTalk (data, response) {
 	var collection = db.collection('talks'),
 		fields = ['title', 'description', 'path', 'extension', 'date', 'author', 'numberOfParticipants', 'comments', 'rating', 'listOfParticipants'],
-		BSON = mongo.BSONPure,
 		o_id = new BSON.ObjectID(data.id);
 	collection.findOne({_id: o_id}, fields, function (err, item) {
 		if ( err ) {
@@ -267,7 +268,9 @@ function getUser (data, response) {
 			var talksCollection = db.collection('talks'),
 				talkFields = ['title'],
 				idTalks = item.talks || [];
-			talksCollection.find({'_id': { $in: idTalks}}, talkFields).toArray(function(err, docs){
+			idTalks.reverse();
+			item.talksNumber = idTalks.length;
+			talksCollection.find({'_id': { $in: idTalks.slice(0, 10)}}, talkFields).toArray(function(err, docs){
 			    if ( err ) {
 					responseActions.sendDataBaseError(response, err, db);
 				}
@@ -298,8 +301,50 @@ function changeAccount (data, response) {
 			responseActions.sendResponse(response, 200);
 		}
 	});
-
 }
+
+var actions = (function () {
+	function handleDbError(err, item, callback) {
+		if ( err ) {
+			responseActions.sendDataBaseError(response, err);
+		}
+		else {
+			( callback ) && callback(item);
+		}
+	}
+
+	return {
+		subscribe: function (data, user, response) {
+			var userCollection = db.collection('users'),
+				talkCollection = db.collection('talks'),
+				talk_id = new BSON.ObjectID(data.id);
+			//update talks collection
+			talkCollection.findOne({_id: talk_id}, function (err, item) {
+				handleDbError(err, item, function (item) {
+					item.participants.push(user._id);
+					talkCollection.update({_id: talk_id}, {$set: {participants: item.participants}}, function (err, result) {
+						//if update of the talk was successful
+						handleDbError(err, result, function (result) {
+							//update users collection
+							usersCollection.findOne({_id: talk_id}, function (err, item) {
+								handleDbError(err, item, function (item) {
+									item.talks.push(result[0]._id);
+									usersCollection.update({email: user.email}, {$set: {talks: item.talks}}, function (err), {
+										//if update of the user was successful
+										handleDbError(err, null, function () {
+											responseActions.sendResponse(response, 200);
+										});
+									});
+								});
+							});
+						});
+					});
+				});
+			});
+		}
+	};
+})();
+};
 
 exports.setDB = setDB;
 exports.insertUser = insertUser;
@@ -313,3 +358,4 @@ exports.getAllTalks = getAllTalks;
 exports.getUser = getUser;
 exports.getTalk = getTalk;
 exports.changeAccount = changeAccount;
+exports.actions = actions;
