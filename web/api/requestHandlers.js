@@ -119,7 +119,7 @@ var requestHandler = (function () {
 					    			formFields.extension = file.name.substring(file.name.lastIndexOf('.'));
 					    			formFields.path = './uploads/img/'
 
-									mongoActions.addTalk(formFields, user, response, function (talkId) {
+									mongoActions.talksCtrl.addTalk(formFields, user, response, function (talkId) {
 								        var new_location = '../content/uploads/img/',
 											temp_path = file.path,
 								        	file_name = talkId + formFields.extension;
@@ -157,7 +157,7 @@ var requestHandler = (function () {
 		talk: {
 			get: function (data, response, session) {
 				checkIsUserLogined(data, response, session, function () {
-					mongoActions.getTalk(data, response);
+					mongoActions.talksCtrl.getTalk(data, response);
 				});
 			}			
 		},
@@ -215,13 +215,47 @@ var requestHandler = (function () {
 							responseActions.sendResponse(response, 403, {field: 'subscribe', message: responseActions.errors.subscribe});	
 						}
 						else {
-							mongoActions.subscribe(data, user, response);
+							mongoActions.talksCtrl.subscribe(data, user, response);
 						}
 					});
 				}
 				else {
 					responseActions.sendResponse(response, 403, {field: 'data', message: responseActions.errors.data});					
 				}
+			}
+		},
+		comment: {
+			post: function (data, response, session) {
+				if ( data.talkId && data.text ) {
+					checkIsUserLogined(data, response, session, function (user) {
+						mongoActions.commentsCtrl.addComment(data, user, response);
+					});
+				}
+				else {
+					responseActions.sendResponse(response, 403, {field: 'data', message: responseActions.errors.data});
+				}
+			} 
+		},
+		comments: {
+			get: function (data, response, session) {
+				if ( data.talkId ) {
+					checkIsUserLogined(data, response, session, function (user) {
+						mongoActions.commentsCtrl.сommentы(data, user, response);
+					});					
+				}
+				else {
+					responseActions.sendResponse(response, 403, {field: 'data', message: responseActions.errors.data});
+				}
+			}
+		},
+		evaluateComment: {
+			post: function (data, response, session) {
+
+			}
+		},
+		evaluateTalk: {
+			post: function (data, response, session) {
+
 			}
 		}
 	}

@@ -4,8 +4,16 @@ var mongodb = require('./mongodb.js'),
 	mongo = require('mongodb'),
 	BSON = mongo.BSONPure;
 
+var db = null,
+	collections = {};
+
 function setDB(dataBase) {
 	db = dataBase;
+	collections = {
+		comments: db.collection('collections'),
+		users: db.collection('users'),
+		talks: db.collection('talks')
+	};
 }
 
 function insertUser(userData, response, callback) {
@@ -168,46 +176,6 @@ function checkExistingNickname (data, response) {
 	}
 }
 
-function addTalk (talk, user, response, callback) {
-	var talksCollection = db.collection('talks'),
-		usersCollection = db.collection('users'),
-		now = new Date(),
-		date = new Date(talk.date);
-
-	talk.participants = [];
-	talk.numberOfParticipants = 0;
-	talk.listOfParticipants = [];
-	talk.comments = [];
-	talk.rating = 0;
-	talk.author = user._id;
-	talk.created = now.getTime() + 60 * 1000 * now.getTimezoneOffset();
-	talk.lastModified = now.getTime() + 60 * 1000 * now.getTimezoneOffset();
-	talk.date = date.getTime() + 60 * 1000 * date.getTimezoneOffset();
-
-	if ( this.date != this.date ) {
-		responseActions.sendResponse(response, 403, {field: 'date', message: responseActions.errors.date});
-		return;
-	}
-
-	talksCollection.insert(talk, {w: 1, unique: true}, function (err, result) {
-		if ( err ) {
-			responseActions.sendDataBaseError(response, err, db);
-		}
-		else {
-			usersCollection.findOne({email: user.email}, function (err, item) {
-				if ( err ) {
-					responseActions.sendDataBaseError(response, err);
-				}
-				else {
-					item.talks.push(result[0]._id);
-					collection.update({email: user.email}, {$set: {talks: item.talks}});
-					( callback ) ? callback(result[0]._id) : responseActions.sendResponse(response, 200, result[0]._id);
-				}
-			});
-		}		
-	});
-}
-
 function getAllTalks (data, response) {
 	data.page_size = Number(data.page_size);
 	data.page = Number(data.page);
@@ -236,23 +204,6 @@ function getAllTalks (data, response) {
 				});
 			}
 			responseActions.sendResponse(response, 200, {talks: result, isEnd: isEnd});
-		}
-	});
-}
-
-function getTalk (data, response) {
-	var collection = db.collection('talks'),
-		fields = ['title', 'description', 'path', 'extension', 'date', 'author', 'numberOfParticipants', 'comments', 'rating', 'listOfParticipants'],
-		o_id = new BSON.ObjectID(data.id);
-	collection.findOne({_id: o_id}, fields, function (err, item) {
-		if ( err ) {
-			responseActions.sendDataBaseError(response, err, db);
-		}
-		else {
-			if ( item ) {
-				item.image = item.path + item._id + item.extension;				
-			}
-			responseActions.sendResponse(response, 200, item);
 		}
 	});
 }
@@ -303,33 +254,123 @@ function changeAccount (data, response) {
 	});
 }
 
-var actions = (function () {
-	function handleDbError(err, item, callback) {
-		if ( err ) {
-			responseActions.sendDataBaseError(response, err);
-		}
-		else {
-			( callback ) && callback(item);
-		}
+function handleDbError(err, item, callback) {
+	if ( err ) {
+		responseActions.sendDataBaseError(response, err);
 	}
+	else {
+		( callback ) && callback(item);
+	}
+}
 
+var commentsCtrl = (function () {
 	return {
+		addComment: function(data, user, response) {
+			var comment = {
+				userId: user._id,
+				talkId: data.talkId,
+				text: data.text,
+				rating: 0,
+				evaluators: []
+			};
+
+			collections.comments.insert(comment, {w: 1, unique: true}, function (err, result) {
+				handleDbError(err, result, function (result) {
+					responseActions.sendResponse(response, 200);
+				});
+			});
+		},
+		getComments: function (data, response) {
+			var page = parseInt(data.page) || 1,
+				pageSize = parseInt(data.page_size) || 10;
+		},
+		evaluate: function (data, user, response) {
+			
+		}
+	};
+})();
+
+var talksCtrl = (function () {
+	return {
+		addTalk: function(talk, user, response, callback) {
+			var now = new Date(),
+				date = new Date(talk.date);
+
+			talk = {
+				participants: [],
+				numberOfParticipants: 0,
+				participants: [],
+				evaluators: [],
+				comments: [],
+				rating: 0,
+				author: user._id,
+				created: now.getTime() + 60 * 1000 * now.getTimezoneOffset(),
+				lastModified: now.getTime() + 60 * 1000 * now.getTimezoneOffset(),
+				date: date.getTime() + 60 * 1000 * date.getTimezoneOffset()
+			};
+
+			if ( talk.date != talk.date ) {
+				responseActions.sendResponse(response, 403, {field: 'date', message: responseActions.errors.date});
+				return;
+			}
+
+			collections.talks.insert(talk, {w: 1, unique: true}, function (err, result) {
+				handleDbError(err, result, function (result) {
+
+					collections.users.findOne({email: user.email}, function (err, item) {
+						handleDbError(err, item, function (item) {
+							item.talks.push(result[0]._id);
+							collection.update({email: user.email}, {$set: {talks: item.talks}});
+							( callback ) ? callback(result[0]._id) : responseActions.sendResponse(response, 200, result[0]._id);
+						});	
+					});	
+				});
+			});
+		},
+		getTalk: function(data, response) {
+			var fields = ['title', 'description', 'path', 'extension', 'date', 'author', 'numberOfParticipants', 'comments', 'rating', 'participants', 'evaluators'],
+				o_id = new BSON.ObjectID(data.id);
+
+			collections.talks.findOne({_id: o_id}, fields, function (err, item) {
+				handleDbError(err, item, function (item) {
+					if ( item ) {
+						item.image = item.path + item._id + item.extension;		
+					}
+					var userId = new BSON.ObjectID(item.author),
+						userFields = ['nickname'];
+
+					collections.users.findOne({_id: userId}, userFields, function (err, user) {
+						handleDbError(err, user, function (user) {
+							item.author = user;
+							if ( item.participants.indexOf(user._id) + 1 ) {
+								item.participants = [];
+							}
+							responseActions.sendResponse(response, 200, item);
+						});
+					});					
+				});				
+			});
+		},
 		subscribe: function (data, user, response) {
-			var userCollection = db.collection('users'),
-				talkCollection = db.collection('talks'),
-				talk_id = new BSON.ObjectID(data.id);
+			var talk_id = new BSON.ObjectID(data.id);
 			//update talks collection
-			talkCollection.findOne({_id: talk_id}, function (err, item) {
+			collections.talks.findOne({_id: talk_id}, function (err, item) {
 				handleDbError(err, item, function (item) {
 					item.participants.push(user._id);
-					talkCollection.update({_id: talk_id}, {$set: {participants: item.participants}}, function (err, result) {
+					item.numberOfParticipants++;
+
+					collections.talks.update({_id: talk_id}, {$set: {
+							participants: item.participants, 
+							numberOfParticipants: item.numberOfParticipants
+						}}, function (err, result) {
 						//if update of the talk was successful
 						handleDbError(err, result, function (result) {
 							//update users collection
-							usersCollection.findOne({_id: talk_id}, function (err, item) {
-								handleDbError(err, item, function (item) {
-									item.talks.push(result[0]._id);
-									usersCollection.update({email: user.email}, {$set: {talks: item.talks}}, function (err), {
+							collections.users.findOne({_id: talk_id}, function (err, user) {
+								handleDbError(err, user, function (user) {
+									user.talks.push(result[0]._id);
+
+									collections.users.update({email: user.email}, {$set: {talks: user.talks}}, function (err) {
 										//if update of the user was successful
 										handleDbError(err, null, function () {
 											responseActions.sendResponse(response, 200);
@@ -341,10 +382,12 @@ var actions = (function () {
 					});
 				});
 			});
+		},
+		evaluate: function (data, user, response) {
+
 		}
 	};
 })();
-};
 
 exports.setDB = setDB;
 exports.insertUser = insertUser;
@@ -352,10 +395,9 @@ exports.userLogin = userLogin;
 exports.checkEmail = checkExistingEmail;
 exports.checkNickname = checkExistingNickname;
 exports.checkToken = checkToken;
-exports.addTalk = addTalk;
 exports.setUserToken = setUserToken;
 exports.getAllTalks = getAllTalks;
 exports.getUser = getUser;
-exports.getTalk = getTalk;
 exports.changeAccount = changeAccount;
-exports.actions = actions;
+exports.talksCtrl = talksCtrl;
+exports.commentsCtrl = commentsCtrl;

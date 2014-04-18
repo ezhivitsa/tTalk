@@ -16,7 +16,12 @@ handler.handle = {
 	'/api/talks': 'talks',
 	'/api/talk': 'talk',
 	'/api/myaccount': 'myAccount',
-	'/api/user': 'user'
+	'/api/user': 'user',
+	'/api/subscripe': 'subscribe',
+	'/api/comment': 'comment',
+	'/api/comments': 'comments',
+	'/api/evaluatecomment': 'evaluateComment',
+	'/api/evaluateTalk': 'evaluateTalk'
 }
 
 server.startServer(host, port, router.route, handler);
