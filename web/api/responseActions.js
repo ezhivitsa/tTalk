@@ -22,7 +22,7 @@ function sendResponse (response, statusCode, responseJSON) {
 function sendDataBaseError (response, err) {
 	console.warn(err.message);
 	response.writeHead(500, {'Content-Type': 'application/json'});
-	response.end(JSON.stringify({error: error.dbErrod}));
+	response.end(JSON.stringify({error: errors.dbErrod}));
 }
 
 exports.errors = errors;

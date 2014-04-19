@@ -17,7 +17,7 @@ handler.handle = {
 	'/api/talk': 'talk',
 	'/api/myaccount': 'myAccount',
 	'/api/user': 'user',
-	'/api/subscripe': 'subscribe',
+	'/api/subscribe': 'subscribe',
 	'/api/comment': 'comment',
 	'/api/comments': 'comments',
 	'/api/evaluatecomment': 'evaluateComment',

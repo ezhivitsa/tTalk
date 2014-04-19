@@ -23,7 +23,7 @@ var requestHandler = (function () {
 			post: function (data, response, session) {
 				if ( data.email && data.password && data.nickname ) {
 					if ( 6 <= data.password.length && data.password.length <= 20 ) {
-						mongoActions.insertUser(data, response, function (token, data) {
+						mongoActions.usersCtrl.insertUser(data, response, function (token, data) {
 							responseActions.sendResponse(response, 200, {
 								nickname: data.nickname,
 								firstName: data.firstName,
@@ -44,12 +44,12 @@ var requestHandler = (function () {
 		},
 		checkEmail: {
 			post: function  (data, response, session) {
-				mongoActions.checkEmail(data, response);
+				mongoActions.usersCtrl.checkEmail(data, response);
 			}
 		},
 		checkNickname: {
 			post: function  (data, response, session) {
-				mongoActions.checkNickname(data, response);
+				mongoActions.usersCtrl.checkNickname(data, response);
 			}
 		},
 		checkLogin: {
@@ -150,15 +150,20 @@ var requestHandler = (function () {
 		talks: {
 			get: function (data, response, session) {
 				checkIsUserLogined(data, response, session, function () {
-					mongoActions.getAllTalks(data, response);
+					mongoActions.talksCtrl.getAllTalks(data, response);
 				});
 			}
 		},
 		talk: {
 			get: function (data, response, session) {
-				checkIsUserLogined(data, response, session, function () {
-					mongoActions.talksCtrl.getTalk(data, response);
-				});
+				if ( data.id ) {
+					checkIsUserLogined(data, response, session, function (user) {
+						mongoActions.talksCtrl.getTalk(data, user, response);
+					});
+				}
+				else {
+					responseActions.sendResponse(response, 403, {field: 'data', message: responseActions.errors.data});
+				}
 			}			
 		},
 		myAccount: {
@@ -190,7 +195,7 @@ var requestHandler = (function () {
 							var cryptoPass = crypto.createHash('md5').update(data.password).digest('hex');
 							data.password = cryptoPass;
 						}			
-						mongoActions.changeAccount(data, response);
+						mongoActions.usersCtrl.changeAccount(data, response);
 					});					
 				}
 			}
@@ -225,8 +230,8 @@ var requestHandler = (function () {
 			}
 		},
 		comment: {
-			post: function (data, response, session) {
-				if ( data.talkId && data.text ) {
+			get: function (data, response, session) {
+				if ( data.id && data.text ) {
 					checkIsUserLogined(data, response, session, function (user) {
 						mongoActions.commentsCtrl.addComment(data, user, response);
 					});

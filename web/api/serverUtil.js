@@ -12,7 +12,7 @@ function startServer (host, port, route, handle) {
 			session = sessionHandler.getSession(request, response);
 
 		if ( pathname == '/api/createtalk' ) {
-			route(handle, pathname, {}, response, session, request);
+			route('post', handle, pathname, {}, response, session, request);
 		}
 		else {
 			if ( request.method.toLowerCase() === 'get' ) {
