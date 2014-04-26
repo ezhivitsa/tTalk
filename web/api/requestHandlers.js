@@ -243,9 +243,9 @@ var requestHandler = (function () {
 		},
 		comments: {
 			get: function (data, response, session) {
-				if ( data.talkId ) {
+				if ( data.id ) {
 					checkIsUserLogined(data, response, session, function (user) {
-						mongoActions.commentsCtrl.сommentы(data, user, response);
+						mongoActions.commentsCtrl.getComments(data, user, response);
 					});					
 				}
 				else {
@@ -254,8 +254,15 @@ var requestHandler = (function () {
 			}
 		},
 		evaluateComment: {
-			post: function (data, response, session) {
-
+			get: function (data, response, session) {
+				if ( data.id && data.mark ) {
+					checkIsUserLogined(data, response, session, function (user) {
+						mongoActions.commentsCtrl.evaluate(data, user, response);
+					});	
+				}
+				else {
+					responseActions.sendResponse(response, 403, {field: 'data', message: responseActions.errors.data});
+				}
 			}
 		},
 		evaluateTalk: {

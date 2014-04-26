@@ -225,13 +225,15 @@ var usersCtrl = (function () {
 var commentsCtrl = (function () {
 	return {
 		addComment: function(data, user, response) {
-			var comment = {
-				userId: user._id,
-				talkId: data.id,
-				text: data.text,
-				rating: 0,
-				evaluators: []
-			};
+			var now = new Date(),
+				comment = {
+					userId: user._id,
+					talkId: data.id,
+					text: data.text,
+					rating: 0,
+					evaluators: [],
+					created: now.getTime() + 60 * 1000 * now.getTimezoneOffset()
+				};
 
 			collections.comments.insert(comment, {w: 1, unique: true}, function (err, result) {
 				handleDbError(err, result, function (result) {
@@ -252,12 +254,122 @@ var commentsCtrl = (function () {
 				});
 			});
 		},
-		getComments: function (data, response) {
+		getComments: function (data, user, response) {
 			var page = parseInt(data.page) || 1,
-				pageSize = parseInt(data.page_size) || 10;
+				pageSize = parseInt(data.page_size) || 10,
+				fields = {
+					text: 1,
+					rating: 1,
+					userId: 1,
+					evaluators: 1
+				}
+
+			collections.comments.find({talkId: data.id}, fields, {
+				sort: {created: -1},
+				skip: pageSize * (page - 1),
+				limit: pageSize + 1
+			}).toArray(function (err, items) {
+
+				handleDbError(err, items, function (items) {
+					var len = items.length,
+						isEnd = true;
+					if ( items.length == pageSize + 1 ) {
+						len--;
+						isEnd = false;
+						items = items.slice(0, len);
+					}
+
+					var users = {},
+						usersArr = [];
+					for ( var i = 0, len = items.length; i < len; i++ ) {
+						users[items[i].userId.toString()] = items[i].userId;
+					}
+					for ( userId in users ) {
+						usersArr.push(users[userId]);
+					}
+					var userFields = {
+						nickname: 1
+					}
+
+					collections.users.find({'_id': { $in: usersArr}}, userFields).toArray(function (err, colUsers) {
+
+						handleDbError(err, colUsers, function (colUsers) {
+							var usersId = {};
+							for ( var i = 0, len = colUsers.length; i < len; i++ ) {
+								usersId[colUsers[i]._id.toString()] = colUsers[i];
+							}
+
+							for ( var i = 0, len = items.length; i < len; i++ ) {
+								items[i].author = usersId[items[i].userId.toString()];
+								items[i].isCanEvaluate = (user._id.toString() != items[i].userId.toString());
+								if ( items[i].isCanEvaluate ) {
+									for ( var j = 0; j < items[i].evaluators.length; j++ ) {
+										if ( items[i].evaluators[j].toString() == user._id.toString() ) {
+											items[i].isCanEvaluate = false;
+											break;
+										}
+									}
+								}
+								delete items[i]['evaluators'];
+							}
+
+							responseActions.sendResponse(response, 200, {comments: items, isEnd: isEnd});
+						});
+
+					});
+				});
+
+			});
 		},
 		evaluate: function (data, user, response) {
-			
+			var commentId = new BSON.ObjectID(data.id);
+			collections.comments.findOne({_id: commentId}, function (err, comment) {
+				handleDbError(err, comment, function (comment) {
+					if ( comment.userId.toString() == user._id.toString() ) {
+						responseActions.sendResponse(response, 403, responseActions.errors.evaluateComment);
+						return;
+					}
+
+					for ( var i = 0, len = comment.evaluators.length; i < len; i++ ) {
+						if ( comment.evaluators[i].toString() == user._id.toString() ) {
+							responseActions.sendResponse(response, 403, responseActions.errors.evaluateComment);
+							return;
+						}
+					}
+
+					var mark = ( parseFloat(data.mark) >= 1 ) ? 1 : -1,
+						coefficient = 1;
+
+					comment.evaluators.push(user._id);
+					comment.rating += mark;
+					//update comment evaluators and rating
+					collections.comments.update({_id: commentId}, {$set: {
+						evaluators: comment.evaluators,
+						rating: comment.rating
+					}}, function (err) {
+						handleDbError(err, null, function () {
+
+							collections.users.findOne({_id: comment.userId}, function (err, author) {
+								handleDbError(err, author, function (author) {
+									//update user rating
+									author.rating += mark * coefficient;
+									collections.users.update({_id: comment.userId}, {$set: {
+										rating: author.rating
+									}}, function (err) {
+
+										handleDbError(err, null, function () {
+											responseActions.sendResponse(response, 200);
+										});
+
+									});
+								});
+							});
+
+						});
+					});
+
+				});
+			});
 		}
 	};
 })();
@@ -387,9 +499,9 @@ var talksCtrl = (function () {
 						}}, function (err) {
 						//if update of the talk was successful
 						handleDbError(err, null, function () {
-							user.talks.push(talk_id);
+							user.subscribedTalks.push(talk_id);
 
-							collections.users.update({email: user.email}, {$set: {talks: user.talks}}, function (err) {
+							collections.users.update({email: user.email}, {$set: {talks: user.subscribedTalks}}, function (err) {
 								//if update of the user was successful
 								handleDbError(err, null, function () {
 									responseActions.sendResponse(response, 200);

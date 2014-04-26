@@ -10,7 +10,8 @@ var errors = {
 	upload: 'Error of the file upload',
 	filetype: 'Incorrect type of the file',
 	date: 'Invalid date',
-	subscribe: 'You are already subscribed to this talk'
+	subscribe: 'You are already subscribed to this talk',
+	evaluateComment: 'You can\'t evaluate this comment'
 }
 
 function sendResponse (response, statusCode, responseJSON) {
