@@ -32,27 +32,6 @@ function setUserToken (data, response, callback) {
 	});
 }
 
-function userLogin (user, response, callback) {
-	var email = user.email,
-		password = user.password,
-		cryptoPass = crypto.createHash('md5').update(password).digest('hex');
-		collection = db.collection('users');
-
-	collection.findOne({email: email}, function (err, item) {
-		if ( err ) {
-			responseActions.sendDataBaseError(response, err);		
-		}
-		else {
-			if ( item && item.password === cryptoPass ) {
-				setUserToken(item, response, callback);
-			}
-			else {
-				responseActions.sendResponse(response, 403);
-			}
-		}			
-	});
-}
-
 function checkToken (data, response, callback) {
 	compareToken(data, response, callback);
 }
@@ -101,6 +80,23 @@ function handleDbError(err, item, callback) {
 
 var usersCtrl = (function () {
 	return {
+		userLogin: function(user, response, callback) {
+			var email = user.email,
+				password = user.password,
+				cryptoPass = crypto.createHash('md5').update(password).digest('hex');
+
+			collections.users.findOne({email: email}, function (err, item) {
+
+				handleDbError(err, item, function (item) {
+					if ( item && item.password === cryptoPass ) {
+						setUserToken(item, response, callback);
+					}
+					else {
+						responseActions.sendResponse(response, 403);
+					}
+				});
+			});
+		},
 		insertUser: function(userData, response, callback) {
 			var email = userData.email,
 				password = userData.password,
@@ -143,7 +139,7 @@ var usersCtrl = (function () {
 		checkEmail: function(email, response, callback) {
 			var expr = /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i;
 
-			if ( expr.test(email) && email.length >= 6 && email.length <= 20 ) {
+			if ( expr.test(email) ) {
 				collections.users.findOne({email: email}, function (err, item) {
 					if ( err ) {
 						responseActions.sendDataBaseError(response, err);
@@ -421,10 +417,8 @@ var talksCtrl = (function () {
 				skip: perPage * (page - 1), 
 				limit: perPage + 1
 			}).toArray(function (err, items) {
-				if ( err ) {
-					responseActions.sendDataBaseError(response, err, db);
-				}
-				else {
+
+				handleDbError(err, items, function (items) {
 					var len = items.length,
 						isEnd = true;
 					if ( items.length == perPage + 1 ) {
@@ -436,7 +430,7 @@ var talksCtrl = (function () {
 						items[i].image = items[i].path + items[i]._id + items[i].extension;
 					}
 					responseActions.sendResponse(response, 200, {talks: items, isEnd: isEnd});
-				}
+				});
 			});
 		},
 		getTalk: function(data, user, response) {
@@ -470,7 +464,16 @@ var talksCtrl = (function () {
 					collections.users.findOne({_id: item.author}, userFields, function (err, authUser) {
 						handleDbError(err, authUser, function (authUser) {
 							item.author = authUser;
-							item.isCanSubscribe = ((authUser._id.toString() != user._id.toString()) && !(item.participants.indexOf(user._id) + 1));
+							item.isCanSubscribe = (authUser._id.toString() != user._id.toString());
+							
+							if ( item.isCanSubscribe ) {
+								for ( var i = 0, len = item.participants.length; i < len; i++ ) {
+									if ( item.participants[i].toString() == user._id.toString() ) {
+										item.isCanSubscribe = false;
+										break;
+									}
+								}
+							}
 							if ( item.participants.indexOf(user._id) + 1 ) {
 								item.participants = [];
 							}
@@ -485,9 +488,16 @@ var talksCtrl = (function () {
 			//update talks collection
 			collections.talks.findOne({_id: talk_id}, function (err, item) {
 				handleDbError(err, item, function (item) {
-					if ( (item.author.toString() == user._id.toString()) || (item.participants.indexOf(user._id) + 1) ) {
+					if ( item.author.toString() == user._id.toString() ) {
 						responseActions.sendResponse(response, 403, {field: 'subscribe', message: responseActions.errors.subscribe});
 						return;
+					}
+
+					for ( var i = 0, len = item.participants.length; i < len; i++ ) {
+						if ( item.participants[i].toString() == user._id.toString() ) {
+							responseActions.sendResponse(response, 403, {field: 'subscribe', message: responseActions.errors.subscribe});
+							return;
+						}
 					}
 
 					item.participants.push(user._id);
@@ -513,13 +523,55 @@ var talksCtrl = (function () {
 			});
 		},
 		evaluate: function (data, user, response) {
+			var talkId = new BSON.ObjectID(data.id);
+			collections.talks.findOne({_id: talkId}, function (err, talk) {
+				handleDbError(err, talk, function (talk) {
+					if ( talk.author.toString() == user._id.toString() ) {
+						responseActions.sendResponse(response, 403, responseActions.errors.evaluateTalk);
+						return;
+					}
+					for ( var i = 0, len = talk.evaluators.length; i < len; i++ ) {
+						if ( talk.evaluators[i].toString() == user._id.toString() ) {
+							responseActions.sendResponse(response, 403, responseActions.errors.evaluateTalk);
+							return;
+						}
+					}
 
+					var mark = ( parseFloat(data.mark) >= 1 ) ? 1 : -1,
+						coefficient = 1;
+
+					talk.evaluators.push(user._id)
+
+					//updating talk in the db
+					collections.talks.update({_id: talkId}, {$set: {
+						evaluators: talk.evaluators,
+						rating: talk.rating + mark
+					}}, function (err) {
+
+						handleDbError(err, null, function () {
+							collections.users.findOne({_id: talk.author}, function (err, author) {
+								handleDbError(err, author, function (author) {
+									//update rating of the talk author
+									collections.users.update({_id: talk.author}, {$set: {
+										rating: author.rating + mark * coefficient
+									}}, function (err) {
+										//if update of the user was successful
+										handleDbError(err, null, function () {
+											responseActions.sendResponse(response, 200);
+										});
+									});
+								});
+							});
+						});
+
+					});
+				});
+			});
 		}
 	};
 })();
 
 exports.setDB = setDB;
-exports.userLogin = userLogin;
 exports.checkToken = checkToken;
 exports.setUserToken = setUserToken;
 exports.usersCtrl = usersCtrl;

@@ -44,12 +44,12 @@ var requestHandler = (function () {
 		},
 		checkEmail: {
 			post: function  (data, response, session) {
-				mongoActions.usersCtrl.checkEmail(data, response);
+				mongoActions.usersCtrl.checkEmail(data.email, response);
 			}
 		},
 		checkNickname: {
 			post: function  (data, response, session) {
-				mongoActions.usersCtrl.checkNickname(data, response);
+				mongoActions.usersCtrl.checkNickname(data.nickname, response);
 			}
 		},
 		checkLogin: {
@@ -62,7 +62,7 @@ var requestHandler = (function () {
 		login: {
 			post: function (data, response, session) {
 				if ( data.email && data.password ) {
-					mongoActions.userLogin(data, response, function (token, data) {
+					mongoActions.usersCtrl.userLogin(data, response, function (token, data) {
 						responseActions.sendResponse(response, 200, {
 							nickname: data.nickname,
 							firstName: data.firstName,
@@ -254,7 +254,7 @@ var requestHandler = (function () {
 			}
 		},
 		evaluateComment: {
-			get: function (data, response, session) {
+			post: function (data, response, session) {
 				if ( data.id && data.mark ) {
 					checkIsUserLogined(data, response, session, function (user) {
 						mongoActions.commentsCtrl.evaluate(data, user, response);
@@ -267,7 +267,14 @@ var requestHandler = (function () {
 		},
 		evaluateTalk: {
 			post: function (data, response, session) {
-
+				if ( data.id && data.mark ) {
+					checkIsUserLogined(data, response, session, function (user) {
+						mongoActions.talksCtrl.evaluate(data, user, response);
+					});	
+				}
+				else {
+					responseActions.sendResponse(response, 403, {field: 'data', message: responseActions.errors.data});
+				}
 			}
 		}
 	}

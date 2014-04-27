@@ -11,7 +11,8 @@ var errors = {
 	filetype: 'Incorrect type of the file',
 	date: 'Invalid date',
 	subscribe: 'You are already subscribed to this talk',
-	evaluateComment: 'You can\'t evaluate this comment'
+	evaluateComment: 'You can\'t evaluate this comment',
+	evaluateTalk: 'You can\'t evaluate this talk'
 }
 
 function sendResponse (response, statusCode, responseJSON) {
