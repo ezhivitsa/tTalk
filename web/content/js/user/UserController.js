@@ -60,12 +60,10 @@ app.controller('UserProfileCtrl', ['$scope', '$resource', '$q', '$location', fun
 app.controller('UserInfoCtrl', ['$scope', '$resource', '$routeParams', '$q', function ( $scope, $resource, $routeParams, $q ){
 
 	var userDataService = $resource('../api/user');
-	console.log($routeParams);
 
 	var defer = $q.defer();
 	$scope.userData = userDataService.get({ nickname: $routeParams.nickname },
 		function ( response ) {
-			console.log($scope.userData);
 			defer.resolve();
 		},
 		function ( response ) {

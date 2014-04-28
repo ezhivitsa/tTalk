@@ -1,1 +1,38 @@
-I'm Talk
+<div class="talk">
+	<div class="wrapper">
+		<div class="talkInfo" ng-show="!!talk.title">
+			<header>
+				<span class="date">{{talk.date}}</span>
+				<h2>{{talk.title}}</h2>
+				<span class="author">Author: <a href="#/userinfo/{{talk.author.nickname}}">{{talk.author.nickname}}</a></span>
+			</header>
+			<article>
+				<img src="{{talk.image}}" alt="{{talk.title}}">
+				<span class="description">{{talk.description}}</span>
+			</article>
+			<div class="sub">
+				<div class="subLinks clearfix">
+					<a href="../talk/subscribe" class="subButton" ng-disabled="!talk.isCanSubscribe">Subscribe</a>
+					<div ng-show="true">
+						Evaluate:
+						<a href="../talk/like" class="evalButton like" ng-cick="like($event)">+</a>
+						<a href="../talk/dislike" class="evalButton dislike" ng-cick="disike($event)">-</a>
+						<span>Rating: {{talk.rating}}</span>
+					</div>
+				</div>
+				<ul class="subscribers" ng-show="!!talk.participants">
+					<!-- <li ng-repeat="(key, value) in talk.participants">lol</li> -->
+				</ul>
+			</div>
+			<div class="comments" ng-show="!!comments.comments">
+				<div class="commentsWrapper">
+					<comment ng-repeat="(key, value) in comments.comments" data="value"></comment>
+				</div>
+				<form name="commentForm" class="commentsCreater">
+					<textarea name="comment" placeholder="Comment" require></textarea>
+					<button class="button" ng-click="createComment($event)" ng-disabled="!commentForm.$valid">Submit</button>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>

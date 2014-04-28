@@ -5,12 +5,17 @@
 	<title>tTalk</title>
 	<link rel="stylesheet" href="css/foundation.css">
 	<link rel="stylesheet" href="css/custom.css">
+	<style>
+		[ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
+		  	display: none !important;
+		}
+	</style>
 </head>
 <body ng-app="tTalk" id="myTop">
-	<header ng-controller="HeadCtrl">
+	<header class="mainHeader" ng-controller="HeadCtrl">
 		<div class="myHeader">
 			<a href="#/main" class="logo"><img src="/img/logo.png" alt="tTalk"></a>
-			<nav class="userWrapper" ng-show="visHeader">
+			<nav class="userWrapper" ng-show="visHeader" ng-cloak>
 				<div class="user">
 					Hello <a href="#/userprofile">{{userNickname}}</a>
 				</div>

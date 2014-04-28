@@ -1,4 +1,4 @@
-header {
+.mainHeader {
 	position: relative;
 	width: 100%;
 	height: 190px;
@@ -276,4 +276,113 @@ header {
 	display: block;
 	width: 200px;
 	margin: 0 auto;
+}
+
+.content .talk header .date {
+	float: right;
+	display: block;
+	margin: 35px 10px 0 0;
+}
+
+.content .talk header h2 {
+	padding: 5px 0 0 5px;
+	border-bottom: 1px solid #C5BABA;
+}
+
+.content .talk header .author {
+	display: block;
+	margin: 0 0 20px 5px;
+}
+
+.content .talk article img {
+	display: block;
+	width: 800px;
+	margin: 0 auto;
+}
+
+.content .talk .description {
+	display: block;
+	margin: 20px 0 5px;
+	padding: 0 20px 10px;
+	border-bottom: 1px solid #C4C4C4;
+}
+
+.content .talk .subButton {
+	float: left;
+	display: block;
+	width: 100px;
+	text-align: center;
+	background-color: rgb(219, 28, 28);
+	color: #ffffff;
+	line-height: 24px;
+	border-radius: 5px;
+}
+
+.content .talk .subLinks {
+	width: 960px;
+	margin: 0 auto;
+}
+
+.content .talk .subLinks div {
+	float: right;
+	height: 24px;
+}
+
+.content .talk .evalButton {
+	display: inline-block;
+	width: 24px;
+	height: 24px;	
+	border-radius: 12px;
+	color: white;
+	text-align: center;
+	margin-left: 10px;
+	vertical-align: middle;
+}
+
+.content .talk .like {
+	background-color: #2F8D1D;
+	line-height: 24px;
+}
+
+.content .talk .dislike {
+	background-color: #666666;
+	height: 24px;
+	line-height: 20px;
+}
+
+.content .talk .commentsWrapper {
+	width: 800px;
+	margin: 0 auto;
+}
+
+.content .talk .comment {
+	width: 100%;
+	min-height: 200px;
+	background: #ddd;
+	border-radius: 6px;
+	padding: 10px 10px 40px;
+	position: relative;
+	margin-bottom: 20px;
+}
+
+.content .talk .cAuthor {
+	display: block;
+	font-size: 20px;
+	line-height: 30px;
+}
+
+.content .talk .text {
+	min-height: 110px;
+	padding: 5px;
+	background-color: #fff;
+}
+
+.content .talk .bottom {
+	position: absolute;
+	bottom: 10px;
+	width: 775px;
+}
+
+.content .talk .cEval {
+	float: right;
 }
