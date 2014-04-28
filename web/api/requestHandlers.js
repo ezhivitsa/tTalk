@@ -230,7 +230,7 @@ var requestHandler = (function () {
 			}
 		},
 		comment: {
-			get: function (data, response, session) {
+			post: function (data, response, session) {
 				if ( data.id && data.text ) {
 					checkIsUserLogined(data, response, session, function (user) {
 						mongoActions.commentsCtrl.addComment(data, user, response);
