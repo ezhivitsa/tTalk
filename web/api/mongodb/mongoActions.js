@@ -442,10 +442,8 @@ var talksCtrl = (function () {
 					date: 1,
 					author: 1,
 					numberOfParticipants: 1,
-					comments: 1,
 					rating: 1,
-					participants: 1,
-					evaluators: 1
+					participants: 1
 				},
 				o_id = new BSON.ObjectID(data.id);
 

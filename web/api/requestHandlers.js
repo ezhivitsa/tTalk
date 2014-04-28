@@ -204,7 +204,7 @@ var requestHandler = (function () {
 			get: function (data, response, session) {
 				if ( data.nickname ) {
 					checkIsUserLogined(data, response, session, function () {						
-						mongoActions.getUser(data, response);						
+						mongoActions.usersCtrl.getUser(data, response);						
 					});
 				}
 				else {
