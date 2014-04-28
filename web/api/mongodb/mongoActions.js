@@ -354,7 +354,7 @@ var commentsCtrl = (function () {
 									}}, function (err) {
 
 										handleDbError(err, null, function () {
-											responseActions.sendResponse(response, 200);
+											responseActions.sendResponse(response, 200, comment.rating);
 										});
 
 									});
@@ -472,10 +472,34 @@ var talksCtrl = (function () {
 									}
 								}
 							}
-							if ( item.participants.indexOf(user._id) + 1 ) {
-								item.participants = [];
+							if ( !item.isCanSubscribe ) {
+								//get nicknames of the participants
+								var userFields = {
+									nickname: 1
+								}
+
+								collections.users.find({'_id': { $in: item.participants}}, userFields).toArray(function (err, users) {
+
+									handleDbError(err, users, function (users) {
+										var usersId = {};
+										for ( var i = 0, len = users.length; i < len; i++ ) {
+											usersId[users[i]._id.toString()] = users[i];
+										}
+
+										for ( var i = 0, len = item.participants.length; i < len; i++ ) {
+											item.participants[i] = usersId[item.participants[i].toString()];
+										}
+										item.isCanEvaluate = false;
+										responseActions.sendResponse(response, 200, item);
+									});
+
+								});
 							}
-							responseActions.sendResponse(response, 200, item);
+							else {
+								item.participants = [];
+								item.isCanEvaluate = true;								
+								responseActions.sendResponse(response, 200, item);
+							}
 						});
 					});					
 				});				
@@ -555,7 +579,7 @@ var talksCtrl = (function () {
 									}}, function (err) {
 										//if update of the user was successful
 										handleDbError(err, null, function () {
-											responseActions.sendResponse(response, 200);
+											responseActions.sendResponse(response, 200, talk.rating + mark);
 										});
 									});
 								});
