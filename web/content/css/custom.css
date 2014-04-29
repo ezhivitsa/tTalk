@@ -311,6 +311,7 @@
 	float: left;
 	display: block;
 	width: 100px;
+	padding: 0;
 	text-align: center;
 	background-color: rgb(219, 28, 28);
 	color: #ffffff;
