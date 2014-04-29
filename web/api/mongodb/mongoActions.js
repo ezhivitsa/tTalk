@@ -371,6 +371,30 @@ var commentsCtrl = (function () {
 })();
 
 var talksCtrl = (function () {
+
+	function getTalkParticipants(item, response, callback) {
+		var userFields = {
+			nickname: 1
+		}
+
+		collections.users.find({'_id': { $in: item.participants}}, userFields).toArray(function (err, users) {
+
+			handleDbError(err, users, function (users) {
+				var usersId = {};
+				for ( var i = 0, len = users.length; i < len; i++ ) {
+					usersId[users[i]._id.toString()] = users[i];
+				}
+
+				for ( var i = 0, len = item.participants.length; i < len; i++ ) {
+					item.participants[i] = usersId[item.participants[i].toString()];
+				}
+				//item.isCanEvaluate = false;
+				( callback ) ? callback(item) : responseActions.sendResponse(response, 200, item);
+			});
+
+		});
+	}
+
 	return {
 		addTalk: function(talk, user, response, callback) {
 			var now = new Date(),
@@ -474,30 +498,11 @@ var talksCtrl = (function () {
 							}
 							if ( !item.isCanSubscribe ) {
 								//get nicknames of the participants
-								var userFields = {
-									nickname: 1
-								}
-
-								collections.users.find({'_id': { $in: item.participants}}, userFields).toArray(function (err, users) {
-
-									handleDbError(err, users, function (users) {
-										var usersId = {};
-										for ( var i = 0, len = users.length; i < len; i++ ) {
-											usersId[users[i]._id.toString()] = users[i];
-										}
-
-										for ( var i = 0, len = item.participants.length; i < len; i++ ) {
-											item.participants[i] = usersId[item.participants[i].toString()];
-										}
-										item.isCanEvaluate = false;
-										responseActions.sendResponse(response, 200, item);
-									});
-
-								});
+								getTalkParticipants(item, response);
 							}
 							else {
 								item.participants = [];
-								item.isCanEvaluate = true;								
+								//item.isCanEvaluate = true;								
 								responseActions.sendResponse(response, 200, item);
 							}
 						});
@@ -536,7 +541,8 @@ var talksCtrl = (function () {
 							collections.users.update({email: user.email}, {$set: {talks: user.subscribedTalks}}, function (err) {
 								//if update of the user was successful
 								handleDbError(err, null, function () {
-									responseActions.sendResponse(response, 200);
+									// get participants of the talk
+									getTalkParticipants(item, response);
 								});
 							});
 						});

@@ -44,12 +44,16 @@ var requestHandler = (function () {
 		},
 		checkEmail: {
 			post: function  (data, response, session) {
-				mongoActions.usersCtrl.checkEmail(data.email, response);
+				mongoActions.usersCtrl.checkEmail(data.email, response, function () {
+					responseActions.sendResponse(response, 200);
+				});
 			}
 		},
 		checkNickname: {
 			post: function  (data, response, session) {
-				mongoActions.usersCtrl.checkNickname(data.nickname, response);
+				mongoActions.usersCtrl.checkNickname(data.nickname, response, function () {
+					responseActions.sendResponse(response, 200);
+				});
 			}
 		},
 		checkLogin: {
