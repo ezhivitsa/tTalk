@@ -13,10 +13,12 @@
 			<div class="sub">
 				<div class="subLinks clearfix">
 					<a href="../talk/subscribe" class="subButton button" ng-if="talk.isCanSubscribe" ng-click="subscribe($event)">Subscribe</a>
-					<div ng-if="talk.isCanEvaluate">
-						Evaluate:
-						<a href="../talk/like" class="evalButton like" ng-click="like($event)">+</a>
-						<a href="../talk/dislike" class="evalButton dislike" ng-click="disike($event)">-</a>
+					<div>
+						<span ng-if="talk.isCanEvaluate">
+							Evaluate:
+							<a href="../talk/like" class="evalButton like" ng-click="eval($event,1)">+</a>
+							<a href="../talk/dislike" class="evalButton dislike" ng-click="eval($event,-1)">-</a>
+						</span>
 						<span>Rating: {{talk.rating}}</span>
 					</div>
 				</div>
@@ -26,12 +28,13 @@
 					</li>
 				</ul>
 			</div>
-			<div class="comments" ng-if="!!comments.comments">
+			<div class="comments" ng-if="!!comments">
 				<div class="commentsWrapper">
-					<comment ng-repeat="(key, value) in comments.comments" data="value"></comment>
+					<comment ng-repeat="(key, value) in comments" data="value"></comment>
 				</div>
+				<a href="more" class="button" ng-click="moreComments($event)" ng-if="!isCommentsEnd">More</a>
 				<form name="commentForm" class="commentsCreater">
-					<textarea name="comment" placeholder="Comment" ng-model="newComment" required></textarea>
+					<textarea name="comment" placeholder="Comment" ng-model="talk.newComment" required></textarea>
 					<button class="button" ng-click="createComment($event)" ng-disabled="!commentForm.$valid">Submit</button>
 				</form>
 			</div>
