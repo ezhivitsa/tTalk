@@ -369,8 +369,7 @@ var talksCtrl = (function () {
 				for ( var i = 0, len = item.participants.length; i < len; i++ ) {
 					item.participants[i] = usersId[item.participants[i].toString()];
 				}
-				//item.isCanEvaluate = false;
-				( callback ) ? callback(item) : responseActions.sendResponse(response, 200, item);
+				( callback ) ? callback(item) : responseActions.sendResponse(response, 200, item.participants);
 			});
 
 		});
@@ -529,7 +528,7 @@ var talksCtrl = (function () {
 						handleDbError(err, null, function () {
 							user.subscribedTalks.push(talk_id);
 
-							collections.users.update({email: user.email}, {$set: {talks: user.subscribedTalks}}, function (err) {
+							collections.users.update({email: user.email}, {$set: {subscribedTalks: user.subscribedTalks}}, function (err) {
 								//if update of the user was successful
 								handleDbError(err, null, function () {
 									// get participants of the talk
