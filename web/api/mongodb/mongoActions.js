@@ -403,7 +403,7 @@ var talksCtrl = (function () {
 						handleDbError(err, item, function (item) {
 							item.talks.push(result[0]._id);
 							collections.users.update({email: user.email}, {$set: {talks: item.talks}});
-							( callback ) ? callback(result[0]._id) : responseActions.sendResponse(response, 200, result[0]._id);
+							( callback ) ? callback(result[0]._id) : responseActions.sendResponse(response, 200, {id: result[0]._id});
 						});	
 					});	
 				});
