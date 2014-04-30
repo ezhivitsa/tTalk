@@ -16,59 +16,6 @@ function setDB(dataBase) {
 	};
 }
 
-function setUserToken (data, response, callback) {
-	crypto.randomBytes(48, function(ex, buf) {
-		var token = buf.toString('hex'),
-			collection = db.collection('users');
-
-		collection.findAndModify({email: data.email}, [['email', 1]], {$set: {token: token}}, {}, function (err, object) {
-			if ( err ) {
-				responseActions.sendDataBaseError(response, err);
-			}
-			else {
-				( callback ) && callback(token, data);
-			}
-		});
-	});
-}
-
-function checkToken (data, response, callback) {
-	compareToken(data, response, callback);
-}
-
-function compareToken (data, response, callback) {
-	var collection = db.collection('users');
-	collection.findOne({email: data.email}, function (err, item) {
-		if ( err ) {
-			responseActions.sendDataBaseError(response, err);
-		}
-		else {
-			if ( item.token == data.token ) {
-				setUserToken(item, response, callback);
-			}
-			else {
-				responseActions.sendResponse(response, 401);
-			}
-		}
-	});
-}
-
-function checkExistingEmail (data, response) {
-	if ( data.email ) {
-		checkEmail(data.email, response, function () {
-			responseActions.sendResponse(response, 200);
-		});
-	}
-}
-
-function checkExistingNickname (data, response) {
-	if ( data.nickname ) {
-		checkNickname(data.nickname, response, function () {
-			responseActions.sendResponse(response, 200);
-		});
-	}
-}
-
 function handleDbError(err, item, callback) {
 	if ( err ) {
 		responseActions.sendDataBaseError(response, err);
@@ -80,6 +27,40 @@ function handleDbError(err, item, callback) {
 
 var usersCtrl = (function () {
 	return {
+		setUserToken: function(data, response, callback) {
+			crypto.randomBytes(48, function(ex, buf) {
+				var token = buf.toString('hex'),
+					collection = db.collection('users');
+
+				collection.findAndModify({email: data.email}, [['email', 1]], {$set: {token: token}}, {}, function (err, object) {
+					if ( err ) {
+						responseActions.sendDataBaseError(response, err);
+					}
+					else {
+						( callback ) && callback(token, data);
+					}
+				});
+			});
+		},
+		checkToken: function(data, response, callback) {
+			usersCtrl.compareToken(data, response, callback);
+		},
+		compareToken: function(data, response, callback) {
+			var collection = db.collection('users');
+			collection.findOne({email: data.email}, function (err, item) {
+				if ( err ) {
+					responseActions.sendDataBaseError(response, err);
+				}
+				else {
+					if ( item.token == data.token ) {
+						usersCtrl.setUserToken(item, response, callback);
+					}
+					else {
+						responseActions.sendResponse(response, 401);
+					}
+				}
+			});
+		},
 		userLogin: function(user, response, callback) {
 			var email = user.email,
 				password = user.password,
@@ -89,7 +70,7 @@ var usersCtrl = (function () {
 
 				handleDbError(err, item, function (item) {
 					if ( item && item.password === cryptoPass ) {
-						setUserToken(item, response, callback);
+						usersCtrl.setUserToken(item, response, callback);
 					}
 					else {
 						responseActions.sendResponse(response, 403);
@@ -124,7 +105,7 @@ var usersCtrl = (function () {
 			usersCtrl.checkEmail(email, response, function () {
 				usersCtrl.checkNickname(nickname, response, function () {
 					usersCtrl.registerUser(data, response, function () {
-						setUserToken(data, response, callback);
+						usersCtrl.setUserToken(data, response, callback);
 					});
 				});
 			});
@@ -322,13 +303,13 @@ var commentsCtrl = (function () {
 			collections.comments.findOne({_id: commentId}, function (err, comment) {
 				handleDbError(err, comment, function (comment) {
 					if ( comment.userId.toString() == user._id.toString() ) {
-						responseActions.sendResponse(response, 403, responseActions.errors.evaluateComment);
+						responseActions.sendResponse(response, 403, {message: responseActions.errors.evaluateComment});
 						return;
 					}
 
 					for ( var i = 0, len = comment.evaluators.length; i < len; i++ ) {
 						if ( comment.evaluators[i].toString() == user._id.toString() ) {
-							responseActions.sendResponse(response, 403, responseActions.errors.evaluateComment);
+							responseActions.sendResponse(response, 403, {message: responseActions.errors.evaluateComment});
 							return;
 						}
 					}
@@ -354,7 +335,7 @@ var commentsCtrl = (function () {
 									}}, function (err) {
 
 										handleDbError(err, null, function () {
-											responseActions.sendResponse(response, 200, comment.rating);
+											responseActions.sendResponse(response, 200, {rating: comment.rating});
 										});
 
 									});
@@ -486,7 +467,7 @@ var talksCtrl = (function () {
 					collections.users.findOne({_id: item.author}, userFields, function (err, authUser) {
 						handleDbError(err, authUser, function (authUser) {
 							item.author = authUser;
-							item.isCanSubscribe = (authUser._id.toString() != user._id.toString());
+							item.isCanSubscribe = item.isCanEvaluate = (authUser._id.toString() != user._id.toString());
 							
 							if ( item.isCanSubscribe ) {
 								for ( var i = 0, len = item.participants.length; i < len; i++ ) {
@@ -498,7 +479,14 @@ var talksCtrl = (function () {
 							}
 							if ( !item.isCanSubscribe ) {
 								//get nicknames of the participants
-								getTalkParticipants(item, response);
+								getTalkParticipants(item, response, function (item) {
+									for ( var i = 0, len = item.evaluators.length; i < len; i++ ) {
+										if ( user._id.toString() == item.evaluators[i].toString() ) {
+											item.isCanEvaluate = false;
+											break;
+										}
+									}
+								});
 							}
 							else {
 								item.participants = [];
@@ -555,12 +543,12 @@ var talksCtrl = (function () {
 			collections.talks.findOne({_id: talkId}, function (err, talk) {
 				handleDbError(err, talk, function (talk) {
 					if ( talk.author.toString() == user._id.toString() ) {
-						responseActions.sendResponse(response, 403, responseActions.errors.evaluateTalk);
+						responseActions.sendResponse(response, 403, {message: responseActions.errors.evaluateTalk});
 						return;
 					}
 					for ( var i = 0, len = talk.evaluators.length; i < len; i++ ) {
 						if ( talk.evaluators[i].toString() == user._id.toString() ) {
-							responseActions.sendResponse(response, 403, responseActions.errors.evaluateTalk);
+							responseActions.sendResponse(response, 403, {message: responseActions.errors.evaluateTalk});
 							return;
 						}
 					}
@@ -585,7 +573,7 @@ var talksCtrl = (function () {
 									}}, function (err) {
 										//if update of the user was successful
 										handleDbError(err, null, function () {
-											responseActions.sendResponse(response, 200, talk.rating + mark);
+											responseActions.sendResponse(response, 200, {rating: talk.rating + mark});
 										});
 									});
 								});
@@ -600,8 +588,6 @@ var talksCtrl = (function () {
 })();
 
 exports.setDB = setDB;
-exports.checkToken = checkToken;
-exports.setUserToken = setUserToken;
 exports.usersCtrl = usersCtrl;
 exports.talksCtrl = talksCtrl;
 exports.commentsCtrl = commentsCtrl;

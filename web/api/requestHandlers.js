@@ -8,7 +8,7 @@ var mongoActions = require('./mongodb/mongoActions.js'),
 var requestHandler = (function () {
 	function checkIsUserLogined (data, response, session, callback) {
 		if ( session && session.email && session.token ) {
-			mongoActions.checkToken(session, response, function (token, user) {
+			mongoActions.usersCtrl.checkToken(session, response, function (token, user) {
 				sessionActions.setSessionData(session, token, session);
 				( callback ) && callback(user);
 			});
