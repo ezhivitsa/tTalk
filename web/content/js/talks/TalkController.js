@@ -2,6 +2,8 @@ app.controller('TalkCtrl', ['$scope', '$resource', '$routeParams', '$q', functio
 	
 	var apiService = $resource('../api/:action',{
 				action: '@action'
+			},{
+				subscribe: {method:'POST', isArray:true }
 			}),
 		pageCount = { val: 1 };
 
@@ -12,7 +14,6 @@ app.controller('TalkCtrl', ['$scope', '$resource', '$routeParams', '$q', functio
 			function ( response ) {
 				defer.resolve();
 				$scope.talk.date = (new Date($scope.talk.date)).toLocaleString();
-				console.log($scope.talk);
 			},
 			function ( response ) {
 				defer.reject({
@@ -26,7 +27,6 @@ app.controller('TalkCtrl', ['$scope', '$resource', '$routeParams', '$q', functio
 	function getComments( page , size ) {
 		var comments = apiService.get({ action: 'comments', id: $routeParams.id, page: page.val, page_size: size },
 			function ( response ) {
-				console.log(comments)
 				if (page.val != 1) {
 					$scope.comments = $scope.comments.concat(comments.comments);
 					$scope.isCommentsEnd = comments.isEnd;
@@ -49,7 +49,7 @@ app.controller('TalkCtrl', ['$scope', '$resource', '$routeParams', '$q', functio
 		if (!$scope.talk.isCanSubscribe) {
 			return;
 		}
-		var participants = apiService.save({ action: 'subscribe' },{ id: $routeParams.id },function(response) {
+		var participants = apiService.subscribe({ action: 'subscribe' },{ id: $routeParams.id },function(response) {
 				defer.resolve();
 				$scope.talk.isCanSubscribe = false;
 				$scope.talk.participants = participants;
