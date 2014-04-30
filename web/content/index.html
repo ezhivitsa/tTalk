@@ -13,27 +13,16 @@
 </head>
 <body ng-app="tTalk" id="myTop">
 	<header class="mainHeader" ng-controller="HeadCtrl">
-		<div class="myHeader">
+		<div class="myHeader clearfix">
 			<a href="#/main" class="logo"><img src="/img/logo.png" alt="tTalk"></a>
-			<nav class="userWrapper" ng-show="visHeader" ng-cloak>
+			<div class="banner">
+				You banner can be here
+			</div>
+			<nav class="userWrapper" ng-if="visHeader" ng-cloak>
 				<div class="user">
 					Hello <a href="#/userprofile">{{userNickname}}</a>
 				</div>
 				<a href="#" class="logout" ng-click="logout($event)">Logout</a>
-			</nav>
-			<nav class="myMenu">
-				<ul class="verticalNav">
-					<li>
-						<a href="#/main">Main</a>
-					</li>
-					<li>
-						<a href="#/about">About tTalk</a>
-					</li>
-					<li>
-						<a href="#/us">About us</a>
-					</li>
-				</ul>
-				<a href="#myTop" class="top"></a>
 			</nav>
 		</div>
 	</header>

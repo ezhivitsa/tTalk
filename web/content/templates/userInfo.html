@@ -1,19 +1,19 @@
 <div class="userInfo">
 	<div class="wrapper">
 		<h3>User {{(!!userData.firstName && !!userData.lastName) ? userData.firstName + " " + userData.lastName : user.nickname}}</h3>
-		<div ng-show="!!userData.city">
+		<div class="info" ng-if="!!userData.city">
 			Address:
 			<span>{{userData.city}}</span>
 		</div>
-		<div ng-show="!!userData.about">
+		<div class="info" ng-if="!!userData.about">
 			Information about user:
 			<span class="big">{{userData.about}}</span>
 		</div>
-		<div ng-show="!!userData.job">
+		<div class="info" ng-if="!!userData.job">
 			Job:
 			<span>{{userData.job}}</span>
 		</div>
-		<div ng-show="!!userData.talks">
+		<div class="list" ng-if="!!userData.talks">
 			<h4>Most popular talk of {{userData.talksNumber}}</h4>
 			<ul class="talks">
 				<li ng-repeat="(key, value) in userData.talks">

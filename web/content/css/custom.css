@@ -1,19 +1,26 @@
 .mainHeader {
-	position: relative;
 	width: 100%;
-	height: 190px;
 	margin-bottom: 30px;
-	background: #CCECFA;
+	background: #008cba;
 }
 
 .myHeader {
-	position: absolute;
-	top: 20px;
-	left: 50%;
+	position: relative;
 	width: 980px;
-	margin-left: -490px;
-	background: #008cba;
-	-webkit-transform: rotate(1deg);
+	margin: 0 auto;
+	height: 150px;
+}
+
+.myHeader .banner {
+	position: absolute;
+	width: 500px;
+	height: 130px;
+	left: 50%;
+	top: 10px;
+	margin-left: -250px;
+	background: #fff;
+	text-align: center;
+	line-height: 130px;
 }
 
 .myHeader .logo {
@@ -23,14 +30,15 @@
 }
 
 .myHeader .logo img {
-	width: 280px;
+	width: 200px;
 }
 
 .myHeader .userWrapper {
 	float: right;
-	margin: 10px;
-	font-size: 20px;
-	-webkit-transform: rotate(-1deg);
+	margin-top: 40px;
+	font-size: 18px;
+	line-height: 30px;
+	text-align: right;
 }
 
 .myHeader .userWrapper .user {
@@ -45,74 +53,46 @@
 	color: #fff;
 }
 
-.myHeader .myMenu {
-	width: 1000px;
-	float: left;
-}
-
-.myHeader .myMenu .verticalNav {
-	list-style-type: none;
-	padding: 0;
-	margin: 0;
-}
-
-.myHeader .myMenu .verticalNav li {
-	float: left;
-	width: 150px;
-	margin: 0 30px;
-	line-height: 30px;
-	background: #fff;
-	border: 3px solid red;
-	text-align: center;
-	-webkit-transform: rotate(-2deg);
-}
-
-.myHeader .myMenu .verticalNav li a {
-	display: block;
-	width: 100%;
-	height: 100%;
-}
-
 .content {
 	width: 980px;
 	margin: 0 auto;
 }
 
-.content .login, 
-.content .registration {
+.login, 
+.registration {
 	text-align: center;
 }
 
-.content .login .loginForm,
-.content .registration .regForm {
+.login .loginForm,
+.registration .regForm {
 	width: 500px;
 	margin: 20px auto;
 }
 
-.content .registration .regForm input[type=email],
-.content .registration .regForm input[type=password] {
+.registration .regForm input[type=email],
+.registration .regForm input[type=password] {
 	-webkit-box-shadow: 0 0 0px 1000px white inset;
 }
 
-.content .login .error, 
-.content .login button,
-.content .registration .error,
-.content .registration button,
-.content .createTalk .talkForm button,
-.content .userprofile .userForm button {
+.login .error, 
+.login button,
+.registration .error,
+.registration button,
+.createTalk .talkForm button,
+.userprofile .userForm button {
 	border-radius: 5px;
 }
 
-.content .login .button,
-.content .registration .button {
+.login .button,
+.registration .button {
 	width: 200px;
 }
 
-.content .req {
+.req {
 	position: relative;
 }
 
-.content .req:after {
+.req:after {
 	content: "*";
 	display: inline-block;
 	color: red;
@@ -123,68 +103,68 @@
 	font-size: 20px;
 }
 
-.content .info {
+.info {
 	text-align: start;
 }
 
-.content .errorBlock {
+.errorBlock {
 	width: 500px;
 	margin: 10% auto;
 	text-align: center;
 }
-.content .errorBlock .error {
+.errorBlock .error {
 	font-size: 20px;
 	line-height: 50px;
 	border-radius: 5px;
 }
-.content .errorBlock .vcard {
+.errorBlock .vcard {
 	width: 100%;
 }
 
-.content .createTalk legend {
+.createTalk legend {
 	margin: 20px auto;
 	font-size: 36px;;
 	text-transform: uppercase;
 }
 
-.content .createTalk .talkForm {
+.createTalk .talkForm {
 	width: 90%;
 	margin: 0 auto;
 }
 
-.content .createTalk .talkForm label {
+.createTalk .talkForm label {
 	margin: 5px 0 5px 5px;
 	font-size: 14px;
 }
 
-.content .createTalk .talkForm .title {
+.createTalk .talkForm .title {
 	width: 250px;
 }
 
-.content .createTalk .talkForm .description textarea {
+.createTalk .talkForm .description textarea {
 	height: 205px;
 	resize:none;
 }
 
-.content .createTalk .talkForm .date {
+.createTalk .talkForm .date {
 	width: 190px;
 }
 
-.content .createTalk .talkForm .file {
+.createTalk .talkForm .file {
 	width: 300px;
 }
 
-.content .createTalk .talkForm .button {
+.createTalk .talkForm .button {
 	display: block;
 	width: 200px;
 	margin: 0 auto;
 }
 
-.content .createTalk .req:after  {
+.createTalk .req:after  {
 	top: 20px;
 }
 
-.content .main .talks {
+.main .talks {
 	width: 930px;
 	margin: 0 auto;
 	padding: 0;
@@ -193,14 +173,14 @@
 	overflow: hidden;
 }
 
-.content .main .talks li {
+.main .talks li {
 	float: left;
 	display: block;
 	width: 310px;
 	height: 200px;
 }
 
-.content .main .talks .talkPrev {
+.main .talks .talkPrev {
 	position: relative;
 	display: block;
 	max-height: 180px;
@@ -213,11 +193,11 @@
 	box-shadow:         0px 0px 5px 0px rgba(50, 50, 50, 0.75);	
 }
 
-.content .main .talks .talkPrev img {
+.main .talks .talkPrev img {
 	width: 290px;
 }
 
-.content .main .talks .talkPrev .title {
+.main .talks .talkPrev .title {
 	position: absolute;
 	display: block;
 	left: 0;
@@ -232,26 +212,26 @@
 	transition: bottom 0.3s;
 }
 
-.content .main .talks .talkPrev:hover .title {	
+.main .talks .talkPrev:hover .title {	
 	bottom: 0px;
 }
 
-.content .main .canCreate {
+.main .canCreate {
 	text-align: center;
 	line-height: 50px;
 }
 
-.content .main .moreButton {
+.main .moreButton {
 	display: block;
 	margin: 0 auto;
 }
 
-.content .userprofile .userForm {
+.userprofile .userForm {
 	width: 80%;
 	margin: 0 auto;
 }
 
-.content .userprofile .userForm label {
+.userprofile .userForm label {
 	display: inline-block;
 	margin: 10px 5px 5px 0px;
 	font-size: 14px;
@@ -260,54 +240,54 @@
 	text-align: right;
 }
 
-.content .userprofile .userForm input {
+.userprofile .userForm input {
 	display: inline-block;
 	width: 50%;
 }
 
-.content .userprofile .userForm textarea {
+.userprofile .userForm textarea {
 	display: inline-block;
 	width: 80%;
 	height: 205px;
 	resize:none;
 }
 
-.content .userprofile .userForm .button {
+.userprofile .userForm .button {
 	display: block;
 	width: 200px;
 	margin: 0 auto;
 }
 
-.content .talk header .date {
+.talk header .date {
 	float: right;
 	display: block;
 	margin: 35px 10px 0 0;
 }
 
-.content .talk header h2 {
+.talk header h2 {
 	padding: 5px 0 0 5px;
-	border-bottom: 1px solid #C5BABA;
+	border-bottom: 1px solid #DADADA;
 }
 
-.content .talk header .author {
+.talk header .author {
 	display: block;
 	margin: 0 0 20px 5px;
 }
 
-.content .talk article img {
+.talk article img {
 	display: block;
 	width: 800px;
 	margin: 0 auto;
 }
 
-.content .talk .description {
+.talk .description {
 	display: block;
 	margin: 20px 0 5px;
 	padding: 0 20px 10px;
-	border-bottom: 1px solid #C4C4C4;
+	border-bottom: 1px solid #DADADA;
 }
 
-.content .talk .subButton {
+.talk .subButton {
 	float: left;
 	display: block;
 	width: 100px;
@@ -319,17 +299,17 @@
 	border-radius: 5px;
 }
 
-.content .talk .subLinks {
+.talk .subLinks {
 	width: 960px;
 	margin: 0 auto;
 }
 
-.content .talk .subLinks div {
+.talk .subLinks div {
 	float: right;
 	height: 24px;
 }
 
-.content .talk .evalButton {
+.talk .evalButton {
 	display: inline-block;
 	width: 24px;
 	height: 24px;	
@@ -340,23 +320,75 @@
 	vertical-align: middle;
 }
 
-.content .talk .like {
+.talk .like {
 	background-color: #2F8D1D;
 	line-height: 24px;
 }
 
-.content .talk .dislike {
+.talk .dislike {
 	background-color: #666666;
 	height: 24px;
 	line-height: 20px;
 }
 
-.content .talk .commentsWrapper {
+.talk .commentsWrapper {
 	width: 800px;
 	margin: 0 auto;
 }
 
-.content .talk .comment {
+.talk .subscribers {
+	display: block;
+	border: 1px solid #DADADA;
+	padding: 5px 20px 5px 5px;
+	border-radius: 5px;
+	list-style-type: none;
+	margin: 10px 10px 40px;
+}
+
+.talk .subscribers > li {
+	float: left;
+	display: block;
+}
+
+.talk .subscribers > li > a {
+	position: relative;
+	display: block;
+	padding: 2px 20px;
+	background-color: rgb(219, 28, 28);
+	border-radius: 2px 0 0 2px;
+	line-height: 20px;	
+	color: #ffffff;
+}
+
+.talk .subscribers > li > a:after {
+	position: absolute;
+	display: block;
+	content: "";
+	z-index: 1;
+	width: 0;
+	height: 0;
+	top: -1px;
+	right: -16px;
+	border-top: 13px solid transparent;
+	border-left: 16px solid #ffffff;
+	border-bottom: 13px solid transparent;
+}
+
+.talk .subscribers > li > a:before {
+	position: absolute;
+	display: block;
+	content: "";
+	z-index: 2;
+	width: 0;
+	height: 0;
+	top: 0px;
+	right: -15px;
+	border-top: 12px solid transparent;
+	border-left: 15px solid rgb(219, 28, 28);
+	border-bottom: 12px solid transparent;
+}
+
+.talk .comment {
 	width: 100%;
 	min-height: 200px;
 	background: #ddd;
@@ -366,24 +398,99 @@
 	margin-bottom: 20px;
 }
 
-.content .talk .cAuthor {
+.talk .cAuthor {
 	display: block;
 	font-size: 20px;
 	line-height: 30px;
 }
 
-.content .talk .text {
+.talk .text {
 	min-height: 110px;
 	padding: 5px;
 	background-color: #fff;
 }
 
-.content .talk .bottom {
+.talk .bottom {
 	position: absolute;
 	bottom: 10px;
 	width: 775px;
 }
 
-.content .talk .cEval {
+.talk .cEval {
 	float: right;
+}
+
+.talk .more,
+.talk .addComment {
+	position: relative;
+	width: 200px;
+	padding: 0;
+	line-height: 40px;
+	border-radius: 5px;
+	display: block;
+	margin: 20px auto;
+}
+
+.talk .more:after {
+	position: absolute;
+	display: block;
+	content: "";
+	width: 980px;
+	height: 1px;
+	background-color: #DADADA;
+	bottom: -20px;
+	left: -390px;
+}
+
+.talk form {
+	width: 800px;
+	padding-top: 20px;
+	margin: 0 auto;
+}
+
+.talk form textarea {
+	resize: none;
+}
+
+.userInfo h3 {
+	text-align: center;
+}
+
+.userInfo .info {
+	width: 800px;
+	margin: 20px auto;
+	text-align: right;
+	line-height: 26px;
+}
+
+.userInfo .info > span {
+	display: inline-block;
+	background-color: #DADADA;
+	padding: 5px;
+	width: 75%;
+	float: right;
+	text-align: left;
+	margin-left: 10px;
+	border-radius: 4px;
+	line-height: 18px;
+}
+
+.userInfo .list {
+	text-align: center;
+	margin-top: 40px;
+}
+
+.userInfo .list h4 {
+	border-bottom: 1px solid #DADADA;
+	width: 500px;
+	margin: 0 auto;
+}
+
+.userInfo .list ul {
+	display: block;
+	width: 400px;
+	margin: 0 auto;
+	text-align: left;
+	list-style-type: none;
+	margin-top: 20px;
 }
