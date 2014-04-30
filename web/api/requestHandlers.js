@@ -216,8 +216,8 @@ var requestHandler = (function () {
 				}
 			}
 		},
-		subscribe: {//post
-			get: function (data, response, session) {
+		subscribe: {
+			post: function (data, response, session) {
 				if ( data.id ) {
 					checkIsUserLogined(data, response, session, function (user) {
 						if ( user.subscribedTalks.indexOf(data.id) + 1 ) {
