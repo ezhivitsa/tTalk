@@ -1,4 +1,4 @@
-app.controller('CreateTalkCtrl', ['$scope', '$fileUploader', function ( $scope, $fileUploader ) {
+app.controller('CreateTalkCtrl', ['$scope', '$fileUploader', '$location', function ( $scope, $fileUploader, $location ) {
 	var uploader = $scope.uploader = $fileUploader.create({
 		scope: $scope,
 		url: '../api/createtalk',
@@ -12,11 +12,11 @@ app.controller('CreateTalkCtrl', ['$scope', '$fileUploader', function ( $scope, 
 	});
 
 	uploader.bind('success',function ( event, xhr, item, response ) {
-		console.info('success', xhr, item, response);
+		$location.path('/talk/' + response.id);
+		$scope.$apply();
 	});
 
 	uploader.bind('error', function ( event, xhr, item, response ) {
-		console.info('Error', xhr, item, response);
 	});
 
 	$scope.createTalk = function( event ) {
@@ -25,7 +25,6 @@ app.controller('CreateTalkCtrl', ['$scope', '$fileUploader', function ( $scope, 
 			description: $scope.talk.description,
 			date: $scope.talk.date
 		});
-		console.log(uploader.getNotUploadedItems())
 	    uploader.uploadAll();
 	};
 	

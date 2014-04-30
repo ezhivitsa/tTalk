@@ -49,10 +49,10 @@ app.controller('TalkCtrl', ['$scope', '$resource', '$routeParams', '$q', functio
 		if (!$scope.talk.isCanSubscribe) {
 			return;
 		}
-		var talk = apiService.save({ action: 'subscribe' },{ id: $routeParams.id },function(response) {
+		var participants = apiService.save({ action: 'subscribe' },{ id: $routeParams.id },function(response) {
 				defer.resolve();
 				$scope.talk.isCanSubscribe = false;
-				$scope.talk.participants = talk.participants;
+				$scope.talk.participants = participants;
 			},function(response) {
 				defer.reject({
 					message: response.data.message,
