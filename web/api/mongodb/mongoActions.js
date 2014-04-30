@@ -448,7 +448,8 @@ var talksCtrl = (function () {
 					author: 1,
 					numberOfParticipants: 1,
 					rating: 1,
-					participants: 1
+					participants: 1,
+					evaluators: 1
 				},
 				o_id = new BSON.ObjectID(data.id);
 
@@ -479,18 +480,20 @@ var talksCtrl = (function () {
 							}
 							if ( !item.isCanSubscribe ) {
 								//get nicknames of the participants
-								getTalkParticipants(item, response, function (item) {
-									for ( var i = 0, len = item.evaluators.length; i < len; i++ ) {
-										if ( user._id.toString() == item.evaluators[i].toString() ) {
-											item.isCanEvaluate = false;
+								getTalkParticipants(item, response, function (talk) {
+									for ( var i = 0, len = talk.evaluators.length; i < len; i++ ) {
+										if ( user._id.toString() == talk.evaluators[i].toString() ) {
+											talk.isCanEvaluate = false;
 											break;
 										}
 									}
+									delete talk['evaluators'];
+									responseActions.sendResponse(response, 200, talk);
 								});
 							}
 							else {
 								item.participants = [];
-								//item.isCanEvaluate = true;								
+								delete item['evaluators'];							
 								responseActions.sendResponse(response, 200, item);
 							}
 						});
