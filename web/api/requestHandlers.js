@@ -133,7 +133,7 @@ var requestHandler = (function () {
 								            	responseActions.sendResponse(response, 403, {field: 'upload', message: responseActions.errors.upload});
 								            } 
 								            else {
-								                responseActions.sendResponse(response, 200, talkId);
+								                responseActions.sendResponse(response, 200, {id: talkId});
 								            }
 								        });				 
 									});
