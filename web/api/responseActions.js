@@ -12,6 +12,7 @@ var errors = {
 	date: 'Invalid date',
 	subscribe: 'You are already subscribed to this talk',
 	evaluateComment: 'You can\'t evaluate this comment',
+	deleteComment: 'You can\'t delete this comment',
 	evaluateTalk: 'You can\'t evaluate this talk'
 }
 

@@ -5,7 +5,11 @@ var mongodb = require('./mongodb.js'),
 	BSON = mongo.BSONPure;
 
 var db = null,
-	collections = {};
+	collections = {},
+	userRoles = {
+		admin: 'admin',
+		client: 'client'
+	}
 
 function setDB(dataBase) {
 	db = dataBase;
@@ -92,7 +96,8 @@ var usersCtrl = (function () {
 					nickname: nickname,
 					rating: 0,
 					talks: [],
-					subscribedTalks: []
+					subscribedTalks: [],
+					role: userRoles.client
 				};
 
 			if ( firstName ) {
@@ -209,7 +214,8 @@ var commentsCtrl = (function () {
 					text: data.text,
 					rating: 0,
 					evaluators: [],
-					created: now.getTime() + 60 * 1000 * now.getTimezoneOffset()
+					created: now.getTime() + 60 * 1000 * now.getTimezoneOffset(),
+					isActual: true
 				};
 
 			collections.comments.insert(comment, {w: 1, unique: true}, function (err, result) {
@@ -238,7 +244,8 @@ var commentsCtrl = (function () {
 					text: 1,
 					rating: 1,
 					userId: 1,
-					evaluators: 1
+					evaluators: 1,
+					isActual: 1
 				}
 
 			collections.comments.find({talkId: data.id}, fields, {
@@ -278,15 +285,25 @@ var commentsCtrl = (function () {
 
 							for ( var i = 0, len = items.length; i < len; i++ ) {
 								items[i].author = usersId[items[i].userId.toString()];
-								items[i].isCanEvaluate = (user._id.toString() != items[i].userId.toString());
-								if ( items[i].isCanEvaluate ) {
-									for ( var j = 0; j < items[i].evaluators.length; j++ ) {
-										if ( items[i].evaluators[j].toString() == user._id.toString() ) {
-											items[i].isCanEvaluate = false;
-											break;
-										}
-									}
+
+								if ( !items[i].isActual ) {
+									items[i].isCanEvaluate = false;
+									delete items[i]['text'];
 								}
+								else {
+									// if comment is actual it can be evaluated
+									items[i].isCanEvaluate = (user._id.toString() != items[i].userId.toString());
+									items[i].isCanDelete = (user._id.toString() === items[i].userId.toString() || user.role === userRoles.admin);
+									if ( items[i].isCanEvaluate ) {
+										for ( var j = 0; j < items[i].evaluators.length; j++ ) {
+											if ( items[i].evaluators[j].toString() == user._id.toString() ) {
+												items[i].isCanEvaluate = false;
+												break;
+											}
+										}
+									}									
+								}
+
 								delete items[i]['evaluators'];
 							}
 
@@ -302,6 +319,10 @@ var commentsCtrl = (function () {
 			var commentId = new BSON.ObjectID(data.id);
 			collections.comments.findOne({_id: commentId}, function (err, comment) {
 				handleDbError(err, comment, function (comment) {
+					if ( !comment.isActual ) {
+						responseActions.sendResponse(response, 403, {message: responseActions.errors.evaluateComment});
+						return;
+					}
 					if ( comment.userId.toString() == user._id.toString() ) {
 						responseActions.sendResponse(response, 403, {message: responseActions.errors.evaluateComment});
 						return;
@@ -345,6 +366,19 @@ var commentsCtrl = (function () {
 						});
 					});
 
+				});
+			});
+		},
+		delete: function (data, user, response) {
+			var commentId = new BSON.ObjectID(data.id);
+			collections.comments.findOne({_id: commentId}, function (err, comment) {
+				handleDbError(err, comment, function (comment) {
+					if ( !comment.isActual || ( comment.userId.toString() != user._id.toString() && user.role != userRoles.admin ) ) {
+						responseActions.sendResponse(response, 403, {message: responseActions.errors.deleteComment});
+						return;
+					}
+
+					comment.isActual = false;
 				});
 			});
 		}

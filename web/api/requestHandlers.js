@@ -269,6 +269,18 @@ var requestHandler = (function () {
 				}
 			}
 		},
+		deleteComment: {
+			post: function (data, response, session) {
+				if ( data.id ) {
+					checkIsUserLogined(data, response, session, function (user) {
+						mongoActions.commentsCtrl.delete(data, user, response);
+					});
+				}
+				else {
+					responseActions.sendResponse(response, 403, {field: 'data', message: responseActions.errors.data});
+				}
+			}
+		},
 		evaluateTalk: {
 			post: function (data, response, session) {
 				if ( data.id && data.mark ) {
