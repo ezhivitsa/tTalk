@@ -25,7 +25,12 @@ function handleDbError(err, item, callback) {
 		responseActions.sendDataBaseError(response, err);
 	}
 	else {
-		( callback ) && callback(item);
+		if ( item ) {
+			( callback ) && callback(item);			
+		}
+		else {
+			responseActions.sendResponse(response, 404);
+		}
 	}
 }
 
@@ -228,7 +233,7 @@ var commentsCtrl = (function () {
 							item.comments.push(result[0]._id);
 							collections.talks.update({_id: o_id}, {$set: {comments: item.comments}}, function (err) {
 
-								handleDbError(err, null, function () {
+								handleDbError(err, {}, function () {
 									responseActions.sendResponse(response, 200);
 								});
 							});
@@ -345,7 +350,7 @@ var commentsCtrl = (function () {
 						evaluators: comment.evaluators,
 						rating: comment.rating
 					}}, function (err) {
-						handleDbError(err, null, function () {
+						handleDbError(err, {}, function () {
 
 							collections.users.findOne({_id: comment.userId}, function (err, author) {
 								handleDbError(err, author, function (author) {
@@ -355,7 +360,7 @@ var commentsCtrl = (function () {
 										rating: author.rating
 									}}, function (err) {
 
-										handleDbError(err, null, function () {
+										handleDbError(err, {}, function () {
 											responseActions.sendResponse(response, 200, {rating: comment.rating});
 										});
 
@@ -378,7 +383,11 @@ var commentsCtrl = (function () {
 						return;
 					}
 
-					comment.isActual = false;
+					collections.comments.update({_id: commentId}, {$set: {isActual: false}}, function (err) {
+						handleDbError(err, {}, function () {
+							responseActions.sendResponse(response, 200);
+						});
+					});
 				});
 			});
 		}
@@ -424,6 +433,7 @@ var talksCtrl = (function () {
 			talk.created = now.getTime() + 60 * 1000 * now.getTimezoneOffset();
 			talk.lastModified = now.getTime() + 60 * 1000 * now.getTimezoneOffset();
 			talk.date = date.getTime() + 60 * 1000 * date.getTimezoneOffset();
+			talk.isActual = true;
 
 			if ( talk.date != talk.date ) {
 				responseActions.sendResponse(response, 403, {field: 'date', message: responseActions.errors.date});
@@ -450,7 +460,7 @@ var talksCtrl = (function () {
 				page = ( data.page < 1 || !data.page ) ? 1 : data.page,
 				result = [];
 
-			collections.talks.find({}, {title: 1, date: 1, path: 1, extension: 1}, {
+			collections.talks.find({isActual: true}, {title: 1, date: 1, path: 1, extension: 1}, {
 				sort: {date: -1}, 
 				skip: perPage * (page - 1), 
 				limit: perPage + 1
@@ -559,12 +569,12 @@ var talksCtrl = (function () {
 							numberOfParticipants: item.numberOfParticipants
 						}}, function (err) {
 						//if update of the talk was successful
-						handleDbError(err, null, function () {
+						handleDbError(err, {}, function () {
 							user.subscribedTalks.push(talk_id);
 
 							collections.users.update({email: user.email}, {$set: {subscribedTalks: user.subscribedTalks}}, function (err) {
 								//if update of the user was successful
-								handleDbError(err, null, function () {
+								handleDbError(err, {}, function () {
 									// get participants of the talk
 									getTalkParticipants(item, response);
 								});
@@ -600,7 +610,7 @@ var talksCtrl = (function () {
 						rating: talk.rating + mark
 					}}, function (err) {
 
-						handleDbError(err, null, function () {
+						handleDbError(err, {}, function () {
 							collections.users.findOne({_id: talk.author}, function (err, author) {
 								handleDbError(err, author, function (author) {
 									//update rating of the talk author
@@ -608,7 +618,7 @@ var talksCtrl = (function () {
 										rating: author.rating + mark * coefficient
 									}}, function (err) {
 										//if update of the user was successful
-										handleDbError(err, null, function () {
+										handleDbError(err, {}, function () {
 											responseActions.sendResponse(response, 200, {rating: talk.rating + mark});
 										});
 									});
@@ -618,6 +628,12 @@ var talksCtrl = (function () {
 
 					});
 				});
+			});
+		},
+		delete: function (data, user, response) {
+			var talkId = new BSON.ObjectID(data.id);
+			collections.talks.findOne({_id: talkId}, function (err, talk) {
+
 			});
 		}
 	};

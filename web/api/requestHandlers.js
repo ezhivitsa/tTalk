@@ -292,6 +292,18 @@ var requestHandler = (function () {
 					responseActions.sendResponse(response, 403, {field: 'data', message: responseActions.errors.data});
 				}
 			}
+		},
+		deleteTalk: {
+			post: function (data, response, session) {
+				if ( data.id ) {
+					checkIsUserLogined(data, response, session, function (user) {
+						mongoActions.talksCtrl.delete(data, user, response);
+					});
+				}
+				else {
+					responseActions.sendResponse(response, 403, {field: 'data', message: responseActions.errors.data});
+				}
+			}
 		}
 	}
 })();
