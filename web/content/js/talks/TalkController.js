@@ -1,4 +1,4 @@
-app.controller('TalkCtrl', ['$scope', '$resource', '$routeParams', '$q', function ( $scope, $resource, $routeParams, $q ) {
+app.controller('TalkCtrl', ['$scope', '$resource', '$routeParams', '$q', '$location', '$rootScope', function ( $scope, $resource, $routeParams, $q, $location, $rootScope ) {
 	
 	var apiService = $resource('../api/:action',{
 				action: '@action'
@@ -16,10 +16,7 @@ app.controller('TalkCtrl', ['$scope', '$resource', '$routeParams', '$q', functio
 				$scope.talk.date = (new Date($scope.talk.date)).toLocaleString();
 			},
 			function ( response ) {
-				defer.reject({
-					message: response.data.message,
-					status: response.status
-				});
+				app.resourceAuthorizedErr($location,$rootScope,response,defer);
 			});
 		return defer.promise;
 	}
@@ -37,6 +34,7 @@ app.controller('TalkCtrl', ['$scope', '$resource', '$routeParams', '$q', functio
 				page.val++;
 			},
 			function ( response ) {
+				app.resourceAuthorizedErr($location,$rootScope,response);
 			});
 	}
 
@@ -54,10 +52,7 @@ app.controller('TalkCtrl', ['$scope', '$resource', '$routeParams', '$q', functio
 				$scope.talk.isCanSubscribe = false;
 				$scope.talk.participants = participants;
 			},function(response) {
-				defer.reject({
-					message: response.data.message,
-					status: response.status
-				});
+				app.resourceAuthorizedErr($location,$rootScope,response,defer);
 			});
 		return defer.promise;
 	};
@@ -74,10 +69,7 @@ app.controller('TalkCtrl', ['$scope', '$resource', '$routeParams', '$q', functio
 				$scope.talk.rating = rating.rating;
 				console.log(rating);
 			},function(response) {
-				defer.reject({
-					message: response.data.message,
-					status: response.status
-				});
+				app.resourceAuthorizedErr($location,$rootScope,response,defer);
 			});
 		return defer.promise;
 	}
@@ -99,25 +91,23 @@ app.controller('TalkCtrl', ['$scope', '$resource', '$routeParams', '$q', functio
 				pageCount.val = 1;
 				getComments(pageCount,10);
 			},function(response) {
-				defer.reject({
-					message: response.data.message,
-					status: response.status
-				});
+				app.resourceAuthorizedErr($location,$rootScope,response,defer);
 			});
 		return defer.promise;
 	}
 
 }]);
 
-app.directive('comment', [ '$resource', '$q', function( $resource, $q ){
+app.directive('comment', [ '$resource', '$q', '$location', '$rootScope', function ( $resource, $q, $location, $rootScope ){
 	return {
 		scope: {
 			data: '=data'
 		},
 		restrict: 'E',
 		template: '<div class="comment">' + 
+					'<a class="removeButton" ng-if="data.isCanDelete" href="#/comment/remove" ng-click="remove($event)"></a>' +
 					'<a class="cAuthor" href="#/userinfo/{{data.author.nickname}}">{{data.author.nickname}}</a>' +
-					'<div class="text">{{data.text}}</div>' +
+					'<div class="text" ng-class="{red: !data.isActual}">{{data.text || "This comment was removed"}}</div>' +
 					'<div class="bottom">' +
 						'<span class="rating">{{data.rating}}</span>' +
 						'<span class="cEval" ng-if="data.isCanEvaluate">' +
@@ -128,22 +118,38 @@ app.directive('comment', [ '$resource', '$q', function( $resource, $q ){
 				'</div>',
 		replace: true,
 		link: function( $scope, iElm, iAttrs, controller ) {
-			var evalTalkService = $resource('/api/evaluatecomment');
+			var evalTalkService = $resource('/api/evaluatecomment'),
+				deleteTalkService = $resource('/api/deletecomment');
 			$scope.cEval = function ( event, mark ) {
 				event.preventDefault();
 				var defer = $q.defer();
 				if (!$scope.data.isCanEvaluate) {
 					return;
 				}
-				var rating = evalTalkService .save({},{ id: $scope.data._id, mark: mark },function(response) {
+				var rating = evalTalkService.save({},{ id: $scope.data._id, mark: mark },function(response) {
 						defer.resolve();
 						$scope.data.isCanEvaluate = false;
 						$scope.data.rating = rating.rating;
 					},function(response) {
-						defer.reject({
-							message: response.data.message,
-							status: response.status
-						});
+						app.resourceAuthorizedErr($location,$rootScope,response,defer);
+					});
+				return defer.promise;
+			};
+
+			$scope.remove = function ( event ) {
+				event.preventDefault();
+				var defer = $q.defer();
+				if (!$scope.data.isCanDelete) {
+					return;
+				}
+				deleteTalkService.save({},{ id: $scope.data._id },function(response) {
+						defer.resolve();
+						$scope.data.isCanEvaluate = false;
+						$scope.data.isCanDelete = false;
+						$scope.data.isActual = false;
+						$scope.data.text = null;
+					},function(response) {
+						app.resourceAuthorizedErr($location,$rootScope,response,defer);
 					});
 				return defer.promise;
 			}

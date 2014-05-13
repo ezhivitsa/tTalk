@@ -1,4 +1,4 @@
-app.controller('MainCtrl',['$scope', '$resource', '$q', '$location', function ( $scope, $resource, $q, $location ) {
+app.controller('MainCtrl',['$scope', '$resource', '$q', '$location', '$rootScope', function ( $scope, $resource, $q, $location, $rootScope ) {
 	var talksService = $resource('../api/talks'),
 		page = 0;
 	$scope.status = localStorage.getItem('isPositiveRating');
@@ -12,7 +12,7 @@ app.controller('MainCtrl',['$scope', '$resource', '$q', '$location', function ( 
 			$scope.isAll = !talksInfo.isEnd;
 		},
 		function ( response ) {
-
+			app.resourceAuthorizedErr($location,$rootScope,response);
 		});
 	};
 	

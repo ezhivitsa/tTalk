@@ -78,3 +78,16 @@ app.sessionVerification = function( $q, $http, $location, $rootScope ) {
 	});
 	return defer.promise;
 };
+
+app.resourceAuthorizedErr = function ( $location, $rootScope, response, defer ) {
+	if (response.status == "401") {
+		$location.path("/");			
+		$rootScope.$broadcast('unlogged');
+		defer && defer.resolve();
+	} else if (defer) {
+		defer.reject({
+			message: response.data.message,
+			status: response.status
+		});
+	}
+}

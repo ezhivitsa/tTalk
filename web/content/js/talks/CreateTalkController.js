@@ -1,4 +1,4 @@
-app.controller('CreateTalkCtrl', ['$scope', '$fileUploader', '$location', function ( $scope, $fileUploader, $location ) {
+app.controller('CreateTalkCtrl', ['$scope', '$fileUploader', '$location', '$rootScope', function ( $scope, $fileUploader, $location, $rootScope ) {
 	var uploader = $scope.uploader = $fileUploader.create({
 		scope: $scope,
 		url: '../api/createtalk',
@@ -17,6 +17,11 @@ app.controller('CreateTalkCtrl', ['$scope', '$fileUploader', '$location', functi
 	});
 
 	uploader.bind('error', function ( event, xhr, item, response ) {
+		if (response.status == "401") {
+			$location.path("/");			
+			$rootScope.$broadcast('unlogged');
+			$scope.$apply();
+		}
 	});
 
 	$scope.createTalk = function( event ) {

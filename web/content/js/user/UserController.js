@@ -1,4 +1,4 @@
-app.controller('UserProfileCtrl', ['$scope', '$resource', '$q', '$location', function ( $scope, $resource, $q, $location ){
+app.controller('UserProfileCtrl', ['$scope', '$resource', '$q', '$location', '$rootScope', function ( $scope, $resource, $q, $location, $rootScope ){
 
 	var userDataService = $resource('../api/myaccount');
 	$scope.myPermisson = false;
@@ -47,17 +47,14 @@ app.controller('UserProfileCtrl', ['$scope', '$resource', '$q', '$location', fun
 				$location.path("/main");
 			},
 			function ( response ) {
-				defer.reject({
-					message: response.data.message,
-					status: response.status
-				});
+				app.resourceAuthorizedErr($location,$rootScope,response,defer);
 			});
 		return defer.promise;
 	}
 	
 }]);
 
-app.controller('UserInfoCtrl', ['$scope', '$resource', '$routeParams', '$q', function ( $scope, $resource, $routeParams, $q ){
+app.controller('UserInfoCtrl', ['$scope', '$resource', '$routeParams', '$q', '$location', '$rootScope', function ( $scope, $resource, $routeParams, $q, $location, $rootScope ){
 
 	var userDataService = $resource('../api/user');
 
@@ -67,10 +64,7 @@ app.controller('UserInfoCtrl', ['$scope', '$resource', '$routeParams', '$q', fun
 			defer.resolve();
 		},
 		function ( response ) {
-			defer.reject({
-				message: response.data.message,
-				status: response.status
-			});
+			app.resourceAuthorizedErr($location,$rootScope,response,defer);
 		});
 
 	return defer.promise;

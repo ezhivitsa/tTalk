@@ -494,3 +494,36 @@
 	list-style-type: none;
 	margin-top: 20px;
 }
+
+.comment .removeButton {
+	float: right;
+	position: relative;
+	width: 25px;
+	height: 25px;
+	border-radius: 20px;
+	background-color: #fff;
+}
+
+.comment .removeButton:after,
+.comment .removeButton:before {
+	position: absolute;
+	content: "";
+	width: 2px;
+	height: 13px;
+	background-color: #0078a0;
+	left: 11.5px;
+	top: 6px;
+}
+
+
+.comment .removeButton:after {
+	-webkit-transform: skewX(-45deg);
+}
+
+.comment .removeButton:before {
+	-webkit-transform: skewX(45deg);
+}
+
+.red {
+	color: rgb(219, 28, 28);
+}
