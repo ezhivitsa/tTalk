@@ -13,7 +13,8 @@ var errors = {
 	subscribe: 'You are already subscribed to this talk',
 	evaluateComment: 'You can\'t evaluate this comment',
 	deleteComment: 'You can\'t delete this comment',
-	evaluateTalk: 'You can\'t evaluate this talk'
+	evaluateTalk: 'You can\'t evaluate this talk',
+	teapot: 'Sorry, but this is talk was removed'
 }
 
 function sendResponse (response, statusCode, responseJSON) {

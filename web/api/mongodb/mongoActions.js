@@ -20,12 +20,12 @@ function setDB(dataBase) {
 	};
 }
 
-function handleDbError(err, item, callback) {
+function handleDbError(response, err, item, callback) {
 	if ( err ) {
 		responseActions.sendDataBaseError(response, err);
 	}
 	else {
-		if ( item ) {
+		if ( item || ( item instanceof Array && item.length ) ) {
 			( callback ) && callback(item);			
 		}
 		else {
@@ -77,7 +77,7 @@ var usersCtrl = (function () {
 
 			collections.users.findOne({email: email}, function (err, item) {
 
-				handleDbError(err, item, function (item) {
+				handleDbError(response, err, item, function (item) {
 					if ( item && item.password === cryptoPass ) {
 						usersCtrl.setUserToken(item, response, callback);
 					}
@@ -122,7 +122,7 @@ var usersCtrl = (function () {
 		},
 		registerUser: function(data, response, callback) {
 			collections.users.insert(data, {w: 1, unique: true}, function (err, result) {
-				handleDbError(err, result, function (result) {
+				handleDbError(response, err, result, function (result) {
 					( callback ) && callback();
 				});		
 			});
@@ -176,14 +176,14 @@ var usersCtrl = (function () {
 			};
 			collections.users.findOne({nickname: data.nickname}, fields, function (err, item) {
 
-				handleDbError(err, item, function (item) {
+				handleDbError(response, err, item, function (item) {
 					var talkFields = ['title'],
 						idTalks = item.talks || [];
 					idTalks.reverse();
 					item.talksNumber = idTalks.length;
 					collections.talks.find({'_id': { $in: idTalks}}, talkFields).toArray(function(err, docs){
 
-						handleDbError(err, docs, function (docs) {
+						handleDbError(response, err, docs, function (docs) {
 							item.talks = docs || [];
 							responseActions.sendResponse(response, 200, item);
 						});
@@ -201,7 +201,7 @@ var usersCtrl = (function () {
 					job: (data.job) ? data.job : ''
 				};
 			collections.users.findAndModify({_id: data.id}, [['email', 1]], {$set: newData}, {}, function (err, object) {
-				handleDbError(err, object, function (object) {
+				handleDbError(response, err, object, function (object) {
 					responseActions.sendResponse(response, 200);
 				});
 			});
@@ -224,16 +224,16 @@ var commentsCtrl = (function () {
 				};
 
 			collections.comments.insert(comment, {w: 1, unique: true}, function (err, result) {
-				handleDbError(err, result, function (result) {
+				handleDbError(response, err, result, function (result) {
 
 					var o_id = new BSON.ObjectID(data.id);
 					collections.talks.findOne({_id: o_id}, function (err, item) {
-						handleDbError(err, item, function (item) {
+						handleDbError(response, err, item, function (item) {
 							//update talk
 							item.comments.push(result[0]._id);
 							collections.talks.update({_id: o_id}, {$set: {comments: item.comments}}, function (err) {
 
-								handleDbError(err, {}, function () {
+								handleDbError(response, err, {}, function () {
 									responseActions.sendResponse(response, 200);
 								});
 							});
@@ -259,7 +259,7 @@ var commentsCtrl = (function () {
 				limit: pageSize + 1
 			}).toArray(function (err, items) {
 
-				handleDbError(err, items, function (items) {
+				handleDbError(response, err, items, function (items) {
 					var len = items.length,
 						isEnd = true;
 					if ( items.length == pageSize + 1 ) {
@@ -282,7 +282,7 @@ var commentsCtrl = (function () {
 
 					collections.users.find({'_id': { $in: usersArr}}, userFields).toArray(function (err, colUsers) {
 
-						handleDbError(err, colUsers, function (colUsers) {
+						handleDbError(response, err, colUsers, function (colUsers) {
 							var usersId = {};
 							for ( var i = 0, len = colUsers.length; i < len; i++ ) {
 								usersId[colUsers[i]._id.toString()] = colUsers[i];
@@ -323,7 +323,7 @@ var commentsCtrl = (function () {
 		evaluate: function (data, user, response) {
 			var commentId = new BSON.ObjectID(data.id);
 			collections.comments.findOne({_id: commentId}, function (err, comment) {
-				handleDbError(err, comment, function (comment) {
+				handleDbError(response, err, comment, function (comment) {
 					if ( !comment.isActual ) {
 						responseActions.sendResponse(response, 403, {message: responseActions.errors.evaluateComment});
 						return;
@@ -350,17 +350,17 @@ var commentsCtrl = (function () {
 						evaluators: comment.evaluators,
 						rating: comment.rating
 					}}, function (err) {
-						handleDbError(err, {}, function () {
+						handleDbError(response, err, {}, function () {
 
 							collections.users.findOne({_id: comment.userId}, function (err, author) {
-								handleDbError(err, author, function (author) {
+								handleDbError(response, err, author, function (author) {
 									//update user rating
 									author.rating += mark * coefficient;
 									collections.users.update({_id: comment.userId}, {$set: {
 										rating: author.rating
 									}}, function (err) {
 
-										handleDbError(err, {}, function () {
+										handleDbError(response, err, {}, function () {
 											responseActions.sendResponse(response, 200, {rating: comment.rating});
 										});
 
@@ -377,14 +377,14 @@ var commentsCtrl = (function () {
 		delete: function (data, user, response) {
 			var commentId = new BSON.ObjectID(data.id);
 			collections.comments.findOne({_id: commentId}, function (err, comment) {
-				handleDbError(err, comment, function (comment) {
+				handleDbError(response, err, comment, function (comment) {
 					if ( !comment.isActual || ( comment.userId.toString() != user._id.toString() && user.role != userRoles.admin ) ) {
 						responseActions.sendResponse(response, 403, {message: responseActions.errors.deleteComment});
 						return;
 					}
 
 					collections.comments.update({_id: commentId}, {$set: {isActual: false}}, function (err) {
-						handleDbError(err, {}, function () {
+						handleDbError(response, err, {}, function () {
 							responseActions.sendResponse(response, 200);
 						});
 					});
@@ -403,7 +403,7 @@ var talksCtrl = (function () {
 
 		collections.users.find({'_id': { $in: item.participants}}, userFields).toArray(function (err, users) {
 
-			handleDbError(err, users, function (users) {
+			handleDbError(response, err, users, function (users) {
 				var usersId = {};
 				for ( var i = 0, len = users.length; i < len; i++ ) {
 					usersId[users[i]._id.toString()] = users[i];
@@ -441,10 +441,10 @@ var talksCtrl = (function () {
 			}
 
 			collections.talks.insert(talk, {w: 1, unique: true}, function (err, result) {
-				handleDbError(err, result, function (result) {
+				handleDbError(response, err, result, function (result) {
 
 					collections.users.findOne({email: user.email}, function (err, item) {
-						handleDbError(err, item, function (item) {
+						handleDbError(response, err, item, function (item) {
 							item.talks.push(result[0]._id);
 							collections.users.update({email: user.email}, {$set: {talks: item.talks}});
 							( callback ) ? callback(result[0]._id) : responseActions.sendResponse(response, 200, {id: result[0]._id});
@@ -466,7 +466,7 @@ var talksCtrl = (function () {
 				limit: perPage + 1
 			}).toArray(function (err, items) {
 
-				handleDbError(err, items, function (items) {
+				handleDbError(response, err, items, function (items) {
 					var len = items.length,
 						isEnd = true;
 					if ( items.length == perPage + 1 ) {
@@ -492,7 +492,8 @@ var talksCtrl = (function () {
 					numberOfParticipants: 1,
 					rating: 1,
 					participants: 1,
-					evaluators: 1
+					evaluators: 1,
+					isActual: 1
 				},
 				o_id = new BSON.ObjectID(data.id);
 
@@ -500,16 +501,20 @@ var talksCtrl = (function () {
 				sort: {rating: -1},
 				limit: 10
 			}, function (err, item) {
-				handleDbError(err, item, function (item) {
-					if ( item ) {
-						item.image = item.path + item._id + item.extension;		
+				handleDbError(response, err, item, function (item) {
+
+					if ( !item.isActual ) {
+						responseActions.sendResponse(response, 418, {message: responseActions.errors.teapot});
+						return;
 					}
+						
+					item.image = item.path + item._id + item.extension;
 					var userFields = {
 							nickname: 1
 						};
 
 					collections.users.findOne({_id: item.author}, userFields, function (err, authUser) {
-						handleDbError(err, authUser, function (authUser) {
+						handleDbError(response, err, authUser, function (authUser) {
 							item.author = authUser;
 							item.isCanSubscribe = item.isCanEvaluate = (authUser._id.toString() != user._id.toString());
 							
@@ -547,8 +552,11 @@ var talksCtrl = (function () {
 		subscribe: function (data, user, response) {
 			var talk_id = new BSON.ObjectID(data.id);
 			//update talks collection
-			collections.talks.findOne({_id: talk_id}, function (err, item) {
-				handleDbError(err, item, function (item) {
+			collections.talks.findOne({
+				_id: talk_id,
+				isActual: true
+			}, function (err, item) {
+				handleDbError(response, err, item, function (item) {
 					if ( item.author.toString() == user._id.toString() ) {
 						responseActions.sendResponse(response, 403, {field: 'subscribe', message: responseActions.errors.subscribe});
 						return;
@@ -569,12 +577,12 @@ var talksCtrl = (function () {
 							numberOfParticipants: item.numberOfParticipants
 						}}, function (err) {
 						//if update of the talk was successful
-						handleDbError(err, {}, function () {
+						handleDbError(response, err, {}, function () {
 							user.subscribedTalks.push(talk_id);
 
 							collections.users.update({email: user.email}, {$set: {subscribedTalks: user.subscribedTalks}}, function (err) {
 								//if update of the user was successful
-								handleDbError(err, {}, function () {
+								handleDbError(response, err, {}, function () {
 									// get participants of the talk
 									getTalkParticipants(item, response);
 								});
@@ -586,8 +594,11 @@ var talksCtrl = (function () {
 		},
 		evaluate: function (data, user, response) {
 			var talkId = new BSON.ObjectID(data.id);
-			collections.talks.findOne({_id: talkId}, function (err, talk) {
-				handleDbError(err, talk, function (talk) {
+			collections.talks.findOne({
+				_id: talkId,
+				isActual: true
+			}, function (err, talk) {
+				handleDbError(response, err, talk, function (talk) {
 					if ( talk.author.toString() == user._id.toString() ) {
 						responseActions.sendResponse(response, 403, {message: responseActions.errors.evaluateTalk});
 						return;
@@ -610,15 +621,15 @@ var talksCtrl = (function () {
 						rating: talk.rating + mark
 					}}, function (err) {
 
-						handleDbError(err, {}, function () {
+						handleDbError(response, err, {}, function () {
 							collections.users.findOne({_id: talk.author}, function (err, author) {
-								handleDbError(err, author, function (author) {
+								handleDbError(response, err, author, function (author) {
 									//update rating of the talk author
 									collections.users.update({_id: talk.author}, {$set: {
 										rating: author.rating + mark * coefficient
 									}}, function (err) {
 										//if update of the user was successful
-										handleDbError(err, {}, function () {
+										handleDbError(response, err, {}, function () {
 											responseActions.sendResponse(response, 200, {rating: talk.rating + mark});
 										});
 									});

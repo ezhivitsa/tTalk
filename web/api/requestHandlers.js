@@ -160,7 +160,7 @@ var requestHandler = (function () {
 		},
 		talk: {
 			get: function (data, response, session) {
-				if ( data.id ) {
+				if ( data.id && data.id.length == 24 ) {
 					checkIsUserLogined(data, response, session, function (user) {
 						mongoActions.talksCtrl.getTalk(data, user, response);
 					});
@@ -218,7 +218,7 @@ var requestHandler = (function () {
 		},
 		subscribe: {
 			post: function (data, response, session) {
-				if ( data.id ) {
+				if ( data.id && data.id.length == 24 ) {
 					checkIsUserLogined(data, response, session, function (user) {
 						if ( user.subscribedTalks.indexOf(data.id) + 1 ) {
 							responseActions.sendResponse(response, 403, {field: 'subscribe', message: responseActions.errors.subscribe});	
@@ -235,7 +235,7 @@ var requestHandler = (function () {
 		},
 		comment: {
 			post: function (data, response, session) {
-				if ( data.id && data.text ) {
+				if ( data.id && data.id.length == 24 && data.text ) {
 					checkIsUserLogined(data, response, session, function (user) {
 						mongoActions.commentsCtrl.addComment(data, user, response);
 					});
@@ -247,7 +247,7 @@ var requestHandler = (function () {
 		},
 		comments: {
 			get: function (data, response, session) {
-				if ( data.id ) {
+				if ( data.id && data.id.length == 24 ) {
 					checkIsUserLogined(data, response, session, function (user) {
 						mongoActions.commentsCtrl.getComments(data, user, response);
 					});					
@@ -259,7 +259,7 @@ var requestHandler = (function () {
 		},
 		evaluateComment: {
 			post: function (data, response, session) {
-				if ( data.id && data.mark ) {
+				if ( data.id && data.id.length == 24 && data.mark ) {
 					checkIsUserLogined(data, response, session, function (user) {
 						mongoActions.commentsCtrl.evaluate(data, user, response);
 					});	
@@ -271,7 +271,7 @@ var requestHandler = (function () {
 		},
 		deleteComment: {
 			post: function (data, response, session) {
-				if ( data.id ) {
+				if ( data.id && data.id.length == 24 ) {
 					checkIsUserLogined(data, response, session, function (user) {
 						mongoActions.commentsCtrl.delete(data, user, response);
 					});
@@ -283,7 +283,7 @@ var requestHandler = (function () {
 		},
 		evaluateTalk: {
 			post: function (data, response, session) {
-				if ( data.id && data.mark ) {
+				if ( data.id && data.id.length == 24 && data.mark ) {
 					checkIsUserLogined(data, response, session, function (user) {
 						mongoActions.talksCtrl.evaluate(data, user, response);
 					});	
@@ -295,7 +295,7 @@ var requestHandler = (function () {
 		},
 		deleteTalk: {
 			post: function (data, response, session) {
-				if ( data.id ) {
+				if ( data.id && data.id.length == 24 ) {
 					checkIsUserLogined(data, response, session, function (user) {
 						mongoActions.talksCtrl.delete(data, user, response);
 					});
