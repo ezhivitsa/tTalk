@@ -1,4 +1,4 @@
-app.controller('HeadCtrl',['$scope', '$resource', '$rootScope', '$q', '$location', function( $scope, $resource, $rootScope, $q, $location ) {
+app.controller('HeadCtrl',['$scope', '$resource', '$rootScope', '$location', function ( $scope, $resource, $rootScope, $location ) {
 	$scope.visHeader = false;
 	var logoutService = $resource('../api/logout');
 
@@ -19,25 +19,21 @@ app.controller('HeadCtrl',['$scope', '$resource', '$rootScope', '$q', '$location
 
 	$scope.logout = function(event) {
 		event.preventDefault();
-		var defer = $q.defer();
 
-		logoutService.get({},function(response, getReponseHeaders) {
-				$rootScope.$broadcast('unlogged');
-				defer.resolve();				
+		logoutService.get({},function ( response ) {
+				$rootScope.$broadcast('unlogged');			
 				$location.path("/");
-			},function(response, getReponseHeaders) {
+			},function ( response ) {
 				if (response.status == "403") {
 					$rootScope.$broadcast('unlogged');
-					defer.resolve();
 					$location.path("/");
 				} else {
-					defer.reject({
-						message : data.message,
-						status: status
-					});	
+					$rootScope.$broadcast('requestError',{
+						message: response.data.message,
+						status: response.status
+					});
 				}
 			});
 
-		return defer.promise;
 	};
 }]);

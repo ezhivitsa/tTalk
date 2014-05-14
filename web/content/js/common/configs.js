@@ -79,13 +79,12 @@ app.sessionVerification = function( $q, $http, $location, $rootScope ) {
 	return defer.promise;
 };
 
-app.resourceAuthorizedErr = function ( $location, $rootScope, response, defer ) {
+app.resourceAuthorizedErr = function ( $location, $rootScope, response ) {
 	if (response.status == "401") {
 		$location.path("/");			
 		$rootScope.$broadcast('unlogged');
-		defer && defer.resolve();
-	} else if (defer) {
-		defer.reject({
+	} else {
+		$rootScope.$broadcast('requestError',{
 			message: response.data.message,
 			status: response.status
 		});

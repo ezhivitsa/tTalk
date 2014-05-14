@@ -1,4 +1,4 @@
-app.controller('UserProfileCtrl', ['$scope', '$resource', '$q', '$location', '$rootScope', function ( $scope, $resource, $q, $location, $rootScope ){
+app.controller('UserProfileCtrl', ['$scope', '$resource', '$location', '$rootScope', function ( $scope, $resource, $location, $rootScope ){
 
 	var userDataService = $resource('../api/myaccount');
 	$scope.myPermisson = false;
@@ -40,32 +40,26 @@ app.controller('UserProfileCtrl', ['$scope', '$resource', '$q', '$location', '$r
 
 	$scope.updateProfile = function ( event ) {
 		event.preventDefault();
-		var defer = $q.defer();
 		userDataService.save({},$scope.userData,
 			function ( response ) {
-				defer.resolve();
 				$location.path("/main");
 			},
 			function ( response ) {
-				app.resourceAuthorizedErr($location,$rootScope,response,defer);
+				app.resourceAuthorizedErr($location,$rootScope,response);
 			});
-		return defer.promise;
 	}
 	
 }]);
 
-app.controller('UserInfoCtrl', ['$scope', '$resource', '$routeParams', '$q', '$location', '$rootScope', function ( $scope, $resource, $routeParams, $q, $location, $rootScope ){
+app.controller('UserInfoCtrl', ['$scope', '$resource', '$routeParams', '$location', '$rootScope', function ( $scope, $resource, $routeParams, $location, $rootScope ){
 
 	var userDataService = $resource('../api/user');
 
-	var defer = $q.defer();
 	$scope.userData = userDataService.get({ nickname: $routeParams.nickname },
 		function ( response ) {
-			defer.resolve();
 		},
 		function ( response ) {
-			app.resourceAuthorizedErr($location,$rootScope,response,defer);
+			app.resourceAuthorizedErr($location,$rootScope,response);
 		});
 
-	return defer.promise;
 }]);

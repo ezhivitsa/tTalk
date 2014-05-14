@@ -1,4 +1,4 @@
-app.controller('RegisterCtrl',['$scope', '$timeout', '$resource', '$rootScope', '$q', '$location', function( $scope, $timeout, $resource, $rootScope, $q, $location ) {
+app.controller('RegisterCtrl',['$scope', '$timeout', '$resource', '$rootScope', '$location', function( $scope, $timeout, $resource, $rootScope, $location ) {
 	var self = this,
 		registerService = $resource('../api/:action',{
 			action: '@action'
@@ -45,27 +45,24 @@ app.controller('RegisterCtrl',['$scope', '$timeout', '$resource', '$rootScope', 
 	$scope.register = function() {
 		$timeout.cancel(self.emailPromise);
 		$timeout.cancel(self.nicknamePromise);
-		var defer = $q.defer();
-		registerService.save({ action: 'registration' },$scope.regData,function(response) {
+		registerService.save({ action: 'registration' },$scope.regData,function ( response ) {
 				localStorage.setItem("nickname", response.nickname);				
 				if (response.firstName) {
 					localStorage.setItem("full", response.firstName + " " + response.lastName);
 				}
 				localStorage.setItem('isPositiveRating',response.isPositiveRating);
-				$rootScope.$broadcast('logged');				
-				defer.resolve();
+				$rootScope.$broadcast('logged');
 				$location.path("/main");
-			},function(response) {
+			},function ( response ) {
 				if (response.status == "403") {
 					$scope[response.data.field + "Error"] = response.data.message;
 				} else {
-					defer.reject({
-						message : response.data.message,
+					$rootScope.$broadcast('requestError',{
+						message: response.data.message,
 						status: response.status
 					});	
 				}	
 			});
-		return defer.promise;
 	};
 
 	$scope.passwordChange = function() {		

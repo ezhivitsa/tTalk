@@ -1,4 +1,4 @@
-app.controller('MainCtrl',['$scope', '$resource', '$q', '$location', '$rootScope', function ( $scope, $resource, $q, $location, $rootScope ) {
+app.controller('MainCtrl',['$scope', '$resource', '$location', '$rootScope', function ( $scope, $resource, $location, $rootScope ) {
 	var talksService = $resource('../api/talks'),
 		page = 0;
 	$scope.status = localStorage.getItem('isPositiveRating');
