@@ -460,7 +460,14 @@ var talksCtrl = (function () {
 				page = ( data.page < 1 || !data.page ) ? 1 : data.page,
 				result = [];
 
-			collections.talks.find({isActual: true}, {title: 1, date: 1, path: 1, extension: 1}, {
+			collections.talks.find({isActual: true}, 
+			{
+				title: 1, 
+				date: 1, 
+				path: 1, 
+				extension: 1,
+				comments: 1
+			}, {
 				sort: {date: -1}, 
 				skip: perPage * (page - 1), 
 				limit: perPage + 1
@@ -476,6 +483,7 @@ var talksCtrl = (function () {
 					}
 					for ( var i = 0; i < len; i++ ) {
 						items[i].image = items[i].path + items[i]._id + items[i].extension;
+						items[i].comments = items[i].comments.length;
 					}
 					responseActions.sendResponse(response, 200, {talks: items, isEnd: isEnd});
 				});
@@ -517,7 +525,7 @@ var talksCtrl = (function () {
 						handleDbError(response, err, authUser, function (authUser) {
 							item.author = authUser;
 							item.isCanSubscribe = item.isCanEvaluate = (authUser._id.toString() != user._id.toString());
-							items[i].isCanDelete = (user._id.toString() === authUser._id.toString() || user.role === userRoles.admin);
+							item.isCanDelete = (user._id.toString() === authUser._id.toString() || user.role === userRoles.admin);
 							
 							if ( item.isCanSubscribe ) {
 								for ( var i = 0, len = item.participants.length; i < len; i++ ) {
