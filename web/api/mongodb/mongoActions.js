@@ -29,7 +29,7 @@ function handleDbError(response, err, item, callback) {
 			( callback ) && callback(item);			
 		}
 		else {
-			responseActions.sendResponse(response, 404);
+			responseActions.sendResponse(response, 404, {message: responseActions.errors.notFound});
 		}
 	}
 }
@@ -227,7 +227,7 @@ var commentsCtrl = (function () {
 				handleDbError(response, err, result, function (result) {
 
 					var o_id = new BSON.ObjectID(data.id);
-					collections.talks.findOne({_id: o_id}, function (err, item) {
+					collections.talks.findOne({_id: o_id, isActual: true}, function (err, item) {
 						handleDbError(response, err, item, function (item) {
 							//update talk
 							item.comments.push(result[0]._id);
@@ -497,7 +497,7 @@ var talksCtrl = (function () {
 				},
 				o_id = new BSON.ObjectID(data.id);
 
-			collections.talks.findOne({_id: o_id}, fields, {
+			collections.talks.findOne({_id: o_id, isActual: true}, fields, {
 				sort: {rating: -1},
 				limit: 10
 			}, function (err, item) {
@@ -517,6 +517,7 @@ var talksCtrl = (function () {
 						handleDbError(response, err, authUser, function (authUser) {
 							item.author = authUser;
 							item.isCanSubscribe = item.isCanEvaluate = (authUser._id.toString() != user._id.toString());
+							items[i].isCanDelete = (user._id.toString() === authUser._id.toString() || user.role === userRoles.admin);
 							
 							if ( item.isCanSubscribe ) {
 								for ( var i = 0, len = item.participants.length; i < len; i++ ) {
@@ -643,8 +644,19 @@ var talksCtrl = (function () {
 		},
 		delete: function (data, user, response) {
 			var talkId = new BSON.ObjectID(data.id);
-			collections.talks.findOne({_id: talkId}, function (err, talk) {
+			collections.talks.findOne({_id: talkId, isActual: true}, function (err, talk) {
+				handleDbError(response, err, talk, function (talk) {
+					if ( !talk.isActual || ( talk.author.toString() != user._id.toString() && user.role != userRoles.admin ) ) {
+						responseActions.sendResponse(response, 403, {message: responseActions.errors.deleteTalk});
+						return;
+					}
 
+					collections.comments.update({_id: talkId}, {$set: {isActual: false}}, function (err) {
+						handleDbError(response, err, {}, function () {
+							responseActions.sendResponse(response, 200);
+						});
+					});
+				});
 			});
 		}
 	};

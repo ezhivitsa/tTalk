@@ -13,8 +13,11 @@ var errors = {
 	subscribe: 'You are already subscribed to this talk',
 	evaluateComment: 'You can\'t evaluate this comment',
 	deleteComment: 'You can\'t delete this comment',
+	deleteTalk: 'You can\'t delete this talk',
 	evaluateTalk: 'You can\'t evaluate this talk',
-	teapot: 'Sorry, but this is talk was removed'
+	teapot: 'Sorry, but this is talk was removed',
+	handler: 'There is no function to handle this request',
+	notFound: 'Not Found'
 }
 
 function sendResponse (response, statusCode, responseJSON) {
