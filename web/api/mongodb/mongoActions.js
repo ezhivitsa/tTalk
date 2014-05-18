@@ -651,7 +651,7 @@ var talksCtrl = (function () {
 						return;
 					}
 
-					collections.comments.update({_id: talkId}, {$set: {isActual: false}}, function (err) {
+					collections.talks.update({_id: talkId}, {$set: {isActual: false}}, function (err) {
 						handleDbError(response, err, {}, function () {
 							responseActions.sendResponse(response, 200);
 						});
