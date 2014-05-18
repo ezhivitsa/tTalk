@@ -206,7 +206,7 @@
 	font-size: 20px;
 	line-height: 30px;
 	color: white;
-	background-color: rgba(183, 183, 183, 0.5);
+	background-color: rgba(183, 183, 183, 0.9);
 	text-align: center;
 	-webkit-transition: bottom 0.3s;
 	transition: bottom 0.3s;
@@ -518,10 +518,12 @@
 
 .comment .removeButton:after {
 	-webkit-transform: skewX(-45deg);
+	transform: skewX(-45deg);
 }
 
 .comment .removeButton:before {
 	-webkit-transform: skewX(45deg);
+	transform: skewX(45deg);
 }
 
 .red {
@@ -531,4 +533,38 @@
 .talk .deleteTalk {
 	float: right;
 	margin-right: 5px;
+}
+
+.talkPrev .nomOfComments {
+	position: absolute;
+	display: block;
+	padding-left: 20px;
+	top: 2px;
+	right: 5px;
+	background: url('../img/comments.png') no-repeat;
+	background-position: 0px 5px;
+	color: white;
+	opacity: 0;
+	-webkit-transition: opacity 0.3s;
+	transition: opacity 0.3s;
+}
+
+.talkPrev:before {
+	content: "";
+	position: absolute;
+	width: 100px;
+	height: 100px;
+	top: -60px;
+	display: block;
+	right: -40px;
+	background-color: rgba(183, 183, 183, 0.9);
+	border-radius: 50px;
+	opacity: 0;
+	-webkit-transition: opacity 0.3s;
+	transition: opacity 0.3s;
+}
+
+.talkPrev:hover .nomOfComments,
+.talkPrev:hover:before {
+	opacity: 1;
 }

@@ -28,6 +28,7 @@ app.directive('talk', function ( ) {
 		template: '<a href="#/talk/{{data._id}}" class="talkPrev">' + 
 					'<img src="{{data.image}}" title="{{data.title}}" />' +
 					'<span class="title">{{data.title}}</span>' +
+					'<span class="nomOfComments">{{data.comments}}</span>' +
 				'</a>',
 		replace: true
 	};
