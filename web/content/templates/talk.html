@@ -4,7 +4,10 @@
 			<header>
 				<span class="date">{{talk.date}}</span>
 				<h2>{{talk.title}}</h2>
-				<span class="author">Author: <a href="#/userinfo/{{talk.author.nickname}}">{{talk.author.nickname}}</a></span>
+				<span class="author">Author: 
+					<a href="#/userinfo/{{talk.author.nickname}}">{{talk.author.nickname}}</a>
+					<a href="#/talk/delete" class="deleteTalk" ng-click="delete($event)" ng-if="talk.isCanDelete">Remove Talk</a>
+				</span>
 			</header>
 			<article>
 				<img src="{{talk.image}}" alt="{{talk.title}}">

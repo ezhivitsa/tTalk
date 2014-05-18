@@ -25,7 +25,10 @@ app.directive('talk', function ( ) {
 			data: '=data'
 		},
 		restrict: 'E',
-		template: '<a href="#/talk/{{data._id}}" class="talkPrev"><img src="{{data.image}}" title="{{data.title}}" /><span class="title">{{data.title}}</span></a>',
+		template: '<a href="#/talk/{{data._id}}" class="talkPrev">' + 
+					'<img src="{{data.image}}" title="{{data.title}}" />' +
+					'<span class="title">{{data.title}}</span>' +
+				'</a>',
 		replace: true
 	};
 });

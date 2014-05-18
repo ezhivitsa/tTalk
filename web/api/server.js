@@ -22,7 +22,8 @@ handler.handle = {
 	'/api/comments': 'comments',
 	'/api/evaluatecomment': 'evaluateComment',
 	'/api/evaluatetalk': 'evaluateTalk',
-	'/api/deletecomment': 'deleteComment'
+	'/api/deletecomment': 'deleteComment',
+	'/api/deletetalk': 'deleteTalk'
 }
 
 server.startServer(host, port, router.route, handler);

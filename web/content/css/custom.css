@@ -527,3 +527,8 @@
 .red {
 	color: rgb(219, 28, 28);
 }
+
+.talk .deleteTalk {
+	float: right;
+	margin-right: 5px;
+}

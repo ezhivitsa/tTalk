@@ -83,6 +83,18 @@ app.controller('TalkCtrl', ['$scope', '$resource', '$routeParams', '$location', 
 			});
 	}
 
+	$scope.delete = function ( event ) {
+		event.preventDefault();
+		if (!$scope.talk.isCanDelete) {
+			return;
+		}
+		apiService.save({ action: 'deletetalk' },{ id: $routeParams.id },function(response) {
+				$location.path("/main");
+			},function(response) {
+				app.resourceAuthorizedErr($location,$rootScope,response);
+			})
+	}
+
 }]);
 
 app.directive('comment', [ '$resource', '$location', '$rootScope', function ( $resource, $location, $rootScope ){
